@@ -1,0 +1,21 @@
+[
+{
+  "modid": "jukeboxReloaded",
+  "name": "Jukebox Reloaded",
+  "description": "A rebuild of the ",
+  "version": "@VERSION@",
+  "url": "",
+  "updateUrl": "",
+  "authorList": [
+    "cazzar"
+  ],
+  "credits": "By cazzar",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  	"CodeChickenCore"
+  ]
+}
+]
