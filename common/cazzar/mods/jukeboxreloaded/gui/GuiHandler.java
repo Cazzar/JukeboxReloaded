@@ -1,4 +1,4 @@
-package cazzar.mods.jukeboxreloaded.network;
+package cazzar.mods.jukeboxreloaded.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -18,7 +18,7 @@ public class GuiHandler implements IGuiHandler {
         switch (ID)
         {
             case JUKEBOX:
-                if (!(tile instanceof TileJukeBox)) return null;                
+                if (!(tile instanceof TileJukeBox)) return null;
                 return new GUIJukeBox(player, (TileJukeBox) tile);
             default:
                 return null;

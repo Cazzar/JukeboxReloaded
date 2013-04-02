@@ -1,11 +1,15 @@
 package cazzar.mods.jukeboxreloaded.proxy;
 
-public class ClientProxy extends CommonProxy
-{
+import cazzar.mods.jukeboxreloaded.lib.Reference;
+import cazzar.mods.jukeboxreloaded.network.JukeBoxCPH;
+import codechicken.core.packet.PacketCustom;
+
+public class ClientProxy extends CommonProxy {
     @Override
     public void Init()
     {
         super.Init();
-        // do nothing
+        PacketCustom.assignHandler(Reference.CHANNEL_NAME, 0, 255,
+                new JukeBoxCPH());
     }
 }

@@ -1,6 +1,5 @@
 package cazzar.mods.jukeboxreloaded.configuration;
 
-public class Configuration
-{
+public class Configuration {
 
 }

@@ -1,21 +1,20 @@
-package cazzar.mods.jukeboxreloaded.network;
+package cazzar.mods.jukeboxreloaded.gui;
 
+import static java.lang.Math.floor;
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import codechicken.core.packet.PacketCustom;
-
-import static java.lang.Math.floor;
-
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
+import codechicken.core.packet.PacketCustom;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 
 @SideOnly(Side.CLIENT)
 public class GUIJukeBox extends GuiContainer {
@@ -35,11 +34,12 @@ public class GUIJukeBox extends GuiContainer {
     protected void actionPerformed(GuiButton btn)
     {
         final boolean wasPlaying = tileJukeBox.isPlayingRecord();
-        PacketCustom packet = new PacketCustom(Reference.CHANNEL_NAME, 1);
-        packet.writeCoord(tileJukeBox.getCoord());
-        packet.writeInt(btn.id);
-        
-        packet.sendToServer();
+        // final PacketCustom packet = new PacketCustom(Reference.CHANNEL_NAME,
+        // 1);
+        // packet.writeCoord(tileJukeBox.getCoord());
+        // packet.writeInt(btn.id);
+        // packet.sendToServer();
+
         switch (btn.id)
         {
             case 0:
@@ -52,7 +52,7 @@ public class GUIJukeBox extends GuiContainer {
                 break;
             case 1:
                 tileJukeBox.stopPlayingRecord();
-                //tileJukeBox.resetPlayingRecord();
+                // tileJukeBox.resetPlayingRecord();
                 break;
             case 2:
                 if (wasPlaying)
@@ -78,6 +78,13 @@ public class GUIJukeBox extends GuiContainer {
                 break;
         }
         btnPlay.enabled = !(btnStop.enabled = tileJukeBox.isPlayingRecord());
+
+        // send tile information to the server to update the other clients
+        final PacketCustom packet = new PacketCustom(Reference.CHANNEL_NAME, 1);
+        packet.writeCoord(tileJukeBox.getCoord());
+        packet.writeBoolean(tileJukeBox.isPlayingRecord());
+        packet.writeInt(tileJukeBox.getCurrentRecordNumer());
+        packet.sendToServer();
     }
 
     @Override
@@ -89,7 +96,13 @@ public class GUIJukeBox extends GuiContainer {
         mc.renderEngine.bindTexture("/mods/cazzar/textures/gui/jukebox.png");
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;
-        drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize);     
+        drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize);
+        
+        //TileEntity tile = world.getBlockTileEntity(x, y, z);
+        //if (tile instanceof TileJukeBox) {
+            boolean playing = SoundManager.sndSystem.playing(((TileJukeBox) tileJukeBox).getLastPlayedRecord());
+        //}
+
     }
 
     @Override
@@ -103,23 +116,24 @@ public class GUIJukeBox extends GuiContainer {
         fontRenderer.drawString(
                 StatCollector.translateToLocal("container.inventory"), 8,
                 ySize - 93, 4210752);
+
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture("/mods/cazzar/textures/gui/jukebox.png");
+
         final int xOffset = 53;
         final int yOffset = 16;
         final int size = 18;
-        
-        int index = tileJukeBox.getCurrentRecordNumer();
-        int column = (int)floor((double)index / 4D);
-        int row = index % 4;
-        
-        //System.out.println(column + ":" + row + ":" + index);
-        //Args: x1, y1, x2, y2, color
-        //xOffset + (size * row), yOffset + (size * column), 
-        drawTexturedModalRect(0 + xOffset + (size * row), 
-                            0 + yOffset + (size * column),
-                            176, 0, 17, 17);
-    }
 
+        final int index = tileJukeBox.getCurrentRecordNumer();
+        final int column = (int) floor(index / 4D);
+        final int row = index % 4;
+
+        // System.out.println(column + ":" + row + ":" + index);
+        // Args: x1, y1, x2, y2, color
+        // xOffset + (size * row), yOffset + (size * column),
+        drawTexturedModalRect(0 + xOffset + size * row, 0 + yOffset + size
+                * column, 176, 0, 18, 18);
+    }
 
     @SuppressWarnings("unchecked")
     @Override

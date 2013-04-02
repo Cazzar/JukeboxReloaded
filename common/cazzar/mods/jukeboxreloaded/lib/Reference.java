@@ -1,7 +1,6 @@
 package cazzar.mods.jukeboxreloaded.lib;
 
-public class Reference
-{
+public class Reference {
     public static final String MOD_ID = "jukeboxReloaded";
     public static final String MOD_NAME = "JukeBox Reloaded";
     public static final String MOD_VERSION = "1.0a";
