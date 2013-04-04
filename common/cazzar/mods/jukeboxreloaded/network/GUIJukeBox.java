@@ -13,6 +13,7 @@ import static java.lang.Math.floor;
 
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
+import static cazzar.mods.jukeboxreloaded.lib.Reference.GUIJukeBoxActions.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -132,15 +133,15 @@ public class GUIJukeBox extends GuiContainer {
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;
 
-        buttonList.add(btnPlay = new GuiButton(0, xStart + 10, yStart + 17, 40,
+        buttonList.add(btnPlay = new GuiButton(PLAY, xStart + 10, yStart + 17, 40,
                 20, "Play"));
-        buttonList.add(btnStop = new GuiButton(1, xStart + 10, yStart + 40, 40,
+        buttonList.add(btnStop = new GuiButton(STOP, xStart + 10, yStart + 40, 40,
                 20, "Stop"));
 
-        buttonList.add(new GuiButton(2, xStart + 128, yStart + 17, 40, 20,
+        buttonList.add(new GuiButton(NEXT, xStart + 128, yStart + 17, 40, 20,
                 "Next"));
-        buttonList.add(new GuiButton(3, xStart + 128, yStart + 40, 40, 20,
-                "Prev"));
+        buttonList.add(new GuiButton(PREVIOUS, xStart + 128, yStart + 40, 40, 20,
+                "Previ"));
         btnPlay.enabled = !(btnStop.enabled = tileJukeBox.isPlayingRecord());
     }
 }
