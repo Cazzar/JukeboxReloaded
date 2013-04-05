@@ -1,87 +1,212 @@
-<?xml version="1.0" ?> 
-<project name="Jukebox Reloaded">
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ForgeBackup" default="reobfuscate">
+    <target name="download-forge" depends="setupvars" unless="forge.downloaded">
+        <echo>Downloading Minecraft Forge...</echo>
+        <delete dir="${forge.base}" />
+        <delete>
+            <fileset dir="${mod.base}" includes="minecraftforge-src-*.zip" />
+        </delete>
+        <get src="http://files.minecraftforge.net/minecraftforge/minecraftforge-src-${minecraft.version}-${forge.version}.zip" dest="${mod.base}/minecraftforge-src-${minecraft.version}-${forge.version}.zip" />
+    </target>
+    <target name="setup-forge" depends="download-forge" unless="forge.installed">
+		<!--<echo>Installing AccessTransformers</echo>
+		<copy file="${mod.base}\..\CodeChickenCore\codechickencore_at.cfg" todir="${forge.accesstransformers}" />-->
+		
+        <echo>Installing Minecraft Forge...</echo>
+        <unzip src="${mod.base}/minecraftforge-src-${minecraft.version}-${forge.version}.zip" dest="${mod.base}" />
+        <exec executable="${python.exe}" dir="${forge.base}" failonerror="true">
+            <arg value="${forge.base}/install.py" />
+        </exec>
+    </target>
+    <target name="build-forge" depends="setup-forge" unless="forge.built">
+        <delete dir="${mcp.base}/bin" />
+        <delete file="${forge.jar.built}" />
+        <mkdir dir="${mcp.bin}" />
+        <echo>Building Minecraft and Minecraft Forge.</echo>
+        <javac  encoding="UTF-8" compiler="modern" source="1.6" target="1.6" deprecation="false"
+                destdir="${mcp.bin}" includeantruntime="false" includejavaruntime="true" debug="true">
+            <compilerarg value="-Xlint:-options" />
+            <classpath>
+                <pathelement location="${mcp.lib}\argo-3.2-src.jar" />
+                <pathelement location="${mcp.lib}\asm-debug-all-4.1.jar" />
+                <pathelement location="${mcp.lib}\bcprov-debug-jdk15on-148.jar" />
+                <pathelement location="${mcp.lib}\guava-14.0-rc3.jar" />
+                <pathelement location="${mcp.jars}\bin\minecraft.jar" />
+                <pathelement location="${mcp.jars}\bin\jinput.jar" />
+                <pathelement location="${mcp.jars}\bin\lwjgl.jar" />
+                <pathelement location="${mcp.jars}\bin\lwjgl_util.jar" />
+            </classpath>
+            <src path="${mcp.src}" />
+        </javac>
+        <jar destfile="${forge.jar.built}">
+            <fileset dir="${mcp.bin}" includes="**/*.class" />
+        </jar>
+    </target>
+    <target name="build" depends="build-forge">
+        <delete file="VERSION" />
+        <delete dir="${mcp.bin}" />
+		
+		<!--<copy todir="${mcp.src}\minecraft">
+			<fileset dir="${mod.base}\..\CodeChickenCore\codechicken\" />
+			<fileset dir="${mod.base}\..\CodeChickenCore\net\" />
+		</copy>-->
+		
+        <echo>Building ${modname}.</echo>
+        <unzip src="${forge.jar.built}" dest="${mcp.bin}">
+            <patternset><exclude name="MANIFEST.MF" /></patternset>
+        </unzip>
+        <javac  encoding="UTF-8" compiler="modern" source="1.6" target="1.6" deprecation="false"
+                destdir="${mcp.bin}" includeantruntime="false" includejavaruntime="true" debug="true">
+            <compilerarg value="-Xlint:-options" />
+            <compilerarg value="-Xlint:deprecation" />
+            <compilerarg value="-Xlint:unchecked" />
+            <classpath>
+                <pathelement location="${mod.base}\minecraftforge-built.jar" />
+                <pathelement location="${mcp.lib}\argo-3.2-src.jar" />
+                <pathelement location="${mcp.lib}\asm-debug-all-4.1.jar" />
+                <pathelement location="${mcp.lib}\bcprov-debug-jdk15on-148.jar" />
+                <pathelement location="${mcp.lib}\guava-14.0-rc3.jar" />
+                <pathelement location="${mcp.jars}\bin\jinput.jar" />
+                <pathelement location="${mcp.jars}\bin\lwjgl.jar" />
+                <pathelement location="${mcp.jars}\bin\lwjgl_util.jar" />
+				<pathelement location="${mcp.jars}\bin\minecraft.jar" />
+				<pathelement location="${mod.base}\..\CodeChickenCore\CodeChickenCore-src.jar" />
+				<!--<dirset dir="${mod.base}\..\CodeChickenCore\">
+					<include name="codechicken\**"/>
+					<include name="net\**"/>
+				</dirset>-->
+            </classpath>
+            <src path="${mod.src}" />
+        </javac>
+    </target>
+    <target name="reobfuscate" depends="build">
+        <unzip src="${forge.jar.built}" dest="${mcp.bin}" />
+        <echo message="Reobfuscating ${modname}." level="info" />
+        <exec executable="${python.exe}" dir="${mcp.base}" failonerror="true">
+            <arg value="${mcp.base}/runtime/reobfuscate.py" />
+            <arg value="--client" />
+        </exec>
+        <echo message="Building a release jar." />
+        <jar destfile="${mod.jar.release}">
+            <fileset dir="${mcp.reobf}" includes="cazzar/" />
+            <fileset dir="${mod.src}">
+                <exclude name="mcmod.info"/>
+                <exclude name="**/*.java"/>
+                <exclude name="com/" />
+            </fileset>
+			<fileset dir="${mod.base}/resources">
+                <exclude name="mcmod.info"/>
+                <exclude name="**/*.java"/>
+                <exclude name="com/" />
+            </fileset>
+            <mappedresources>
+                <concat>
+                    <fileset dir="${mod.src}" includes="mcmod.info" />
+                    <filterchain>
+                        <replacetokens>
+                            <token key="NAME" value="${modname}" />
+                            <token key="VERSION" value="${version}" />
+                            <token key="MCVERSION" value="${mcversion}" />
+                        </replacetokens>
+                    </filterchain>
+                </concat>
+                <mergemapper to="mcmod.info" />
+            </mappedresources>
+        </jar>
+        <echo file="VERSION">${minecraft.version} -- v${version}</echo>
+    </target>
 	
-	<property file="build.properties" />
-	
-	<target name="clean">
-		<delete file="${dir.development}\mcp\src\minecraft\mcmod.info" />
-		<delete dir="${dir.development}\mcp\src\minecraft\com" />
-		<delete dir="${dir.development}\mcp\reobf\minecraft" />
-	</target>
-	
-	<target name="build">
-		<copy todir="${dir.development}\mcp\src\minecraft">
-			<fileset dir="${dir.development}\source\JukeboxReloaded\common\" />
+	<target name="setup-workdir" depends="build-forge">
+		<delete dir="${temp.dir}" />
+		<copy todir="${temp.src}">
+			<fileset dir="${mod.base}\..\CodeChickenCore\codechicken\" />
+			<fileset dir="${mod.base}\..\CodeChickenCore\net\" />
 		</copy>
-		<replace dir="${dir.development}\mcp\src\minecraft" token="@VERSION@" value="${release.mod.version}" />
+		<copy todir="${temp.src}">
+			<fileset dir="${mod.src}" />
+		</copy>
+		<replace dir="${temp.src}" token="@VERSION@" value="${version}" />
 	</target>
 	
-	<target name="recompile">
-		<exec dir="${dir.development}\mcp" executable="cmd" os="Windows 7">
-			<arg line="/c recompile.bat" />
-		</exec>
-		<exec dir="${dir.development}\mcp" executable="cmd" os="Windows 8">
-			<arg line="/c recompile.bat" />
-		</exec>
-		<exec dir="${dir.development}\mcp" executable="bash" os="Linux">
-			<arg line="recompile.sh" />
-		</exec>
-		<exec dir="${dir.development}\mcp" executable="bash" os="Mac OS X">
-			<arg line="recompile.sh" />
-		</exec>
+	<target name="clean" depends="setupvars">
+		<echo>Cleaning up...</echo>
+		<delete includeemptydirs="true">
+			<fileset dir="${temp.dir}"/>
+			<fileset dir="${forge.base}"/>
+		</delete>
 	</target>
-	
-	<target name="reobfuscate">
-		<exec dir="${dir.development}\mcp" executable="cmd" os="Windows 7">
-			<arg line="/c reobfuscate.bat" />
-		</exec>
-		<exec dir="${dir.development}\mcp" executable="cmd" os="Windows 8">
-			<arg line="/c reobfuscate.bat" />
-		</exec>
-		<exec dir="${dir.development}\mcp" executable="bash" os="Linux">
-			<arg line="reobfuscate.sh" />
-		</exec>
-		<exec dir="${dir.development}\mcp" executable="bash" os="Mac OS X">
-			<arg line="reobfuscate.sh" />
-		</exec>
-	</target>
-	
-	<target name="release-shared">
-		<!-- Prep for the release -->
-		<antcall target="clean" />
-		<antcall target="build" />
-		<antcall target="recompile" />		
-		<antcall target="reobfuscate" />
+
+    <target name="setupvars" unless="vars.setup">
+        <property name="vars.setup" value="true" />
+        <echo>Setting up values...</echo>
+
+        <property environment="env" />
+        <property name="modname" value="JukeboxReloaded" />
+
+        <property name="mod.base" location="${basedir}" />
+        <property name="mod.src" location="${mod.base}/common" />
+        <property name="mod.bin" location="${mod.base}/bin" />
+
+		<property name="temp.dir" location= "${mod.base}/tmp" />
+		<property name="temp.src" location= "${temp.dir}/src" />
 		
-		<!-- Build the jar -->
-		<mkdir dir="${dir.share}\${release.minecraft.version}\${release.mod.version}" />
-		<jar destfile="${dir.share}\${release.minecraft.version}\${release.mod.version}\JukeboxReloaded-universal-${release.mod.version}.jar">
-			<fileset dir="${dir.development}\mcp\src\common\"	includes="mcmod.info" />
-			<fileset dir="${dir.development}\mcp\reobf\minecraft" />
-			<fileset dir="${dir.development}\source\JukeboxReloaded\resources" />
-		</jar>
-		
-		<!-- Clean up the MCP source now that we are done -->
-		<antcall target="clean" />
-	</target>
-	
-	<target name="release">
-		<!-- Prep for the release -->
-		<antcall target="clean" />
-		<antcall target="build" />
-		<antcall target="recompile" />		
-		<antcall target="reobfuscate" />
-		
-		<!-- Build the jar -->
-		<mkdir dir="${dir.release}\${release.minecraft.version}\${release.mod.version}" />
-		<jar destfile="${dir.release}\${release.minecraft.version}\${release.mod.version}\JukeboxReloaded-universal-${release.mod.version}.jar">
-			<fileset dir="${dir.development}\mcp\src\minecraft\" includes="mcmod.info" />
-			<fileset dir="${dir.development}\mcp\reobf\minecraft" />
-			<fileset dir="${dir.development}\source\JukeboxReloaded\resources" />
-		</jar>
-		
-		<!-- Clean up the MCP source now that we are done -->
-		<antcall target="clean" />
-	</target>
-	
+        <property name="forge.base" location="${mod.base}/forge" />
+        <property name="forge.jar.built" location="${mod.base}/minecraftforge-built.jar" />
+		<property name="forge.accesstransformers" location="${forge.base}/accesstransformers" />
+        <property name="mcp.base" location="${forge.base}/mcp" />
+        <property name="mcp.bin" location="${mcp.base}/bin/minecraft" />
+        <property name="mcp.src" location="${mcp.base}/src/minecraft" />
+        <property name="mcp.conf" location="${mcp.base}/conf" />
+        <property name="mcp.jars" location="${mcp.base}/jars" />
+        <property name="mcp.lib" location="${mcp.base}/lib" />
+        <property name="mcp.reobf" location="${mcp.base}/reobf/minecraft" />
+
+        <property name="bon.jar" location="${env.BON_HOME}/bon.jar" />
+
+        <condition property="python.exe" value="${forge.base}/fml/python/python_fml" else="python">
+            <os family="Windows" />
+        </condition>
+
+        <condition property="version.build" value="${env.BUILD_NUMBER}" else="dev">
+            <isset property="env.BUILD_NUMBER" />
+        </condition>
+        <property file="${mod.src}/version.properties" />
+        <property name="build.version" value="${mod.build.major.number}.${mod.build.minor.number}.${mod.build.revision.number}" />
+        <property name="version.minecraft" value="${build.mcversion}" />
+        <property name="version.major" value="${build.major.number}" />
+        <property name="version.minor" value="${build.minor.number}" />
+        <property name="version.rev" value="${build.revision.number}" />
+        <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
+        <property name="minecraft.version" value="${build.mcversion}" />
+        <propertyfile file="${mod.src}/version.properties">
+            <entry key="build.build.number" type="int" value="${version.build}" />
+            <entry key="version" type="string" value="${version}" />
+        </propertyfile>
+
+        <property name="forge.version" value="${build.forgeversion}" />
+        
+        <property name="mod.jar.release" location="${mod.base}/${modname}-universal-${minecraft.version}-${version}.jar" />
+        
+        <condition property="forge.downloaded" value="true">
+            <resourceexists>
+                <file file="${mod.base}/minecraftforge-src-${minecraft.version}-${forge.version}.zip" />
+            </resourceexists>
+        </condition>
+        <condition property="forge.installed" value="true">
+            <and>
+                <isset property="forge.downloaded" />
+                <resourceexists>
+                    <file file="${mod.base}/forge"/>
+                </resourceexists>
+             </and>
+        </condition>
+        <condition property="forge.built" value="true">
+            <and>
+                <isset property="forge.installed" />
+                <resourceexists>
+                    <file file="${forge.jar.built}"/>
+                </resourceexists>
+             </and>
+        </condition>
+    </target>
 </project>

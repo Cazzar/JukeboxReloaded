@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
+import cazzar.mods.jukeboxreloaded.gui.ContainerJukeBox;
+import cazzar.mods.jukeboxreloaded.gui.GUIJukeBox;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
