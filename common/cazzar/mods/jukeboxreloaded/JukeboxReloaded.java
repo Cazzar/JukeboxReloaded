@@ -20,7 +20,7 @@ public class JukeboxReloaded {
     @Instance(Reference.MOD_ID)
     private static JukeboxReloaded instance;
     @SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
-    private static CommonProxy proxy;
+    public static CommonProxy proxy;
 
     public static JukeboxReloaded instance()
     {
