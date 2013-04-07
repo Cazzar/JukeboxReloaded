@@ -7,6 +7,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -173,7 +174,14 @@ public class TileJukeBox extends TileEntity implements IInventory
     {
         super.readFromNBT(tag);
         recordNumber = tag.getInteger("recordNumber");
-        InventoryUtils.readItemStacksFromTag(items, tag.getTagList("items"));
+        //InventoryUtils.readItemStacksFromTag(items, tag.getTagList("items"));
+        NBTTagList tagList = tag.getTagList("items");
+        
+        for(int i = 0; i < tagList.tagCount(); i++)
+        {
+            NBTTagCompound tag2 = (NBTTagCompound) tagList.tagAt(i);
+            items[tag2.getShort("Slot")] = ItemStack.loadItemStackFromNBT(tag);
+        }
     }
 
     public void resetPlayingRecord()
@@ -225,7 +233,18 @@ public class TileJukeBox extends TileEntity implements IInventory
     {
         super.writeToNBT(tag);
         tag.setInteger("recordNumber", recordNumber);
-        tag.setTag("items", InventoryUtils.writeItemStacksToTag(items));
+        NBTTagList tagList = new NBTTagList();
+        for(int i = 0; i < items.length; i++)
+        {
+            if (items[i] != null)
+            {
+                NBTTagCompound tag2 = new NBTTagCompound();
+                tag2.setShort("Slot", (short) i);
+                items[i].writeToNBT(tag2);
+                tagList.appendTag(tag2);
+            }
+        }
+        tag.setTag("items", tagList);
     }
 
     public String getLastPlayedRecord()

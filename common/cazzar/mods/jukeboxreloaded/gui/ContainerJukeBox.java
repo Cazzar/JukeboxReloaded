@@ -2,11 +2,11 @@ package cazzar.mods.jukeboxreloaded.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
-import codechicken.core.inventory.ContainerExtended;
 
-public class ContainerJukeBox extends ContainerExtended {
+public class ContainerJukeBox extends Container {
     private final int PLAYER_INVENTORY_ROWS = 3;
     private final int PLAYER_INVENTORY_COLUMNS = 9;
 
