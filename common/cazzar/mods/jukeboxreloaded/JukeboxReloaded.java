@@ -1,9 +1,15 @@
 package cazzar.mods.jukeboxreloaded;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import net.minecraft.block.Block;
 import cazzar.mods.jukeboxreloaded.blocks.BlockJukeBox;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
+import cazzar.mods.jukeboxreloaded.player.PlayerTracker;
 import cazzar.mods.jukeboxreloaded.proxy.CommonProxy;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -38,10 +44,42 @@ public class JukeboxReloaded {
         GameRegistry.registerBlock(jukeBox, "blockJukeBox");
         GameRegistry.registerTileEntity(TileJukeBox.class, "tileJukeBox");
         LanguageRegistry.addName(jukeBox, "JukeBox");
+        
+        GameRegistry.registerPlayerTracker(new PlayerTracker());
+        //update checker
     }
 
     public CommonProxy proxy()
     {
         return proxy;
+    }
+    
+    public static String getUpdateDetailIfExists()
+    {
+    	URL url;
+		try {
+			url = new URL("https://bitbucket.org/cazzar/mod-updates/raw/master/JukeboxReloaded.cfg");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+
+        	String s, description = null, release = null;
+        	
+        	while ((s = reader.readLine()) != null)
+        	{
+        		if (s.startsWith("release: "))
+        			release = s.replace("release: ", "");
+        		else if (s.startsWith("description: "))
+        			description = s.replace("description: ", "");
+        	}
+        	
+        	int build = Integer.parseInt(release);
+        	
+        	if (Reference.MOD_BUILD != build)
+        		if (release != null && description != null)
+        			return description;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
     }
 }
