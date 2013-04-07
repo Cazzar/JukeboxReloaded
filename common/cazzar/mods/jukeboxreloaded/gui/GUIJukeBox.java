@@ -90,26 +90,22 @@ public class GUIJukeBox extends GuiContainer {
 		btnShuffleOff.enabled = tileJukeBox.shuffleEnabled();
 		switch (tileJukeBox.getReplayMode()) {
 		case 0:
-			System.out.println("mode 0");
 			btnRepeatOff.enabled = false;
 			btnRepeatOne.enabled = true;
 			btnRepeatAll.enabled = true;
 			break;
 		case 1:
-			System.out.println("mode 1");
 			btnRepeatOff.enabled = true;
 			btnRepeatOne.enabled = true;
 			btnRepeatAll.enabled = false;
 			break;
 		case 2:
-			System.out.println("mode 2");
 			btnRepeatOff.enabled = true;
 			btnRepeatOne.enabled = false;
 			btnRepeatAll.enabled = true;
 			break;
 		}
-		
-		System.out.println("ReplayMode:" + tileJukeBox.getReplayMode() + " Shuffle:" + tileJukeBox.shuffleEnabled());
+	
 		// send tile information to the server to update the other clients
 		final PacketCustom packet = new PacketCustom(Reference.CHANNEL_NAME, 1);
 		packet.writeCoord(tileJukeBox.getCoord());
