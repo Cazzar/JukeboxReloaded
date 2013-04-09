@@ -2,7 +2,7 @@
 <project name="ForgeBackup" default="reobfuscate">
 	<target name="clean" depends="setupvars">
 		<delete dir="${forge.base}" />
-	</traget>
+	</target>
     <target name="download-forge" depends="clean" unless="forge.downloaded">
         <echo>Downloading Minecraft Forge...</echo>
         <delete dir="${forge.base}" />
