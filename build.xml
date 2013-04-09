@@ -129,14 +129,6 @@
 		</copy>
 		<replace dir="${temp.src}" token="@VERSION@" value="${version}" />
 	</target>
-	
-	<target name="clean" depends="setupvars">
-		<echo>Cleaning up...</echo>
-		<delete includeemptydirs="true">
-			<fileset dir="${temp.dir}"/>
-			<fileset dir="${forge.base}"/>
-		</delete>
-	</target>
 
     <target name="setupvars" unless="vars.setup">
         <property name="vars.setup" value="true" />
