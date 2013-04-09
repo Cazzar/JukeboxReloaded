@@ -2,20 +2,21 @@ package cazzar.mods.jukeboxreloaded;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.Configuration;
 import cazzar.mods.jukeboxreloaded.blocks.BlockJukeBox;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
 import cazzar.mods.jukeboxreloaded.player.PlayerTracker;
 import cazzar.mods.jukeboxreloaded.proxy.CommonProxy;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -34,19 +35,31 @@ public class JukeboxReloaded {
     }
 
     public BlockJukeBox jukeBox;
+	private int JukeboxID;
 
-    @Init
-    public void Initialization(FMLInitializationEvent event)
+    @PreInit
+    public void Initialization(FMLPreInitializationEvent event)
     {
         proxy.Init();
-        Block.blocksList[Block.jukebox.blockID] = null;
-        jukeBox = new BlockJukeBox(Block.jukebox.blockID);
+        //Block.blocksList[Block.jukebox.blockID] = null;
+        Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+        JukeboxID = config.get("default", "jukeboxID", 3000, "The ID number for the Jukebox").getInt();
+        jukeBox = new BlockJukeBox(JukeboxID);
         GameRegistry.registerBlock(jukeBox, "blockJukeBox");
         GameRegistry.registerTileEntity(TileJukeBox.class, "tileJukeBox");
         LanguageRegistry.addName(jukeBox, "JukeBox");
         
+       
+        GameRegistry.addRecipe(new ItemStack(jukeBox), new Object[] {"WCW", "NJN", "WWW", 
+        	'W', new ItemStack(Block.planks),
+        	'C', new ItemStack(Block.chest), 
+        	'J', new ItemStack(Block.jukebox), 
+        	'N', new ItemStack(Block.music)});
+        
         GameRegistry.registerPlayerTracker(new PlayerTracker());
         //update checker
+        
+        
     }
 
     public CommonProxy proxy()
