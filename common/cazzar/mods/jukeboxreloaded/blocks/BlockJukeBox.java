@@ -2,6 +2,8 @@ package cazzar.mods.jukeboxreloaded.blocks;
 
 import java.util.Random;
 
+import codechicken.core.packet.PacketCustom;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -18,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
+import cazzar.mods.jukeboxreloaded.lib.Reference;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -163,5 +166,34 @@ public class BlockJukeBox extends Block
         iconBuffer[1] = iconRegister.registerIcon("cazzar:jukeboxside");
         iconBuffer[2] = iconRegister.registerIcon("cazzar:jukeboxtop");
         // super.registerIcons(par1IconRegister);
+    }
+    
+    
+    /**
+     * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are
+     * their own) Args: x, y, z, neighbor blockID
+     */
+    public void onNeighborBlockChange(World world, int x, int y, int z, int blockID)
+    {
+        if (!world.isRemote)
+        {
+        	if (!world.isBlockIndirectlyGettingPowered(x, y, z)) return;
+        	
+        	TileEntity tile = world.getBlockTileEntity(x, y, z);
+        	if (tile instanceof TileJukeBox)
+        	{
+        		if (!((TileJukeBox) tile).isPlayingRecord())
+        		{
+        			((TileJukeBox) tile).playSelectedRecord();
+        		}
+        	}
+        	final PacketCustom packet = new PacketCustom(Reference.CHANNEL_NAME, 1);
+    		packet.writeCoord(((TileJukeBox) tile).getCoord());
+    		packet.writeBoolean(((TileJukeBox) tile).isPlayingRecord());
+    		packet.writeInt(((TileJukeBox) tile).getCurrentRecordNumer());
+    		packet.writeInt(((TileJukeBox) tile).getReplayMode());
+    		packet.writeBoolean(((TileJukeBox) tile).shuffleEnabled());
+    		packet.sendToServer();
+        }
     }
 }
