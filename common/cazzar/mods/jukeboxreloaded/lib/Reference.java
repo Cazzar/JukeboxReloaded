@@ -10,7 +10,7 @@ public class Reference
     public static final String SERVER_PROXY_CLASS = "cazzar.mods.jukeboxreloaded.CommonProxy";
     public static final String CLIENT_PROXY_CLASS = "cazzar.mods.jukeboxreloaded.proxy.ClientProxy";
     public static final String GUIJUKEBOX_TEXTURE_FILE = "/mods/cazzar/textures/gui/jukebox.png";
-    public static final Integer MOD_BUILD = 3;    
+    public static final int MOD_BUILD = 3;    
 
     public static class Packets
     {

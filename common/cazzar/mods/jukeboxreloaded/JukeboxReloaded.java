@@ -82,11 +82,12 @@ public class JukeboxReloaded {
         			release = s.replace("release: ", "");
         		else if (s.startsWith("description: "))
         			description = s.replace("description: ", "");
+        		System.out.println(s.replace("release: ", ""));
         	}
         	
         	int build = Integer.parseInt(release);
         	
-        	if (Reference.MOD_BUILD != build)
+        	if (Reference.MOD_BUILD < build)
         		if (release != null && description != null)
         			return description;
 		} catch (Exception e) {
