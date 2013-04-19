@@ -7,7 +7,7 @@ public class Reference
     public static final String MOD_VERSION = "@VERSION@";
     public static final String CHANNEL_NAME = "JUKEBOXRELOADED";
     public static final int SHIFTED_ID_RANGE_CORRECTION = 256;
-    public static final String SERVER_PROXY_CLASS = "cazzar.mods.jukeboxreloaded.CommonProxy";
+    public static final String SERVER_PROXY_CLASS = "cazzar.mods.jukeboxreloaded.proxy.CommonProxy";
     public static final String CLIENT_PROXY_CLASS = "cazzar.mods.jukeboxreloaded.proxy.ClientProxy";
     public static final String GUIJUKEBOX_TEXTURE_FILE = "/mods/cazzar/textures/gui/jukebox.png";
     public static final int MOD_BUILD = 3;    
