@@ -87,7 +87,7 @@
         <echo message="Reobfuscating ${modname}." level="info" />
         <exec executable="${python.exe}" dir="${mcp.base}" failonerror="true">
             <arg value="${mcp.base}/runtime/reobfuscate.py" />
-            <arg value="--client" />
+            <arg value="--srgnames" />
         </exec>
         <echo message="Building a release jar." />
         <jar destfile="${mod.jar.release}">

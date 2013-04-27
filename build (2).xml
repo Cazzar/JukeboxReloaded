@@ -1,0 +1,18 @@
+<project>
+	<target name="test" depends="setup-vars">
+		<mkdir dir="${server.dir}" />
+		<get src="http://files.minecraftforge.net/minecraftforge/minecraftforge-universal-latest.zip" dest="${server.dir}/minecraftforge-universal-latest.zip" />
+		<get src="https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar" dest="${server.dir}/minecraft_server.jar" />
+		<java 
+			dir="${server.dir}"
+			jar="${server.dir}/minecraftforge-universal-latest.zip"
+			args="nogui"
+			maxmemory="1G"
+			fork='true'/>
+	</target>	
+	<target name="setup-vars">
+		 <property name="server.dir" location="${basedir}/server" />
+		 <property name="server.mods" location="${server.dir}/mods" />
+		 <property name="server.coremods" location="${server.dir}/coremods" />
+	</target>
+</project>

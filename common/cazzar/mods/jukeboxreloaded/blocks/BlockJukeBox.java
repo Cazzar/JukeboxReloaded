@@ -27,8 +27,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockJukeBox extends Block
 {
     @SideOnly(Side.CLIENT)
-    private final Icon[] iconBuffer;
-
+    private final Icon[] iconBuffer = new Icon[3];
+    
     private final Random rand = new Random();
 
     public BlockJukeBox(int ID)
@@ -39,7 +39,6 @@ public class BlockJukeBox extends Block
         setHardness(1.0F);
         setStepSound(soundWoodFootstep);
         setTickRandomly(true);
-        iconBuffer = new Icon[3];
     }
 
     @Override
