@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ForgeBackup" default="reobfuscate">
-	<target name="clean" depends="setupvars">
-		<!--<delete dir="${forge.base}" />-->
-	</target>
+    <target name="clean" depends="setupvars">
+        <!--<delete dir="${forge.base}" />-->
+    </target>
     <target name="download-forge" depends="clean" unless="forge.downloaded">
         <echo>Downloading Minecraft Forge...</echo>
         <delete dir="${forge.base}" />
@@ -12,9 +12,9 @@
         <get src="http://files.minecraftforge.net/minecraftforge/minecraftforge-src-${minecraft.version}-${forge.version}.zip" dest="${mod.base}/minecraftforge-src-${minecraft.version}-${forge.version}.zip" />
     </target>
     <target name="setup-forge" depends="download-forge" unless="forge.installed">
-		<!--<echo>Installing AccessTransformers</echo>
-		<copy file="${mod.base}\..\CodeChickenCore\codechickencore_at.cfg" todir="${forge.accesstransformers}" />-->
-		
+        <!--<echo>Installing AccessTransformers</echo>
+        <copy file="${mod.base}\..\CodeChickenCore\codechickencore_at.cfg" todir="${forge.accesstransformers}" />-->
+        
         <echo>Installing Minecraft Forge...</echo>
         <unzip src="${mod.base}/minecraftforge-src-${minecraft.version}-${forge.version}.zip" dest="${mod.base}" />
         <exec executable="${python.exe}" dir="${forge.base}" failonerror="true">
@@ -48,12 +48,12 @@
     <target name="build" depends="build-forge">
         <delete file="VERSION" />
         <delete dir="${mcp.bin}" />
-		
-		<!--<copy todir="${mcp.src}\minecraft">
-			<fileset dir="${mod.base}\..\CodeChickenCore\codechicken\" />
-			<fileset dir="${mod.base}\..\CodeChickenCore\net\" />
-		</copy>-->
-		
+        
+        <!--<copy todir="${mcp.src}\minecraft">
+            <fileset dir="${mod.base}\..\CodeChickenCore\codechicken\" />
+            <fileset dir="${mod.base}\..\CodeChickenCore\net\" />
+        </copy>-->
+        
         <echo>Building ${modname}.</echo>
         <unzip src="${forge.jar.built}" dest="${mcp.bin}">
             <patternset><exclude name="MANIFEST.MF" /></patternset>
@@ -73,11 +73,11 @@
                 <pathelement location="${mcp.jars}\bin\jinput.jar" />
                 <pathelement location="${mcp.jars}\bin\lwjgl.jar" />
                 <pathelement location="${mcp.jars}\bin\lwjgl_util.jar" />
-				<pathelement location="${mcp.jars}\bin\minecraft.jar" />
-				<!--<dirset dir="${mod.base}\..\CodeChickenCore\">
-					<include name="codechicken\**"/>
-					<include name="net\**"/>
-				</dirset>-->
+                <pathelement location="${mcp.jars}\bin\minecraft.jar" />
+                <!--<dirset dir="${mod.base}\..\CodeChickenCore\">
+                    <include name="codechicken\**"/>
+                    <include name="net\**"/>
+                </dirset>-->
             </classpath>
             <src path="${mod.src}" />
         </javac>
@@ -97,7 +97,7 @@
                 <exclude name="**/*.java"/>
                 <exclude name="com/" />
             </fileset>
-			<fileset dir="${mod.base}/resources">
+            <fileset dir="${mod.base}/resources">
                 <exclude name="mcmod.info"/>
                 <exclude name="**/*.java"/>
                 <exclude name="com/" />
@@ -118,18 +118,18 @@
         </jar>
         <echo file="VERSION">${minecraft.version} -- v${version}</echo>
     </target>
-	
-	<target name="setup-workdir" depends="build-forge">
-		<delete dir="${temp.dir}" />
-		<copy todir="${temp.src}">
-			<fileset dir="${mod.base}\..\CodeChickenCore\codechicken\" />
-			<fileset dir="${mod.base}\..\CodeChickenCore\net\" />
-		</copy>
-		<copy todir="${temp.src}">
-			<fileset dir="${mod.src}" />
-		</copy>
-		<replace dir="${temp.src}" token="@VERSION@" value="${version}" />
-	</target>
+    
+    <target name="setup-workdir" depends="build-forge">
+        <delete dir="${temp.dir}" />
+        <copy todir="${temp.src}">
+            <fileset dir="${mod.base}\..\CodeChickenCore\codechicken\" />
+            <fileset dir="${mod.base}\..\CodeChickenCore\net\" />
+        </copy>
+        <copy todir="${temp.src}">
+            <fileset dir="${mod.src}" />
+        </copy>
+        <replace dir="${temp.src}" token="@VERSION@" value="${version}" />
+    </target>
 
     <target name="setupvars" unless="vars.setup">
         <property name="vars.setup" value="true" />
@@ -142,12 +142,12 @@
         <property name="mod.src" location="${mod.base}/common" />
         <property name="mod.bin" location="${mod.base}/bin" />
 
-		<property name="temp.dir" location= "${mod.base}/tmp" />
-		<property name="temp.src" location= "${temp.dir}/src" />
-		
+        <property name="temp.dir" location= "${mod.base}/tmp" />
+        <property name="temp.src" location= "${temp.dir}/src" />
+        
         <property name="forge.base" location="${mod.base}/forge" />
         <property name="forge.jar.built" location="${mod.base}/minecraftforge-built.jar" />
-		<property name="forge.accesstransformers" location="${forge.base}/accesstransformers" />
+        <property name="forge.accesstransformers" location="${forge.base}/accesstransformers" />
         <property name="mcp.base" location="${forge.base}/mcp" />
         <property name="mcp.bin" location="${mcp.base}/bin/minecraft" />
         <property name="mcp.src" location="${mcp.base}/src/minecraft" />
@@ -203,5 +203,10 @@
                 </resourceexists>
              </and>
         </condition>
+    </target>
+    <target name="release" depends="setupvars">
+        <property name="version" value="${version.major}.${version.minor}.${version.rev}" />
+        <property name="mod.jar.release" location="${mod.base}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar" />
+        <antcall target="reobfuscate" />
     </target>
 </project>
