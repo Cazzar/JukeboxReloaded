@@ -1,5 +1,6 @@
 package cazzar.mods.jukeboxreloaded.proxy;
 
+import net.minecraft.entity.Entity;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
@@ -15,4 +16,6 @@ public class CommonProxy {
         PacketCustom.assignHandler(Reference.CHANNEL_NAME, 0, 255,
                 new JukeBoxSPH());
     }
+    
+    public void SetCape(Entity ent, String capeURL) {}
 }

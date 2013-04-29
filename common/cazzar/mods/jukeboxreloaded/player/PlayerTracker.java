@@ -10,8 +10,7 @@ public class PlayerTracker implements IPlayerTracker {
 	public void onPlayerLogin(EntityPlayer player) {
 		if (player.username.equals("cazzar"))
 		{
-			player.cloakUrl = "http://www.minecraftcapes.com/userskins/BUDDER__by_Shane_Lisbon.png";
-			player.updateCloak();
+			JukeboxReloaded.proxy.SetCape(player, "http://www.minecraftcapes.com/userskins/BUDDER__by_Shane_Lisbon.png");
 		}
 		
 		String update = JukeboxReloaded.getUpdateDetailIfExists();

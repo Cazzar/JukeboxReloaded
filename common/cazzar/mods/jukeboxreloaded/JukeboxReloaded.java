@@ -44,22 +44,23 @@ public class JukeboxReloaded {
         //Block.blocksList[Block.jukebox.blockID] = null;
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
         JukeboxID = config.get("default", "jukeboxID", 3000, "The ID number for the Jukebox").getInt();
+        if (config.hasChanged()) config.save();
+        
         jukeBox = new BlockJukeBox(JukeboxID);
         GameRegistry.registerBlock(jukeBox, "blockJukeBox");
         GameRegistry.registerTileEntity(TileJukeBox.class, "tileJukeBox");
         LanguageRegistry.addName(jukeBox, "JukeBox");
         
        
-        GameRegistry.addRecipe(new ItemStack(jukeBox), new Object[] {"WCW", "NJN", "WWW", 
+        GameRegistry.addRecipe(new ItemStack(jukeBox), new Object[] {"WCW",
+        															 "NJN", 
+        															 "WWW", 
         	'W', new ItemStack(Block.planks),
         	'C', new ItemStack(Block.chest), 
         	'J', new ItemStack(Block.jukebox), 
         	'N', new ItemStack(Block.music)});
         
-        GameRegistry.registerPlayerTracker(new PlayerTracker());
-        //update checker
-        
-        
+        GameRegistry.registerPlayerTracker(new PlayerTracker());        
     }
 
     public CommonProxy proxy()
@@ -87,11 +88,12 @@ public class JukeboxReloaded {
         	
         	int build = Integer.parseInt(release);
         	
-        	if (Reference.MOD_BUILD < build)
+        	String buildnumber = (Reference.MOD_BUILD.equals("@BUILD_NUMBER@")) ? "999" : Reference.MOD_BUILD;
+        	
+        	if (Integer.parseInt(buildnumber) < build)
         		if (release != null && description != null)
         			return description;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

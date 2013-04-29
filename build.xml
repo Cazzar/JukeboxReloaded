@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ForgeBackup" default="reobfuscate">
-    <target name="clean" depends="setupvars">
-        <!--<delete dir="${forge.base}" />-->
-    </target>
-    <target name="download-forge" depends="clean" unless="forge.downloaded">
+<project name="JukeboxReloaded" default="reobfuscate">
+    <target name="download-forge" depends="setupvars" unless="forge.downloaded">
         <echo>Downloading Minecraft Forge...</echo>
         <delete dir="${forge.base}" />
         <delete>
@@ -45,7 +42,7 @@
             <fileset dir="${mcp.bin}" includes="**/*.class" />
         </jar>
     </target>
-    <target name="build" depends="build-forge">
+    <target name="build" depends="setup-workdir">
         <delete file="VERSION" />
         <delete dir="${mcp.bin}" />
         
@@ -79,7 +76,8 @@
                     <include name="net\**"/>
                 </dirset>-->
             </classpath>
-            <src path="${mod.src}" />
+            <src path="${temp.src}" />
+            <!--<src path="${mod.src}" />-->
         </javac>
     </target>
     <target name="reobfuscate" depends="build">
@@ -122,13 +120,10 @@
     <target name="setup-workdir" depends="build-forge">
         <delete dir="${temp.dir}" />
         <copy todir="${temp.src}">
-            <fileset dir="${mod.base}\..\CodeChickenCore\codechicken\" />
-            <fileset dir="${mod.base}\..\CodeChickenCore\net\" />
-        </copy>
-        <copy todir="${temp.src}">
             <fileset dir="${mod.src}" />
         </copy>
-        <replace dir="${temp.src}" token="@VERSION@" value="${version}" />
+        <replace dir="${temp.src}/cazzar/mods/jukeboxreloaded/lib" token="@VERSION@" value="${version}" />
+        <replace dir="${temp.src}/cazzar/mods/jukeboxreloaded/lib" token="@BUILD_NUMBER@" value="${build_number.build_number}" />
     </target>
 
     <target name="setupvars" unless="vars.setup">
@@ -171,12 +166,16 @@
         <property name="version.major" value="${build.major.number}" />
         <property name="version.minor" value="${build.minor.number}" />
         <property name="version.rev" value="${build.revision.number}" />
-        <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
+        <!--<property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />-->
+		
+		<condition property="version" value="${version.major}.${version.minor}.${version.rev}" else="${version.major}.${version.minor}.${version.rev}.${version.build}">
+            <isset property="release" />
+        </condition>
         <property name="minecraft.version" value="${build.mcversion}" />
-        <propertyfile file="${mod.src}/version.properties">
+        <!--<propertyfile file="${mod.src}/version.properties">
             <entry key="build.build.number" type="int" value="${version.build}" />
             <entry key="version" type="string" value="${version}" />
-        </propertyfile>
+        </propertyfile>-->
 
         <property name="forge.version" value="${build.forgeversion}" />
         
@@ -203,10 +202,18 @@
                 </resourceexists>
              </and>
         </condition>
+		
+		
+		<property file="build_number.properties" prefix="build_number"/>
     </target>
-    <target name="release" depends="setupvars">
-        <property name="version" value="${version.major}.${version.minor}.${version.rev}" />
-        <property name="mod.jar.release" location="${mod.base}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar" />
+    <target name="release">
+		<property name="release" value="true" />
+		<!--Increase the release number in the config-->
+		<propertyfile file="build_number.properties">
+			<entry key="build_number" type="int" operation="+" default="1"/>
+		</propertyfile>
+		
+        <antcall target="setupvars" />
         <antcall target="reobfuscate" />
     </target>
 </project>

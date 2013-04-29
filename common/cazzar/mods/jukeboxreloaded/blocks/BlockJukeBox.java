@@ -26,7 +26,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockJukeBox extends Block
 {
-    @SideOnly(Side.CLIENT)
     private final Icon[] iconBuffer = new Icon[3];
     
     private final Random rand = new Random();
@@ -112,7 +111,7 @@ public class BlockJukeBox extends Block
         return iconBuffer[1];
     }
 
-    @Override
+    
     // this one does inventory rendering
     public Icon getBlockTextureFromSideAndMetadata(int blockSide, int blockMeta)
     {
