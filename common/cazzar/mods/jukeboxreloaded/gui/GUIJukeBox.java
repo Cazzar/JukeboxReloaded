@@ -176,16 +176,16 @@ public class GUIJukeBox extends GuiContainer {
 		// buttonList.add(new GuiButton(3, xStart + 128, yStart + 40, 40, 20,
 		// "Prev"));
 
-		buttonList.add(btnPlay = new TexturedButton(PLAY, xStart + 10,
+		buttonList.add(btnPlay = new TexturedButton(PLAY, xStart + 7,
 				yStart + 17, 20, 20, GUIJUKEBOX_TEXTURE_FILE, 176, 38, 176, 18,
 				176, 58));
-		buttonList.add(btnStop = new TexturedButton(STOP, xStart + 32,
+		buttonList.add(btnStop = new TexturedButton(STOP, xStart + 29,
 				yStart + 17, 20, 20, GUIJUKEBOX_TEXTURE_FILE, 176, 98, 176, 78,
 				176, 118));
 
-		buttonList.add(new TexturedButton(NEXT, xStart + 32, yStart + 39, 20,
+		buttonList.add(new TexturedButton(NEXT, xStart + 29, yStart + 39, 20,
 				20, GUIJUKEBOX_TEXTURE_FILE, 216, 38, 216, 18, 216, 58));
-		buttonList.add(new TexturedButton(PREVIOUS, xStart + 10, yStart + 39,
+		buttonList.add(new TexturedButton(PREVIOUS, xStart + 7, yStart + 39,
 				20, 20, GUIJUKEBOX_TEXTURE_FILE, 236, 38, 236, 18, 236, 58));
 
 		// buttonList.add(btnShuffle = new TexturedButton(SHUFFLE, xStart + 128,

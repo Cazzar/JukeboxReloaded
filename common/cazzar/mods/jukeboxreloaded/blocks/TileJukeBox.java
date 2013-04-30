@@ -174,6 +174,7 @@ public class TileJukeBox extends TileEntity implements IInventory
     {
         super.readFromNBT(tag);
         recordNumber = tag.getInteger("recordNumber");
+        facing = tag.getShort("facing");
         //InventoryUtils.readItemStacksFromTag(items, tag.getTagList("items"));
         //NBTTagList tagList = tag.getTagList("items");
         //for(int i = 0; i < tagList.tagCount(); i++)
@@ -235,6 +236,7 @@ public class TileJukeBox extends TileEntity implements IInventory
     	//TODO: Fix NBT loading
         super.writeToNBT(tag);
         tag.setInteger("recordNumber", recordNumber);
+        tag.setShort("facing", facing);
         //NBTTagList tagList = new NBTTagList();
         //for(int i = 0; i < items.length; i++)
         //{

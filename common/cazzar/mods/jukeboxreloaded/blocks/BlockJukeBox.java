@@ -27,7 +27,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockJukeBox extends Block
 {
-    private final Icon[] iconBuffer = new Icon[3];
+    private final Icon[] iconBuffer = new Icon[4];
     
     private final Random rand = new Random();
 
@@ -130,7 +130,7 @@ public class BlockJukeBox extends Block
 		}
         
         if (blockSide == left.ordinal() || blockSide == right.ordinal()) return iconBuffer[1];
-        
+        if (blockSide == front.ordinal()) return iconBuffer[3];
         return iconBuffer[0];
     }
     
@@ -195,6 +195,7 @@ public class BlockJukeBox extends Block
         iconBuffer[0] = iconRegister.registerIcon("cazzar:jukeboxbottom");
         iconBuffer[1] = iconRegister.registerIcon("cazzar:jukeboxside");
         iconBuffer[2] = iconRegister.registerIcon("cazzar:jukeboxtop");
+        iconBuffer[3] = iconRegister.registerIcon("cazzar:jukeboxfront");
         // super.registerIcons(par1IconRegister);
     }
     
