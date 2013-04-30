@@ -2,12 +2,11 @@ package cazzar.mods.jukeboxreloaded.blocks;
 
 import java.util.Random;
 
-import codechicken.core.packet.PacketCustom;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -15,12 +14,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
+import codechicken.core.packet.PacketCustom;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -108,9 +109,40 @@ public class BlockJukeBox extends Block
     {
         if ( blockSide == ForgeDirection.UP.ordinal() ) return iconBuffer[2];
         if ( blockSide == ForgeDirection.DOWN.ordinal() ) return iconBuffer[0];
+        TileJukeBox te = (TileJukeBox)world.getBlockTileEntity(x, y, z);
+        //if (blockSide == Integer.valueOf(te.getFacing())) return iconBuffer[1];
+        
+        ForgeDirection front, left, right;
+        left = right = ForgeDirection.UNKNOWN;
+        front = ForgeDirection.getOrientation(Integer.valueOf(te.getFacing()));
+
+        switch (front.ordinal()) {
+			case 2:
+			case 3:
+				right = (left = ForgeDirection.getOrientation(4)).getOpposite();
+				break;
+			case 4:
+			case 5:
+				right = (left = ForgeDirection.getOrientation(2)).getOpposite();
+				break;
+			default:
+				break;
+		}
+        
+        if (blockSide == left.ordinal() || blockSide == right.ordinal()) return iconBuffer[1];
+        
+        return iconBuffer[0];
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Icon getIcon(int blockSide, int blockMeta) {
+    	// TODO Auto-generated method stub
+    	//return super.getIcon(par1, par2);
+    	if ( blockSide == ForgeDirection.UP.ordinal() ) return iconBuffer[2];
+        if ( blockSide == ForgeDirection.DOWN.ordinal() ) return iconBuffer[0];
         return iconBuffer[1];
     }
-
     
     // this one does inventory rendering
     public Icon getBlockTextureFromSideAndMetadata(int blockSide, int blockMeta)
@@ -192,6 +224,31 @@ public class BlockJukeBox extends Block
     		packet.writeInt(((TileJukeBox) tile).getReplayMode());
     		packet.writeBoolean(((TileJukeBox) tile).shuffleEnabled());
     		packet.sendToServer();
+        }
+    }
+    
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving player, ItemStack stack)
+    {
+        super.onBlockPlacedBy(world, x, y, z, player, stack);
+        int heading = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        TileJukeBox te = (TileJukeBox)world.getBlockTileEntity(x, y, z);
+        switch (heading)
+        {
+        case 0:
+            te.setFacing((short)2);
+            break;
+        case 1:
+            te.setFacing((short)5);
+            break;
+        case 2:
+            te.setFacing((short)3);
+            break;
+        case 3:
+            te.setFacing((short)4);
+            break;
+        default:
+        	break;
         }
     }
 }

@@ -28,6 +28,7 @@ public class TileJukeBox extends TileEntity implements IInventory
     boolean repeatAll = false;
     boolean shuffle = false;
     int tick = 0;
+	private short facing;
 
     public TileJukeBox()
     {
@@ -382,4 +383,11 @@ public class TileJukeBox extends TileEntity implements IInventory
     			break;	
     	}
     }
+
+	public void setFacing(short direction) {
+		this.facing = direction;
+	}
+	public short getFacing(){
+		return facing;
+	}
 }
