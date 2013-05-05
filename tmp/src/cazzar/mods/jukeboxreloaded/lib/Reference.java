@@ -4,13 +4,13 @@ public class Reference
 {
     public static final String MOD_ID = "JukeboxReloaded";
     public static final String MOD_NAME = "JukeBox Reloaded";
-    public static final String MOD_VERSION = "@VERSION@";
+    public static final String MOD_VERSION = "1.0.6a.dev";
     public static final String CHANNEL_NAME = "JUKEBOXRELOADED";
     public static final int SHIFTED_ID_RANGE_CORRECTION = 256;
     public static final String SERVER_PROXY_CLASS = "cazzar.mods.jukeboxreloaded.proxy.CommonProxy";
     public static final String CLIENT_PROXY_CLASS = "cazzar.mods.jukeboxreloaded.proxy.ClientProxy";
     public static final String GUIJUKEBOX_TEXTURE_FILE = "/mods/cazzar/textures/gui/jukebox.png";
-    public static final String MOD_BUILD = "@BUILD_NUMBER@";    
+    public static final String MOD_BUILD = "8";    
 
     public static class Packets
     {
