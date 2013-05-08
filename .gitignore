@@ -3,3 +3,4 @@ forge/
 !lib
 minecraftforge-*.zip
 minecraftforge-built.jar
+src
