@@ -26,8 +26,8 @@ public class GUIJukeBox extends GuiContainer {
 	public GUIJukeBox(EntityPlayer player, TileJukeBox tileJukeBox) {
 		super(new ContainerJukeBox(player.inventory, tileJukeBox));
 		this.tileJukeBox = tileJukeBox;
-		xSize = 175;
-		ySize = 177;
+		xSize = 176;
+		ySize = 176;
 	}
 
 	@Override
