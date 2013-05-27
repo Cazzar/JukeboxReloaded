@@ -261,7 +261,7 @@
 		<sshexec host="${scp.server}"
 					username="${scp.username}"
 					password="${scp.password}"
-					command="mkdir ${scp.basedir}/${modname}/${version}/"
+					command="mkdir -p ${scp.basedir}/${modname}/${version}/"
 		/>
 		
 		<scp file="${mod.jar.release}" 
