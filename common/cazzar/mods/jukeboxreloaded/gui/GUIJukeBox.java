@@ -9,7 +9,6 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
-import cazzar.mods.jukeboxreloaded.lib.Reference;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import static cazzar.mods.jukeboxreloaded.lib.Reference.GUIJUKEBOX_TEXTURE_FILE;
 import static cazzar.mods.jukeboxreloaded.lib.Reference.GUIJukeBoxActions.*;

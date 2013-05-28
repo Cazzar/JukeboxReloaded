@@ -7,7 +7,6 @@ import com.google.common.io.ByteArrayDataOutput;
 
 import cpw.mods.fml.relauncher.Side;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
-import cazzar.mods.jukeboxreloaded.network.packets.PacketJukebox.ProtocolException;
 import static cazzar.mods.jukeboxreloaded.lib.Reference.GUIJukeBoxActions.*;
 
 public class PacketUpdateClientTile extends PacketJukebox {

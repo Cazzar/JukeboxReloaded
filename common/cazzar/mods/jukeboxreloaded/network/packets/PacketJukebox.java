@@ -44,7 +44,9 @@ public abstract class PacketJukebox {
 
     public static class ProtocolException extends Exception {
 
-        public ProtocolException()
+		private static final long serialVersionUID = 4758559873161416283L;
+
+		public ProtocolException()
         {
         }
 

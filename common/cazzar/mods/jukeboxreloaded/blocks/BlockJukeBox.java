@@ -20,7 +20,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
-import cazzar.mods.jukeboxreloaded.lib.Reference;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
