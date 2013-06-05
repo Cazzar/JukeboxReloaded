@@ -144,6 +144,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		super.readFromNBT(tag);
 		recordNumber = tag.getInteger("recordNumber");
 		facing = tag.getShort("facing");
+		setRepeatMode(tag.getInteger("rptMode"));
 
 		InventoryUtils
 				.readItemStacksFromTag(items, tag.getTagList("inventory"));
@@ -190,10 +191,10 @@ public class TileJukeBox extends TileEntity implements IInventory {
 
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
-		// TODO: Fix NBT loading
 		super.writeToNBT(tag);
 		tag.setInteger("recordNumber", recordNumber);
 		tag.setShort("facing", facing);
+		tag.setInteger("rptMode", getReplayMode());
 		tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
 	}
 

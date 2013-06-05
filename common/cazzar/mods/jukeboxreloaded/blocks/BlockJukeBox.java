@@ -211,10 +211,7 @@ public class BlockJukeBox extends Block
         	TileEntity tile = world.getBlockTileEntity(x, y, z);
         	if (tile instanceof TileJukeBox)
         	{
-        		if (!((TileJukeBox) tile).isPlayingRecord())
-        		{
         			((TileJukeBox) tile).playSelectedRecord();
-        		}
         	}
         	//final PacketCustom packet = new PacketCustom(Reference.CHANNEL_NAME, 1);
     		//packet.writeCoord(((TileJukeBox) tile).getCoord());
