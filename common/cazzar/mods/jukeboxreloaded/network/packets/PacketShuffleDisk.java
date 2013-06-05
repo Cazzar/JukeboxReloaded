@@ -51,7 +51,7 @@ public class PacketShuffleDisk extends PacketJukebox {
             {
                 final TileJukeBox jukeBox = (TileJukeBox) tile;
                 Random random = new Random();
-                if (jukeBox.getLastSlotWithItem() < 0) return;
+                if (jukeBox.getLastSlotWithItem() <= 0) return;
                 int nextDisk = random.nextInt(jukeBox.getLastSlotWithItem());
                 if (jukeBox.getCurrentRecordNumer() != nextDisk)
                 {
