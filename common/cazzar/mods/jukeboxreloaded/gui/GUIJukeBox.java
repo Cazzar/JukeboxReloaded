@@ -32,24 +32,13 @@ public class GUIJukeBox extends GuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton btn) {
 		final boolean wasPlaying = tileJukeBox.isPlayingRecord();
-		// final PacketCustom packet = new PacketCustom(Reference.CHANNEL_NAME,
-		// 1);
-		// packet.writeCoord(tileJukeBox.getCoord());
-		// packet.writeInt(btn.id);
-		// packet.sendToServer();
 
 		switch (btn.id) {
 		case PLAY:
-			// btnPlayplayRecord(
-			// playRecord(((ItemRecord)tileJukeBox.getStackInSlot(recordNumber).getItem()).getRecordTitle(),
-			// getRecordInfo(tileJukeBox.getStackInSlot(recordNumber)),tileJukeBox.worldObj,
-			// tileJukeBox.xCoord, tileJukeBox.yCoord, tileJukeBox.zCoord);
 			tileJukeBox.playSelectedRecord();
-			// tileJukeBox.nextRecord();
 			break;
 		case STOP:
 			tileJukeBox.stopPlayingRecord();
-			// tileJukeBox.resetPlayingRecord();
 			break;
 		case NEXT:
 			if (wasPlaying) {
@@ -105,15 +94,6 @@ public class GUIJukeBox extends GuiContainer {
 			btnRepeatAll.enabled = true;
 			break;
 		}
-	
-		// send tile information to the server to update the other clients
-//		final PacketCustom packet = new PacketCustom(Reference.CHANNEL_NAME, 1);
-//		packet.writeCoord(tileJukeBox.getCoord());
-//		packet.writeBoolean(tileJukeBox.isPlayingRecord());
-//		packet.writeInt(tileJukeBox.getCurrentRecordNumer());
-//		packet.writeInt(tileJukeBox.getReplayMode());
-//		packet.writeBoolean(tileJukeBox.shuffleEnabled());
-//		packet.sendToServer();
 		
 		PacketDispatcher.sendPacketToServer((new PacketJukeboxDescription(tileJukeBox)).makePacket());
 	}
@@ -132,7 +112,7 @@ public class GUIJukeBox extends GuiContainer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y) {
 
-		final String containerName = "JukeBox";
+		final String containerName = "Jukebox";
 		fontRenderer.drawString(containerName,
 				xSize / 2 - fontRenderer.getStringWidth(containerName) / 2, 6,
 				4210752);
@@ -162,21 +142,9 @@ public class GUIJukeBox extends GuiContainer {
 	@Override
 	public void initGui() {
 		super.initGui();
-		// id, x, y, W, H
-		// this.buttonList.add(this.button = new GuiCCButton(0, 28, 17, 40, 10,
-		// "Play"));
 		final int xStart = (width - xSize) / 2;
 		final int yStart = (height - ySize) / 2;
 
-		// buttonList.add(btnPlay = new GuiButton(0, xStart + 10, yStart + 17,
-		// 40, 20, "Play"));
-		// buttonList.add(btnStop = new GuiButton(1, xStart + 10, yStart + 40,
-		// 40, 20, "Stop"));
-
-		// buttonList.add(new GuiButton(2, xStart + 128, yStart + 17, 40, 20,
-		// "Next"));
-		// buttonList.add(new GuiButton(3, xStart + 128, yStart + 40, 40, 20,
-		// "Prev"));
 
 		buttonList.add(btnPlay = new TexturedButton(PLAY, xStart + 7,
 				yStart + 17, 20, 20, GUIJUKEBOX_TEXTURE_FILE, 176, 38, 176, 18,
@@ -189,10 +157,7 @@ public class GUIJukeBox extends GuiContainer {
 				20, GUIJUKEBOX_TEXTURE_FILE, 216, 38, 216, 18, 216, 58));
 		buttonList.add(new TexturedButton(PREVIOUS, xStart + 7, yStart + 39,
 				20, 20, GUIJUKEBOX_TEXTURE_FILE, 236, 38, 236, 18, 236, 58));
-
-		// buttonList.add(btnShuffle = new TexturedButton(SHUFFLE, xStart + 128,
-		// yStart + 17, 20, 20, GUIJUKEBOX_TEXTURE_FILE, 233, 98, 233, 78, 233,
-		// 118));
+		
 		buttonList.add(btnRepeatOne = new TexturedButton(REPEAT_ONE,
 				xStart + 150, yStart + 17, 20, 20, GUIJUKEBOX_TEXTURE_FILE,
 				196, 98, 196, 78, 196, 118));
@@ -210,8 +175,6 @@ public class GUIJukeBox extends GuiContainer {
 				xStart + 128, yStart + 40, 20, 20, GUIJUKEBOX_TEXTURE_FILE,
 				176, 158, 176, 138, 176, 178));
 
-		// buttonList.add(new TexturedButton(4, xStart + 128, yStart + 57, 20,
-		// 20, GUIJUKEBOX_TEXTURE_FILE, 176, 38, 176, 18, 176, 58));
 		btnPlay.enabled = !(btnStop.enabled = tileJukeBox.isPlayingRecord());
 		btnShuffle.enabled = !tileJukeBox.shuffleEnabled();
 		btnShuffleOff.enabled = tileJukeBox.shuffleEnabled();
