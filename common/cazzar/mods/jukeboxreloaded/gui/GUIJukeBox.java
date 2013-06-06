@@ -1,6 +1,9 @@
 package cazzar.mods.jukeboxreloaded.gui;
 
 import static java.lang.Math.floor;
+
+import java.util.Random;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,6 +47,14 @@ public class GUIJukeBox extends GuiContainer {
 			if (wasPlaying) {
 				tileJukeBox.stopPlayingRecord();
 			}
+			if (tileJukeBox.shuffleEnabled()) {
+	            Random random = new Random();
+	            if (tileJukeBox.getLastSlotWithItem() <= 0) return;
+	            int nextDisk = random.nextInt(tileJukeBox.getLastSlotWithItem());
+	            if (tileJukeBox.getCurrentRecordNumer() != nextDisk) {
+	                tileJukeBox.setRecordPlaying(nextDisk);
+	            }
+	        }
 			tileJukeBox.nextRecord();
 			if (wasPlaying) {
 				tileJukeBox.playSelectedRecord();

@@ -52,7 +52,7 @@ public class BlockJukeBox extends Block {
     @Override
     public TileEntity createTileEntity(World world, int metadata)
     {
-        return new TileJukeBox(world, metadata);
+        return new TileJukeBox(metadata);
         // return super.createTileEntity(world, metadata);
     }
 

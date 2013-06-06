@@ -1,9 +1,12 @@
 package cazzar.mods.jukeboxreloaded.blocks;
 
+import java.util.Random;
+
 import cazzar.mods.jukeboxreloaded.lib.InventoryUtils;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
 import net.minecraft.client.audio.SoundManager;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemRecord;
@@ -17,7 +20,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileJukeBox extends TileEntity implements IInventory {
-	World world;
 	int metadata;
 	public ItemStack[] items;
 	int recordNumber = 0;
@@ -33,9 +35,8 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		items = new ItemStack[getSizeInventory()];
 	}
 
-	public TileJukeBox(World world, int metadata) {
+	public TileJukeBox(int metadata) {
 		this.metadata = metadata;
-		this.world = world;
 		items = new ItemStack[getSizeInventory()];
 	}
 
@@ -112,6 +113,10 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 
 	public void playSelectedRecord() {
+	    if (!(getStackInSlot(recordNumber).getItem() instanceof ItemRecord)) {
+	        return; //no I will not play.
+	    }
+	    
 		for (int i = recordNumber; i < getSizeInventory(); i++) {
 			if (getStackInSlot(i) != null) {
 				recordNumber = i;
@@ -144,6 +149,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		super.readFromNBT(tag);
 		recordNumber = tag.getInteger("recordNumber");
 		facing = tag.getShort("facing");
+		shuffle = tag.getBoolean("shuffle");
 		setRepeatMode(tag.getInteger("rptMode"));
 
 		InventoryUtils
@@ -195,6 +201,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		tag.setInteger("recordNumber", recordNumber);
 		tag.setShort("facing", facing);
 		tag.setInteger("rptMode", getReplayMode());
+		tag.setBoolean("shuffle", shuffle);
 		tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
 	}
 
@@ -216,11 +223,20 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void updateEntity() {
-		if (++tick != 10) {
+	    tick++;
+	    Random random = new Random();
+	    
+	    if (tick % 5 == 0 && random.nextBoolean()) {
+	        if (playingRecord) {
+	            worldObj.spawnParticle("note", xCoord + random.nextDouble(), yCoord + 1.2D, zCoord + random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble());
+                //worldObj.spawnParticle("note", xCoord + random.nextDouble(), yCoord +1, zCoord + random.nextDouble(), 0, 100, 0);
+	        }
+	    }
+	    
+		if (tick%10 != 0) {
 			return;
 		}
-		tick = 0;
-
+		
 		if (SoundManager.sndSystem == null)
 			return; // Thanks to alex
 		// streaming is only used on the client for playing in the jukebox..
