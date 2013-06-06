@@ -270,7 +270,8 @@
 			failonerror="true" 
 		/>
 		
-		<echo message="The download URL is: ${scp.downloadbase}/${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar" level="info" />
-		
+		<echo message="The direct download URL is: ${scp.downloadbase}/${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar" level="info" />
+		<taskdef name="GetString" classname="net.cazzar.ant.tasks.GetString" classpath="AntTasks.jar"/>
+		<GetString url="${adfly.api}${scp.downloadbase}/${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar" />
     </target>
 </project>

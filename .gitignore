@@ -4,3 +4,8 @@ forge/
 minecraftforge-*.zip
 minecraftforge-built.jar
 src
+/bin
+/tmp
+/bin2
+/build
+/forge
