@@ -17,41 +17,39 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class CommonProxy {
-	public BlockJukeBox jukeBox;
-	private ConfigHelper config;
-
-	public void initNetwork() {
-		NetworkRegistry.instance().registerGuiHandler(
-				JukeboxReloaded.instance(), new GuiHandler());
-	}
-
-	public void SetCape(Entity ent, String capeURL) {
-	}
-
-	public void initConfig(File suggested) {
-		Configuration config = new Configuration(suggested);
-		Config.Parse(this.config = new ConfigHelper(), config);
-		if (config.hasChanged())
-			config.save();
-	}
-
+	public BlockJukeBox		jukeBox;
+	private ConfigHelper	config;
+	
 	public void initBlocks() {
 		jukeBox = new BlockJukeBox(config.JukeboxID);
 		GameRegistry.registerBlock(jukeBox, "blockJukeBox");
 	}
-
-	public void initTileEntities() {
-		GameRegistry.registerTileEntity(TileJukeBox.class, "tileJukeBox");
+	
+	public void initConfig(File suggested) {
+		final Configuration config = new Configuration(suggested);
+		Config.Parse(this.config = new ConfigHelper(), config);
+		if (config.hasChanged()) config.save();
 	}
-
+	
 	public void initLanguage() {
 		LanguageRegistry.addName(jukeBox, "JukeBox");
 	}
-
+	
+	public void initNetwork() {
+		NetworkRegistry.instance().registerGuiHandler(
+				JukeboxReloaded.instance(), new GuiHandler());
+	}
+	
 	public void initRecipe() {
 		GameRegistry.addRecipe(new ItemStack(jukeBox), new Object[] { "WCW",
 				"NJN", "WWW", 'W', new ItemStack(Block.planks), 'C',
 				new ItemStack(Block.chest), 'J', new ItemStack(Block.jukebox),
 				'N', new ItemStack(Block.music) });
 	}
+	
+	public void initTileEntities() {
+		GameRegistry.registerTileEntity(TileJukeBox.class, "tileJukeBox");
+	}
+	
+	public void SetCape(Entity ent, String capeURL) {}
 }

@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigurationOption {
 	String category();
-
-	String key();
-
+	
 	String comment() default "";
+	
+	String key();
 }

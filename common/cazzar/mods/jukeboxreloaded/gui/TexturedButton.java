@@ -1,20 +1,21 @@
 package cazzar.mods.jukeboxreloaded.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
+import org.lwjgl.opengl.GL11;
+
 public class TexturedButton extends GuiButton {
-
-	private String textureFile;
-	private int xOffset, yOffset, yOffsetForDisabled, xOffsetForDisabled,
-	xOffsetForHovered, yOffsetForHovered;
-
-	public TexturedButton(int id, int xPosition, int yPosition, int width, int height,
-			String textureFile, int xOffset, int yOffset, int xOffsetForDisabled,
-			int yOffsetForDisabled, int xOffsetForHovered, int yOffsetForHovered) {
-
+	
+	private final String	textureFile;
+	private final int		xOffset, yOffset, yOffsetForDisabled,
+			xOffsetForDisabled, xOffsetForHovered, yOffsetForHovered;
+	
+	public TexturedButton(int id, int xPosition, int yPosition, int width,
+			int height, String textureFile, int xOffset, int yOffset,
+			int xOffsetForDisabled, int yOffsetForDisabled,
+			int xOffsetForHovered, int yOffsetForHovered) {
+		
 		super(id, xPosition, yPosition, width, height, "");
 		
 		this.textureFile = textureFile;
@@ -25,41 +26,39 @@ public class TexturedButton extends GuiButton {
 		this.xOffsetForHovered = xOffsetForHovered;
 		this.yOffsetForHovered = yOffsetForHovered;
 	}
-
+	
 	@Override
 	public void drawButton(Minecraft mc, int par2, int par3) {
-		if (this.drawButton) {
-			mc.renderEngine.bindTexture(this.textureFile);
+		if (drawButton) {
+			mc.renderEngine.bindTexture(textureFile);
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			this.field_82253_i = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
+			field_82253_i = par2 >= xPosition && par3 >= yPosition
+					&& par2 < xPosition + width && par3 < yPosition + height;
 			
-			//int hoverStatus = this.getHoverState(this.field_82253_i);
-		    //Args: x, y, xOffset, yOffset, Width, Height
+			// int hoverStatus = this.getHoverState(this.field_82253_i);
+			// Args: x, y, xOffset, yOffset, Width, Height
 			
-			switch (this.getHoverState(this.field_82253_i))
-			{
+			switch (getHoverState(field_82253_i)) {
 				case 0:
-					//Disabled
-					this.drawTexturedModalRect(this.xPosition, this.yPosition,
-							this.xOffsetForDisabled, this.yOffsetForDisabled,
-							this.width, this.height);
+					// Disabled
+					drawTexturedModalRect(xPosition, yPosition,
+							xOffsetForDisabled, yOffsetForDisabled, width,
+							height);
 					break;
 				case 1:
-					//not hovering
-					this.drawTexturedModalRect(this.xPosition, this.yPosition,
-							this.xOffset, this.yOffset,
-							this.width, this.height);
+					// not hovering
+					drawTexturedModalRect(xPosition, yPosition, xOffset,
+							yOffset, width, height);
 					break;
 				case 2:
-					//hovering
-					this.drawTexturedModalRect(this.xPosition, this.yPosition,
-							this.xOffsetForHovered, this.yOffsetForHovered,
-							this.width, this.height);
+					// hovering
+					drawTexturedModalRect(xPosition, yPosition,
+							xOffsetForHovered, yOffsetForHovered, width, height);
 					break;
 			}
 			
-			//this.drawTexturedModalRect(this.xPosition, this.yPosition,
-			//		this.xOffset, this.yOffset, this.width, this.height);
+			// this.drawTexturedModalRect(this.xPosition, this.yPosition,
+			// this.xOffset, this.yOffset, this.width, this.height);
 		}
 	}
 }
