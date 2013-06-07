@@ -33,6 +33,11 @@
 
 -keep class cazzar.mods.jukeboxreloaded.network.PacketHandler
 
+-keep class cazzar.mods.jukeboxreloaded.blocks.* {
+    <fields>;
+    <methods>;
+}
+
 # Keep - Applications. Keep all application classes, along with their 'main'
 # methods.
 -keepclasseswithmembers public class * {
