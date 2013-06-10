@@ -15,17 +15,17 @@ public class ConfigHelper {
 	public class Items {
 		@ConfigurationComment("Some special records")
 		@ItemID
-		public int	record1	= 3001;
+		public int	record1	= 5001;
 		@ItemID
-		public int	record2	= 3002;
+		public int	record2	= 5002;
 		@ItemID
-		public int	record3	= 3003;
+		public int	record3	= 5003;
 		@ItemID
-		public int	record4	= 3004;
+		public int	record4	= 5004;
 		@ItemID
-		public int	record5	= 3005;
+		public int	record5	= 5005;
 		@ItemID
-		public int	record6	= 3006;
+		public int	record6	= 5006;
 	}
 	
 	@ConfigurationClass
