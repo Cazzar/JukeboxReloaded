@@ -12,7 +12,9 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import cazzar.mods.jukeboxreloaded.lib.InventoryUtils;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
+import cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
+import cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -150,24 +152,29 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	public void openChest() {}
 	
 	public void playSelectedRecord() {
+		if (worldObj.isRemote) {
+			if (getStackInSlot(recordNumber) == null) return;
+			PacketDispatcher
+					.sendPacketToServer(new PacketPlayRecord(
+							((ItemRecord) getStackInSlot(recordNumber)
+									.getItem()).recordName, xCoord, yCoord,
+							zCoord).makePacket());
+			return;
+		}
+		
 		for (int i = recordNumber; i < getSizeInventory(); i++)
 			if (getStackInSlot(i) != null) {
-				if (!(getStackInSlot(recordNumber).getItem() instanceof ItemRecord))
-					return; // no
-							// I
-							// will
-							// not
-							// play.
 				recordNumber = i;
 				break;
 			}
 		if (getStackInSlot(recordNumber) == null) return;
 		
-		// worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1005, xCoord,
-		// yCoord,
-		// zCoord, getStackInSlot(recordNumber).itemID);
+		if (!(getStackInSlot(recordNumber).getItem() instanceof ItemRecord))
+			return; // no I will not play.
+			
 		worldObj.playRecord(((ItemRecord) getStackInSlot(recordNumber)
 				.getItem()).recordName, xCoord, yCoord, zCoord);
+		
 		playingRecord = true;
 		lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber)
 				.getItem()).recordName;
@@ -212,6 +219,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 	
 	public void setPlaying(boolean playing) {
+		this.playingRecord = playing;
 		if (!isPlayingRecord() && playing) playSelectedRecord();
 		else if (isPlayingRecord() && !playing) stopPlayingRecord();
 	}
@@ -255,11 +263,13 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		return shuffle;
 	}
 	
-	public void stopPlayingRecord() {
+	public void stopPlayingRecord() {		
 		playingRecord = false;
 		
-		worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1005, xCoord, yCoord,
-				zCoord, 0);
+		new PacketStopPlaying(xCoord, yCoord, zCoord).sendToServer();
+		
+		//worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1005, xCoord, yCoord,
+		//		zCoord, 0);
 	}
 	
 	@Override
@@ -327,5 +337,17 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		tag.setInteger("rptMode", getReplayMode());
 		tag.setBoolean("shuffle", shuffle);
 		tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
+	}
+	
+	public void forcePlayRecord(String record) {
+		worldObj.playRecord(record, xCoord, yCoord, zCoord);
+		playingRecord = true;
+		lastPlayingRecord = record;
+		this.markForUpdate();
+	}
+	
+	public void setForcedPlaying(boolean playing) {
+		this.playingRecord = playing;
+		this.markForUpdate();
 	}
 }

@@ -18,6 +18,8 @@ public class Reference {
 		public static final int	CLIENT_UPDATE_TILEJUKEBOX	= 2;
 		public static final int	TILEJUKEBOX_DATA			= 4;
 		public static final int	SERVER_NEXT_SHUFFLEDDISK	= 5;
+		public static final int PLAY_RECORD					= 6;
+		public static final int STOP_RECORD					= 7;
 	}
 	
 	public static final String	MOD_ID						= "JukeboxReloaded";

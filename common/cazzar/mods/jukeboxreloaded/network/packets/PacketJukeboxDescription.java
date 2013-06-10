@@ -1,7 +1,12 @@
 package cazzar.mods.jukeboxreloaded.network.packets;
 
+import java.util.logging.Level;
+
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
+import cazzar.mods.jukeboxreloaded.lib.util.LogHelper;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -9,12 +14,12 @@ import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.relauncher.Side;
 
 public class PacketJukeboxDescription extends PacketJukebox {
-	int		x, y, z;
-	int		recordNumber;
-	boolean	playingRecord;
-	int		repeatMode;
-	boolean	shuffle;
-	short	facing;
+	int			x, y, z;
+	int			recordNumber;
+	boolean		playingRecord;
+	int			repeatMode;
+	boolean		shuffle;
+	short		facing;
 	
 	public PacketJukeboxDescription() {}
 	
@@ -36,11 +41,14 @@ public class PacketJukeboxDescription extends PacketJukebox {
 				.getBlockTileEntity(x, y, z);
 		
 		tile.setRecordPlaying(recordNumber);
-		tile.setPlaying(playingRecord);
+		//tile.setPlaying(playingRecord);
+		tile.setForcedPlaying(playingRecord);
 		tile.setRepeatMode(repeatMode);
 		tile.setShuffle(shuffle);
 		tile.setFacing(facing);
-		if (side.isServer()) tile.markForUpdate();
+		
+		//if (side.isServer())
+		//	tile.markForUpdate();
 	}
 	
 	@Override
