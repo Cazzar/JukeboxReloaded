@@ -15,12 +15,12 @@ public class LogHelper {
 	public static void log(Level level, String message) {
 		logger.log(level, message);
 	}
-
+	
 	/**
 	 * @param string
 	 */
 	public static void logInfo(String string) {
-		log(Level.INFO, string);		
+		log(Level.INFO, string);
 	}
 	
 }

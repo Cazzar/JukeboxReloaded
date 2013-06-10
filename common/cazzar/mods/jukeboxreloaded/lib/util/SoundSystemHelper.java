@@ -1,24 +1,20 @@
 package cazzar.mods.jukeboxreloaded.lib.util;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import de.cuina.fireandfuel.CodecJLayerMP3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundManager;
-import net.minecraftforge.common.MinecraftForge;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
+import de.cuina.fireandfuel.CodecJLayerMP3;
 
 public class SoundSystemHelper {
-	private static boolean		registeredCodecs	= false;
-	
-	public static SoundSystem getSoundSystem() {
-		return SoundManager.sndSystem;
-	}
+	private static boolean	registeredCodecs	= false;
 	
 	public static SoundManager getSoundManager() {
 		return Minecraft.getMinecraft().sndManager;
+	}
+	
+	public static SoundSystem getSoundSystem() {
+		return SoundManager.sndSystem;
 	}
 	
 	public static void registerCodecs() {

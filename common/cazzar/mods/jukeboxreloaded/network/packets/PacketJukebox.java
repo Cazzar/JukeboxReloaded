@@ -1,9 +1,12 @@
 package cazzar.mods.jukeboxreloaded.network.packets;
 
-import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.*;
+import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.CLIENT_UPDATE_TILEJUKEBOX;
+import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.PLAY_RECORD;
+import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.SERVER_NEXT_SHUFFLEDDISK;
+import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.STOP_RECORD;
+import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.TILEJUKEBOX_DATA;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
 
 import com.google.common.collect.BiMap;
@@ -78,14 +81,7 @@ public abstract class PacketJukebox {
 				out.toByteArray());
 	}
 	
-	
-	public void sendToServer() {
-		PacketDispatcher.sendPacketToServer(makePacket());
-	}
-	
-	public void sendToAllPlayers() {
-		PacketDispatcher.sendPacketToAllPlayers(makePacket());
-	}
+	public abstract void read(ByteArrayDataInput in);
 	
 	public void sendToAllInDimension(int dimID) {
 		PacketDispatcher.sendPacketToAllInDimension(makePacket(), dimID);
@@ -95,7 +91,13 @@ public abstract class PacketJukebox {
 		PacketDispatcher.sendPacketToPlayer(makePacket(), player);
 	}
 	
-	public abstract void read(ByteArrayDataInput in);
+	public void sendToAllPlayers() {
+		PacketDispatcher.sendPacketToAllPlayers(makePacket());
+	}
+	
+	public void sendToServer() {
+		PacketDispatcher.sendPacketToServer(makePacket());
+	}
 	
 	public abstract void write(ByteArrayDataOutput out);
 }

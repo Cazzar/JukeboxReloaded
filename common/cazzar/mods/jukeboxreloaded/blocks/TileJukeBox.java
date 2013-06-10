@@ -49,6 +49,13 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		return items[slot];
 	}
 	
+	public void forcePlayRecord(String record) {
+		worldObj.playRecord(record, xCoord, yCoord, zCoord);
+		playingRecord = true;
+		lastPlayingRecord = record;
+		markForUpdate();
+	}
+	
 	public int getCurrentRecordNumer() {
 		return recordNumber;
 	}
@@ -205,6 +212,11 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		facing = direction;
 	}
 	
+	public void setForcedPlaying(boolean playing) {
+		playingRecord = playing;
+		markForUpdate();
+	}
+	
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack itemstack) {
 		items[slot] = itemstack;
@@ -219,7 +231,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 	
 	public void setPlaying(boolean playing) {
-		this.playingRecord = playing;
+		playingRecord = playing;
 		if (!isPlayingRecord() && playing) playSelectedRecord();
 		else if (isPlayingRecord() && !playing) stopPlayingRecord();
 	}
@@ -263,13 +275,14 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		return shuffle;
 	}
 	
-	public void stopPlayingRecord() {		
+	public void stopPlayingRecord() {
 		playingRecord = false;
 		
 		new PacketStopPlaying(xCoord, yCoord, zCoord).sendToServer();
 		
-		//worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1005, xCoord, yCoord,
-		//		zCoord, 0);
+		// worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1005, xCoord,
+		// yCoord,
+		// zCoord, 0);
 	}
 	
 	@Override
@@ -337,17 +350,5 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		tag.setInteger("rptMode", getReplayMode());
 		tag.setBoolean("shuffle", shuffle);
 		tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
-	}
-	
-	public void forcePlayRecord(String record) {
-		worldObj.playRecord(record, xCoord, yCoord, zCoord);
-		playingRecord = true;
-		lastPlayingRecord = record;
-		this.markForUpdate();
-	}
-	
-	public void setForcedPlaying(boolean playing) {
-		this.playingRecord = playing;
-		this.markForUpdate();
 	}
 }

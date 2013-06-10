@@ -1,12 +1,8 @@
 package cazzar.mods.jukeboxreloaded.network.packets;
 
-import java.util.logging.Level;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
-import cazzar.mods.jukeboxreloaded.lib.util.LogHelper;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -15,8 +11,8 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
 public class PacketPlayRecord extends PacketJukebox {
-	int	x, y, z;
-	String record;
+	int		x, y, z;
+	String	record;
 	
 	public PacketPlayRecord() {}
 	
@@ -30,7 +26,7 @@ public class PacketPlayRecord extends PacketJukebox {
 	@Override
 	public void execute(EntityPlayer player, Side side)
 			throws ProtocolException {
-		TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
+		final TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
 		if (te instanceof TileJukeBox) {
 			((TileJukeBox) te).forcePlayRecord(record);
 			((TileJukeBox) te).setForcedPlaying(true);
@@ -38,7 +34,7 @@ public class PacketPlayRecord extends PacketJukebox {
 		else return;
 		if (side.isServer()) {
 			((TileJukeBox) te).markForUpdate();
-			PacketDispatcher.sendPacketToAllPlayers(this.makePacket());
+			PacketDispatcher.sendPacketToAllPlayers(makePacket());
 		}
 	}
 	
