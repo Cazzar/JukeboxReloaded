@@ -38,8 +38,9 @@ public class ConfigHelper {
 	public Items	items;
 	
 	public ConfigHelper(Configuration config) {
-		Config.Parse(main = new Main(), config);
-		Config.Parse(blocks = new Blocks(), config);
-		Config.Parse(items = new Items(), config);
+		Config.ParseClass(main = new Main(), config);
+		Config.ParseClass(blocks = new Blocks(), config);
+		Config.ParseClass(items = new Items(), config);
+		config.save();
 	}
 }
