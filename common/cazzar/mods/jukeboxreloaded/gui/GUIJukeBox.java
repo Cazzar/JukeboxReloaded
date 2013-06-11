@@ -47,7 +47,6 @@ public class GUIJukeBox extends GuiContainer {
 		switch (btn.id) {
 			case PLAY:
 				tileJukeBox.playSelectedRecord();
-				tileJukeBox.setForcedPlaying(true);
 				break;
 			case STOP:
 				tileJukeBox.stopPlayingRecord();

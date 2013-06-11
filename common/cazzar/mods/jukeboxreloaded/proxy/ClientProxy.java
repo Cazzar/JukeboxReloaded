@@ -1,5 +1,6 @@
 package cazzar.mods.jukeboxreloaded.proxy;
 
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.Entity;
 import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 import cazzar.mods.jukeboxreloaded.network.ThreadDownloadSongs;
@@ -18,5 +19,9 @@ public class ClientProxy extends CommonProxy {
 	public void SetCape(Entity ent, String capeURL) {
 		ent.cloakUrl = capeURL;
 		ent.updateCloak();
+	}
+	
+	public Side getEffectiveSide() {
+		return Side.CLIENT;
 	}
 }

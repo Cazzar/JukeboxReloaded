@@ -20,6 +20,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
+import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
+import cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -39,9 +41,8 @@ public class BlockJukeBox extends Block {
 	
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
-		if (((TileJukeBox) world.getBlockTileEntity(x, y, z)).isPlayingRecord())
-			((TileJukeBox) world.getBlockTileEntity(x, y, z))
-					.stopPlayingRecord();
+		new PacketStopPlaying(x, y, z).sendToServer();
+		
 		dropInventory(world, x, y, z);
 		super.breakBlock(world, x, y, z, id, meta);
 	}

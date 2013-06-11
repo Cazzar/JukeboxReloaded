@@ -17,6 +17,7 @@ import cazzar.mods.jukeboxreloaded.item.ItemCustomRecord;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 public class CommonProxy {
 	public BlockJukeBox		jukeBox;
@@ -38,7 +39,7 @@ public class CommonProxy {
 	public void initItems() {
 		// String folder = "resources/mod/streaming/JukeboxReloaded/";
 		GameRegistry.registerItem(kokoro = new ItemCustomRecord(
-				config.items.record1, "kokoro", "Kokoro",
+				config.items.record1, "kokoro", "ココロ",
 				"Sung by Kagamine Rin", "writer トラボルタ feat. 鏡音リン"), "kokoro");
 		GameRegistry
 				.registerItem(loveIsWar = new ItemCustomRecord(
@@ -51,7 +52,7 @@ public class CommonProxy {
 		GameRegistry.registerItem(spica = new ItemCustomRecord(
 				config.items.record4, "spica", "SPiCa", "by とく"), "spica");
 		GameRegistry.registerItem(sukiDaiSuki = new ItemCustomRecord(
-				config.items.record5, "suki_daisuki", "Suki Daisuki",
+				config.items.record5, "suki_daisuki", "すすすす、すき、だあいすき",
 				"Sung by Kagamine Rin", "Writer - かたほとりP"),
 				"suki_daisuki");
 		GameRegistry.registerItem(weArePopcandy = new ItemCustomRecord(
@@ -104,6 +105,10 @@ public class CommonProxy {
 	
 	public void initTileEntities() {
 		GameRegistry.registerTileEntity(TileJukeBox.class, "tileJukeBox");
+	}
+	
+	public Side getEffectiveSide() {
+		return Side.SERVER;
 	}
 	
 	public void SetCape(Entity ent, String capeURL) {}

@@ -5,6 +5,7 @@
 
 	<property name="mod.base" location="${basedir}" />
 	<property name="mod.src" location="${mod.base}/common" />
+	<property name="mod.src_other" location="${mod.base}/common_extra" />
 	<property name="mod.bin" location="${mod.base}/bin" />
 
 	<property name="temp.dir" location="${mod.base}/tmp" />
@@ -26,13 +27,20 @@
 	<condition property="python.exe" value="${forge.base}/fml/python/python_fml" else="python">
 		<os family="Windows" />
 	</condition>
+	
+    <!--Increase the release number in the config-->
+	<propertyfile file="${mod.src}/version.properties">
+		<entry key="build.build.number" type="int" operation="+" default="1" />
+	</propertyfile>
+	
 	<property file="${mod.src}/version.properties" />
 	<property name="build.version" value="${mod.build.major.number}.${mod.build.minor.number}.${mod.build.revision.number}" />
 	<property name="version.minecraft" value="${build.mcversion}" />
 	<property name="version.major" value="${build.major.number}" />
 	<property name="version.minor" value="${build.minor.number}" />
 	<property name="version.rev" value="${build.revision.number}" />
-	<property name="version" value="${version.major}.${version.minor}.${version.rev}" />
+	<property name="version.build" value="${build.build.number}" />
+	<property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
 	<property name="minecraft.version" value="${build.mcversion}" />
 	<property name="forge.version" value="${build.forgeversion}" />
 
@@ -130,7 +138,7 @@
 		</exec>
 		<echo message="Building a release jar." />
 		<jar destfile="${mod.jar.release}">
-			<fileset dir="${mcp.reobf}" includes="cazzar/" />
+			<fileset dir="${mcp.reobf}" includes="**" />
 			<fileset dir="${mod.src}">
 				<exclude name="mcmod.info" />
 				<exclude name="**/*.java" />
@@ -162,6 +170,7 @@
 		<delete dir="${temp.dir}" />
 		<copy todir="${temp.src}">
 			<fileset dir="${mod.src}" />
+			<fileset dir="${mod.src_other}" />
 		</copy>
 		<replace dir="${temp.src}/cazzar/mods/jukeboxreloaded/lib" token="@VERSION@" value="${version}" />
 		<replace dir="${temp.src}/cazzar/mods/jukeboxreloaded/lib" token="@BUILD_NUMBER@" value="${build_number.build_number}" />
@@ -198,10 +207,6 @@
 	</target>
 	<target name="release">
 		<property name="release" value="true" />
-		<!--Increase the release number in the config-->
-		<propertyfile file="build_number.properties">
-			<entry key="build_number" type="int" operation="+" default="1" />
-		</propertyfile>
 
 		<antcall target="setupvars" />
 		<antcall target="reobfuscate" />
@@ -215,4 +220,15 @@
 		<taskdef name="GetString" classname="net.cazzar.ant.tasks.GetString" classpath="AntTasks.jar" />
 		<GetString url="${adfly.api}${scp.downloadbase}/${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar" />
 	</target>
+	
+	<target name="test-release">
+	        <antcall target="setupvars" />
+	        <antcall target="reobfuscate" />
+
+	        <sshexec host="${scp.server}" username="${scp.username}" password="${scp.password}" command="mkdir -p ${scp.basedir}/${modname}/test/${version}/" />
+
+	        <scp file="${mod.jar.release}" todir="${scp.username}@${scp.server}:${scp.basedir}/${modname}/test/${version}/" password="${scp.password}" failonerror="true" />
+
+	        <echo message="The direct download URL is: ${scp.downloadbase}/${modname}/test/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar" level="info" />
+	    </target>
 </project>

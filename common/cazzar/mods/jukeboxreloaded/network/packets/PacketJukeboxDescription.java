@@ -36,8 +36,8 @@ public class PacketJukeboxDescription extends PacketJukebox {
 				.getBlockTileEntity(x, y, z);
 		
 		tile.setRecordPlaying(recordNumber);
-		// tile.setPlaying(playingRecord);
-		tile.setForcedPlaying(playingRecord);
+		tile.setPlaying(playingRecord);
+		//tile.setPlayingID(playingRecord);
 		tile.setRepeatMode(repeatMode);
 		tile.setShuffle(shuffle);
 		tile.setFacing(facing);

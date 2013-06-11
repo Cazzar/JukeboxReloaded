@@ -2,6 +2,7 @@ package cazzar.mods.jukeboxreloaded.blocks;
 
 import java.util.Random;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
 import cazzar.mods.jukeboxreloaded.lib.InventoryUtils;
+import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
@@ -23,21 +25,23 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	int					metadata;
 	public ItemStack[]	items;
 	int					recordNumber		= 0;
-	boolean				playingRecord		= false;
+	//boolean				playingRecord		= false;
 	String				lastPlayingRecord	= "";
 	boolean				repeat				= true;
 	boolean				repeatAll			= false;
 	boolean				shuffle				= false;
 	int					tick				= 0;
 	private short		facing;
+	SoundSystemHelper sndSystem;
 	
 	public TileJukeBox() {
 		items = new ItemStack[getSizeInventory()];
+		sndSystem = new SoundSystemHelper(this);
 	}
 	
 	public TileJukeBox(int metadata) {
+		this();
 		this.metadata = metadata;
-		items = new ItemStack[getSizeInventory()];
 	}
 	
 	@Override
@@ -50,8 +54,8 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 	
 	public void forcePlayRecord(String record) {
-		worldObj.playRecord(record, xCoord, yCoord, zCoord);
-		playingRecord = true;
+		//worldObj.playRecord(record, xCoord, yCoord, zCoord);
+		//playingRecord = true;
 		lastPlayingRecord = record;
 		markForUpdate();
 	}
@@ -62,14 +66,6 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	
 	@Override
 	public Packet getDescriptionPacket() {
-		// PacketCustom pkt = new PacketCustom(CHANNEL_NAME,
-		// Packets.CLIENT_TILEJUKEBOX_DATA);
-		// pkt.writeCoord(getCoord());
-		// pkt.writeBoolean(isPlayingRecord());
-		// pkt.writeInt(getCurrentRecordNumer());
-		// pkt.writeInt(getReplayMode());
-		// pkt.writeBoolean(shuffleEnabled());
-		// return pkt.toPacket();
 		return (new PacketJukeboxDescription(this)).makePacket();
 	}
 	
@@ -134,7 +130,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 	
 	public boolean isPlayingRecord() {
-		return playingRecord;
+		return sndSystem.isPlaying();
 	}
 	
 	@Override
@@ -169,20 +165,19 @@ public class TileJukeBox extends TileEntity implements IInventory {
 			return;
 		}
 		
-		for (int i = recordNumber; i < getSizeInventory(); i++)
-			if (getStackInSlot(i) != null) {
-				recordNumber = i;
-				break;
-			}
+		//for (int i = recordNumber; i < getSizeInventory(); i++)
+		//	if (getStackInSlot(i) != null) {
+		//		recordNumber = i;
+		//		break;
+		//	}
 		if (getStackInSlot(recordNumber) == null) return;
 		
-		if (!(getStackInSlot(recordNumber).getItem() instanceof ItemRecord))
-			return; // no I will not play.
+		//if (!(getStackInSlot(recordNumber).getItem() instanceof ItemRecord))
+		//	return; // no I will not play.
 			
-		worldObj.playRecord(((ItemRecord) getStackInSlot(recordNumber)
-				.getItem()).recordName, xCoord, yCoord, zCoord);
-		
-		playingRecord = true;
+		//worldObj.playRecord(((ItemRecord) getStackInSlot(recordNumber)
+		//		.getItem()).recordName, xCoord, yCoord, zCoord);
+
 		lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber)
 				.getItem()).recordName;
 	}
@@ -212,11 +207,6 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		facing = direction;
 	}
 	
-	public void setForcedPlaying(boolean playing) {
-		playingRecord = playing;
-		markForUpdate();
-	}
-	
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack itemstack) {
 		items[slot] = itemstack;
@@ -226,12 +216,11 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		// itemstack.stackSize = getInventoryStackLimit();
 		// }
 		
-		if (recordNumber == slot && playingRecord && itemstack == null)
+		if (recordNumber == slot && sndSystem.isPlaying() && itemstack == null)
 			playSelectedRecord();
 	}
 	
 	public void setPlaying(boolean playing) {
-		playingRecord = playing;
 		if (!isPlayingRecord() && playing) playSelectedRecord();
 		else if (isPlayingRecord() && !playing) stopPlayingRecord();
 	}
@@ -239,7 +228,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	public void setRecordPlaying(int recordNumber) {
 		final int oldRecord = this.recordNumber;
 		this.recordNumber = recordNumber;
-		if (playingRecord && oldRecord != recordNumber) playSelectedRecord();
+		if (sndSystem.isPlaying() && oldRecord != recordNumber) playSelectedRecord();
 	}
 	
 	/**
@@ -276,13 +265,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 	
 	public void stopPlayingRecord() {
-		playingRecord = false;
-		
 		new PacketStopPlaying(xCoord, yCoord, zCoord).sendToServer();
-		
-		// worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1005, xCoord,
-		// yCoord,
-		// zCoord, 0);
 	}
 	
 	@Override
@@ -292,7 +275,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		final Random random = new Random();
 		
 		if (tick % 5 == 0 && random.nextBoolean())
-			if (playingRecord)
+			if (isPlayingRecord())
 				worldObj.spawnParticle("note", xCoord + random.nextDouble(),
 						yCoord + 1.2D, zCoord + random.nextDouble(),
 						random.nextDouble(), random.nextDouble(),
@@ -302,10 +285,9 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		
 		if (tick % 10 != 0) return;
 		
-		if (SoundManager.sndSystem == null) return; // Thanks to alex
+		if (SoundSystemHelper.getSoundSystem() == null) return; // Thanks to alex
 		// streaming is only used on the client for playing in the jukebox..
-		final boolean playing = SoundManager.sndSystem.playing("streaming");
-		if (!playing) {
+		if (!isPlayingRecord()) {
 			final boolean wasPlaying = isPlayingRecord();
 			if (!wasPlaying) return;
 			// if repeating
@@ -325,18 +307,6 @@ public class TileJukeBox extends TileEntity implements IInventory {
 				PacketDispatcher
 						.sendPacketToServer((new PacketShuffleDisk(this))
 								.makePacket());
-			// PacketCustom packet = new PacketCustom(CHANNEL_NAME,
-			// Packets.SERVER_NEXT_SHUFFLEDDISK);
-			// packet.writeCoord(getCoord());
-			// packet.writeString(lastPlayingRecord);
-			// packet.writeBoolean(shuffle);
-			// packet.sendToServer();
-			// final PacketCustom packet = new PacketCustom(
-			// CHANNEL_NAME, Packets.CLIENT_UPDATE_TILEJUKEBOX);
-			// packet.writeCoord(this.getCoord());
-			// packet.writeBoolean(this.isPlayingRecord());
-			// packet.writeInt(this.getCurrentRecordNumer());
-			// packet.sendToServer();
 			PacketDispatcher.sendPacketToServer((new PacketJukeboxDescription(
 					this)).makePacket());
 		}
@@ -350,5 +320,16 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		tag.setInteger("rptMode", getReplayMode());
 		tag.setBoolean("shuffle", shuffle);
 		tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
+	}
+	
+	public String getIdentifier() {
+		return xCoord + ":" + yCoord + ":" + zCoord;
+	}
+	
+	/**
+	 * @return the Sound System Helper
+	 */
+	public SoundSystemHelper getSoundSystem() {
+		return sndSystem;
 	}
 }

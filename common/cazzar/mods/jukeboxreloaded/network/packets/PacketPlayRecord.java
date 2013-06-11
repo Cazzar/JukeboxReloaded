@@ -28,8 +28,11 @@ public class PacketPlayRecord extends PacketJukebox {
 			throws ProtocolException {
 		final TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
 		if (te instanceof TileJukeBox) {
-			((TileJukeBox) te).forcePlayRecord(record);
-			((TileJukeBox) te).setForcedPlaying(true);
+			TileJukeBox t = ((TileJukeBox) te);
+			
+			//t.forcePlayRecord(record);
+			t.getSoundSystem().playRecord(record, t.worldObj, x, y, z, 0.5F);
+			//((TileJukeBox) te).setForcedPlaying(true);
 		}
 		else return;
 		if (side.isServer()) {

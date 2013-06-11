@@ -3,6 +3,7 @@ package cazzar.mods.jukeboxreloaded.network.packets;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
+import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -23,19 +24,26 @@ public class PacketStopPlaying extends PacketJukebox {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		
+		//System.out.println(PacketStopPlaying.class.getName() + ":" + x + ":" + y + ":" + z);
 	}
 	
 	@Override
 	public void execute(EntityPlayer player, Side side)
 			throws ProtocolException {
-		if (side.isServer())
+		if (side.isServer()) {
 			PacketDispatcher.sendPacketToAllPlayers(makePacket());
-		final TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
-		if (te instanceof TileJukeBox)
-			((TileJukeBox) te).setForcedPlaying(false);
+			return;
+		}
 		
-		player.worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1005, x, y, z,
-				0);
+		SoundSystemHelper.stop(x + ":" + y + ":" + z);
+		//final TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
+		//if (te instanceof TileJukeBox)
+		//	((TileJukeBox) te).getSoundSystem().stop();
+		//	((TileJukeBox) te).setForcedPlaying(false);
+		
+		//player.worldObj.playAuxSFXAtEntity((EntityPlayer) null, 1005, x, y, z,
+		//		0);
 		
 	}
 	
