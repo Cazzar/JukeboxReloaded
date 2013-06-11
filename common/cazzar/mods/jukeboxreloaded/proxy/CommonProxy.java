@@ -11,6 +11,7 @@ import net.minecraftforge.common.Configuration;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.blocks.BlockJukeBox;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
+import cazzar.mods.jukeboxreloaded.client.CreativeTabJukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.configuration.ConfigHelper;
 import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import cazzar.mods.jukeboxreloaded.item.ItemCustomRecord;
@@ -23,9 +24,11 @@ public class CommonProxy {
 	public BlockJukeBox		jukeBox;
 	public ItemCustomRecord	kokoro, loveIsWar, shibuya, spica, sukiDaiSuki,
 			weArePopcandy;
+	public CreativeTabJukeboxReloaded creativeTab;
 	private ConfigHelper	config;
 	
 	public void initBlocks() {
+		creativeTab = new CreativeTabJukeboxReloaded();
 		jukeBox = new BlockJukeBox(config.blocks.Jukebox);
 		GameRegistry.registerBlock(jukeBox, "blockJukeBox");
 	}
@@ -82,11 +85,12 @@ public class CommonProxy {
 	
 	public void initLanguage() {
 		LanguageRegistry.addName(jukeBox, "JukeBox");
-		LanguageRegistry.addName(kokoro, "Record");
-		LanguageRegistry.addName(loveIsWar, "Record");
-		LanguageRegistry.addName(shibuya, "Record");
-		LanguageRegistry.addName(sukiDaiSuki, "Record");
-		LanguageRegistry.addName(weArePopcandy, "Record");
+		LanguageRegistry.addName(kokoro, "Music Disc");
+		LanguageRegistry.addName(loveIsWar, "Music Disc");
+		LanguageRegistry.addName(shibuya, "Music Disc");
+		LanguageRegistry.addName(sukiDaiSuki, "Music Disc");
+		LanguageRegistry.addName(weArePopcandy, "Music Disc");
+		LanguageRegistry.instance().addStringLocalization("itemGroup.Jukebox Reloaded", "Jukebox Reloaded");
 	}
 	
 	public void initNetwork() {

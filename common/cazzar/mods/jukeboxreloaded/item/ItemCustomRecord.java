@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
+
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
@@ -28,6 +30,7 @@ public class ItemCustomRecord extends ItemRecord {
 			String... details) {
 		super(ID, recordName);
 		
+		setCreativeTab(JukeboxReloaded.proxy.creativeTab);
 		this.recordInfo = recordInfo;
 		this.details = details;
 		// registerSong(recordFile);

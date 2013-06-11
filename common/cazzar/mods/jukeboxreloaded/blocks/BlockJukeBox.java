@@ -19,6 +19,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
+import cazzar.mods.jukeboxreloaded.client.CreativeTabJukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
@@ -32,7 +33,7 @@ public class BlockJukeBox extends Block {
 	
 	public BlockJukeBox(int ID) {
 		super(ID, Material.rock);
-		setCreativeTab(CreativeTabs.tabDecorations);
+		setCreativeTab(JukeboxReloaded.proxy.creativeTab);
 		setUnlocalizedName("JukeBox");
 		setHardness(1.0F);
 		setStepSound(soundWoodFootstep);
