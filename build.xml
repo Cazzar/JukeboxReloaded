@@ -208,7 +208,7 @@
 	<target name="release">
 		<property name="release" value="true" />
 
-		<antcall target="setupvars" />
+		<!--<antcall target="setupvars" />-->
 		<antcall target="reobfuscate" />
 
 
@@ -222,7 +222,7 @@
 	</target>
 	
 	<target name="test-release">
-	        <antcall target="setupvars" />
+	        <!--<antcall target="setupvars" />-->
 	        <antcall target="reobfuscate" />
 
 	        <sshexec host="${scp.server}" username="${scp.username}" password="${scp.password}" command="mkdir -p ${scp.basedir}/${modname}/test/${version}/" />

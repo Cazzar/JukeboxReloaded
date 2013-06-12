@@ -31,7 +31,7 @@ public class BlockJukeBox extends Block {
 	public BlockJukeBox(int ID) {
 		super(ID, Material.rock);
 		setCreativeTab(JukeboxReloaded.proxy.creativeTab);
-		setUnlocalizedName("JukeBox");
+		setUnlocalizedName("Jukebox");
 		setHardness(1.0F);
 		setStepSound(soundWoodFootstep);
 		setTickRandomly(true);

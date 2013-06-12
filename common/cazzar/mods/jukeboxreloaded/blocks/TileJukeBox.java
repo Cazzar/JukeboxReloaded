@@ -29,6 +29,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	boolean				repeatAll			= false;
 	boolean				shuffle				= false;
 	int					tick				= 0;
+	public int			waitTicks			= 0;
 	private short		facing;
 	SoundSystemHelper sndSystem;
 	
@@ -283,6 +284,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		// yCoord +1, zCoord + random.nextDouble(), 0, 100, 0);
 		
 		if (tick % 10 != 0) return;
+		if (waitTicks-- <= 0) return;
 		
 		if (SoundSystemHelper.getSoundSystem() == null) return; // Thanks to alex
 		// streaming is only used on the client for playing in the jukebox..

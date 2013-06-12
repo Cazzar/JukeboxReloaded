@@ -28,10 +28,10 @@ public class SoundSystemHelper {
 	}
 	
 	public static void registerCodecs() {
-		if (registeredCodecs)
-			throw new RuntimeException(
-					"We cannot register the codecs more than once!");
-		SoundSystemConfig.setCodec("mp3", CodecJLayerMP3.class);
+		//if (registeredCodecs)
+		//	throw new RuntimeException(
+		//			"We cannot register the codecs more than once!");
+		//SoundSystemConfig.setCodec("mp3", CodecJLayerMP3.class);
 	}
 	
 	TileJukeBox	tile;
@@ -44,6 +44,7 @@ public class SoundSystemHelper {
 	
 	public void playRecord(String record, World world, float x, float y,
 			float z, float volume) {
+		tile.waitTicks = 20;
 		if (side.isServer()) return;
 		
 		SoundSystem sndSystem = getSoundSystem();

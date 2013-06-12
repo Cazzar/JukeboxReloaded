@@ -26,13 +26,14 @@ public class ItemCustomRecord extends ItemRecord {
 	
 	String[]	details;
 	
-	public ItemCustomRecord(int ID, String recordName, String recordInfo,
+	public ItemCustomRecord(int ID, String recordFile, String recordInfo,
 			String... details) {
-		super(ID, recordName);
+		super(ID, recordFile);
 		
 		setCreativeTab(JukeboxReloaded.proxy.creativeTab);
 		this.recordInfo = recordInfo;
 		this.details = details;
+		setUnlocalizedName("record");
 		// registerSong(recordFile);
 		records.put(recordName, this);
 	}

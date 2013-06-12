@@ -22,6 +22,7 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
+import cazzar.mods.jukeboxreloaded.lib.Strings;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
@@ -124,12 +125,12 @@ public class GUIJukeBox extends GuiContainer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y) {
 		
-		final String containerName = "Jukebox";
+		final String containerName = Strings.GUI_JUKEBOX_NAME.toString();
 		fontRenderer.drawString(containerName,
 				xSize / 2 - fontRenderer.getStringWidth(containerName) / 2, 6,
 				4210752);
 		fontRenderer.drawString(
-				StatCollector.translateToLocal("container.inventory"), 8,
+				Strings.GUI_INVENTORY.toString(), 8,
 				ySize - 93, 4210752);
 		
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -189,6 +190,7 @@ public class GUIJukeBox extends GuiContainer {
 		btnPlay.enabled = !(btnStop.enabled = tileJukeBox.isPlayingRecord());
 		btnShuffle.enabled = !tileJukeBox.shuffleEnabled();
 		btnShuffleOff.enabled = tileJukeBox.shuffleEnabled();
+		
 		switch (tileJukeBox.getReplayMode()) {
 			case 0:
 				btnRepeatOff.enabled = false;

@@ -32,7 +32,7 @@ public class CommonProxy {
 	public void initBlocks() {
 		creativeTab = new CreativeTabJukeboxReloaded();
 		jukeBox = new BlockJukeBox(config.blocks.Jukebox);
-		GameRegistry.registerBlock(jukeBox, "blockJukeBox");
+		GameRegistry.registerBlock(jukeBox, "blockaJukeBox");
 	}
 	
 	public void initConfig(File suggested) {
@@ -86,13 +86,15 @@ public class CommonProxy {
 	}
 	
 	public void initLanguage() {
-		LanguageRegistry.addName(jukeBox, "JukeBox");
-		LanguageRegistry.addName(kokoro, "Music Disc");
-		LanguageRegistry.addName(loveIsWar, "Music Disc");
-		LanguageRegistry.addName(shibuya, "Music Disc");
-		LanguageRegistry.addName(sukiDaiSuki, "Music Disc");
-		LanguageRegistry.addName(weArePopcandy, "Music Disc");
-		LanguageRegistry.instance().addStringLocalization("itemGroup.Jukebox Reloaded", "Jukebox Reloaded");
+		//LanguageRegistry.addName(jukeBox, "JukeBox");
+		//LanguageRegistry.addName(kokoro, "Music Disc");
+		//LanguageRegistry.addName(loveIsWar, "Music Disc");
+		//LanguageRegistry.addName(shibuya, "Music Disc");
+		//LanguageRegistry.addName(sukiDaiSuki, "Music Disc");
+		//LanguageRegistry.addName(weArePopcandy, "Music Disc");
+		//LanguageRegistry.instance().addStringLocalization("itemGroup.Jukebox Reloaded", "Jukebox Reloaded");
+		ClassLoader cl = this.getClass().getClassLoader();
+		LanguageRegistry.instance().loadLocalization(cl.getResource("mods/cazzar/lang/en_US.xml"), "en_US", true);
 	}
 	
 	public void initNetwork() {
