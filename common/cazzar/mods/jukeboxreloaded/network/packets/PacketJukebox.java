@@ -1,10 +1,6 @@
 package cazzar.mods.jukeboxreloaded.network.packets;
 
-import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.CLIENT_UPDATE_TILEJUKEBOX;
-import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.PLAY_RECORD;
-import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.SERVER_NEXT_SHUFFLEDDISK;
-import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.STOP_RECORD;
-import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.TILEJUKEBOX_DATA;
+import static cazzar.mods.jukeboxreloaded.lib.Reference.Packets.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
@@ -50,6 +46,7 @@ public abstract class PacketJukebox {
 		builder.put(SERVER_NEXT_SHUFFLEDDISK, PacketShuffleDisk.class);
 		builder.put(PLAY_RECORD, PacketPlayRecord.class);
 		builder.put(STOP_RECORD, PacketStopPlaying.class);
+		builder.put(STOP_ALL, PacketStopAllSounds.class);
 		
 		idMap = builder.build();
 	}

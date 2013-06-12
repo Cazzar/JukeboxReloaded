@@ -5,7 +5,6 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,9 +18,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
-import cazzar.mods.jukeboxreloaded.client.CreativeTabJukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
-import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -42,7 +39,10 @@ public class BlockJukeBox extends Block {
 	
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
-		new PacketStopPlaying(x, y, z).sendToServer();
+		if (JukeboxReloaded.proxy.getEffectiveSide().isClient())
+			new PacketStopPlaying(x, y, z).sendToServer();
+		else
+			new PacketStopPlaying(x, y, z).sendToAllPlayers();	
 		
 		dropInventory(world, x, y, z);
 		super.breakBlock(world, x, y, z, id, meta);

@@ -1,8 +1,6 @@
 package cazzar.mods.jukeboxreloaded.network.packets;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
 import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 
 import com.google.common.io.ByteArrayDataInput;

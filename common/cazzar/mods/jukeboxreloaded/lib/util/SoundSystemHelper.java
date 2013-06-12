@@ -6,7 +6,6 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.PlayStreamingEvent;
@@ -19,7 +18,6 @@ import de.cuina.fireandfuel.CodecJLayerMP3;
 
 public class SoundSystemHelper {
 	private static boolean		registeredCodecs	= false;
-	private static GameSettings	options				= Minecraft.getMinecraft().gameSettings;
 	
 	public static SoundManager getSoundManager() {
 		return Minecraft.getMinecraft().sndManager;
@@ -68,7 +66,7 @@ public class SoundSystemHelper {
 		float f3 = 16.0F;
 		sndSystem.newStreamingSource(true, tile.getIdentifier(), song.soundUrl,
 				song.soundName, false, x, y, z, 2, f3 * 4.0F);
-		sndSystem.setVolume(tile.getIdentifier(), volume * options.soundVolume);
+		sndSystem.setVolume(tile.getIdentifier(), volume * Minecraft.getMinecraft().gameSettings.soundVolume);
 		MinecraftForge.EVENT_BUS.post(new PlayStreamingSourceEvent(
 				getSoundManager(), tile.getIdentifier(), x, y, z));
 		sndSystem.play(tile.getIdentifier());
@@ -98,8 +96,8 @@ public class SoundSystemHelper {
 		getSoundSystem().stop(identifier);
 	}
 	
-	public Boolean isPlaying() {
-		if (side.isServer()) return null;
+	public boolean isPlaying() {
+		if (side.isServer()) return false;
 		
 		return getSoundSystem().playing(tile.getIdentifier());
 	}

@@ -3,7 +3,6 @@ package cazzar.mods.jukeboxreloaded.client;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 
 /**

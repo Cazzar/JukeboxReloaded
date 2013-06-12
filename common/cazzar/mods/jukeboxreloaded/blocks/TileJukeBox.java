@@ -2,8 +2,6 @@ package cazzar.mods.jukeboxreloaded.blocks;
 
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemRecord;
@@ -130,6 +128,7 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 	
 	public boolean isPlayingRecord() {
+		if (sndSystem == null) sndSystem = new SoundSystemHelper(this);
 		return sndSystem.isPlaying();
 	}
 	

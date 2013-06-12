@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import cazzar.mods.jukeboxreloaded.EventHandler;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.blocks.BlockJukeBox;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
@@ -98,7 +100,11 @@ public class CommonProxy {
 				JukeboxReloaded.instance(), new GuiHandler());
 	}
 	
-	public void initOther() {}
+	public void initOther() {
+		// I only want this on the server
+		if (getEffectiveSide() == Side.SERVER)
+			MinecraftForge.EVENT_BUS.register(new EventHandler());
+	}
 	
 	public void initRecipe() {
 		GameRegistry.addRecipe(new ItemStack(jukeBox), new Object[] { "WCW",
