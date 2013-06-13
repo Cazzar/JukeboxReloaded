@@ -17,11 +17,8 @@ import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import paulscode.sound.SoundSystem;
-import paulscode.sound.SoundSystemConfig;
 
 public class SoundSystemHelper {
-	private static boolean		registeredCodecs	= false;
-	
 	public static SoundManager getSoundManager() {
 		return Minecraft.getMinecraft().sndManager;
 	}
@@ -53,6 +50,7 @@ public class SoundSystemHelper {
 			float z, float volume) {
 		tile.waitTicks = 20;
 		if (side.isServer()) return;
+		if (getSoundSystem() == null) return;
 		
 		SoundSystem sndSystem = getSoundSystem();
 		
@@ -82,30 +80,35 @@ public class SoundSystemHelper {
 	
 	public void pause() {
 		if (side.isServer()) return;
+		if (getSoundSystem() == null) return;
 		
 		getSoundSystem().pause(tile.getIdentifier());
 	}
 	
 	public void resume() {
 		if (side.isServer()) return;
+		if (getSoundSystem() == null) return;
 		
 		getSoundSystem().play(tile.getIdentifier());
 	}
 	
 	public void stop() {
 		if (side.isServer()) return;
+		if (getSoundSystem() == null) return;
 		
 		getSoundSystem().stop(tile.getIdentifier());
 	}
 	
 	public static void stop(String identifier) {
 		if (JukeboxReloaded.instance().proxy().getEffectiveSide().isServer()) return;
+		if (getSoundSystem() == null) return;
 		
 		getSoundSystem().stop(identifier);
 	}
 	
 	public boolean isPlaying() {
 		if (side.isServer()) return false;
+		if (getSoundSystem() == null) return false;
 		
 		return getSoundSystem().playing(tile.getIdentifier());
 	}

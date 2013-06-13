@@ -54,7 +54,7 @@ public class ComputerCraftAPI
 		}
 	}
 
-	private static Method findCCMethod( String name, Class[] args )
+	private static Method findCCMethod( String name, Class<?>[] args )
 	{
 		try {
 			return computerCraft.getMethod( name, args );
@@ -66,6 +66,6 @@ public class ComputerCraftAPI
 	}	
 	
 	private static boolean ccSearched = false;	
-	private static Class computerCraft = null;
+	private static Class<?> computerCraft = null;
 	private static Method computerCraft_registerExternalPeripheral = null;
 }

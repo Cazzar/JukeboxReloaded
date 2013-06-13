@@ -61,7 +61,7 @@ public class TurtleAPI
 		}
 	}
 	
-	private static Method findCCTurtleMethod( String name, Class[] args )
+	private static Method findCCTurtleMethod( String name, Class<?>[] args )
 	{
 		try {
 			return ccTurtle.getMethod( name, args );
@@ -73,6 +73,6 @@ public class TurtleAPI
 	}	
 	
 	private static boolean ccTurtleSearched = false;	
-	private static Class ccTurtle = null;
+	private static Class<?> ccTurtle = null;
 	private static Method ccTurtle_registerTurtleUpgrade = null;
 }

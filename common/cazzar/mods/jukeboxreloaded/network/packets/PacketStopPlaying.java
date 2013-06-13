@@ -8,7 +8,6 @@ import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 
-import cpw.mods.fml.common.asm.transformers.MarkerTransformer;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
