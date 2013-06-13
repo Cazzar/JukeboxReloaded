@@ -34,7 +34,8 @@ public class PacketPlayRecord extends PacketJukebox {
 		final TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
 		if (te instanceof TileJukeBox) {
 			TileJukeBox t = ((TileJukeBox) te);
-			t.getSoundSystem().playRecord(record, t.worldObj, x, y, z, 0.5F);
+			t.setPlaying(true);
+			t.getSoundSystem().playRecord(record, t.worldObj, x, y, z, t.volume);
 		}
 	}
 	

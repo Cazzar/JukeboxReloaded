@@ -9,17 +9,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+import net.minecraftforge.common.ForgeDirection;
+
+import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.lib.InventoryUtils;
 import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
+
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileJukeBox extends TileEntity implements IInventory {
+import dan200.computer.api.IComputerAccess;
+import dan200.computer.api.IPeripheral;
+
+public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 	int					metadata;
 	public ItemStack[]	items;
 	int					recordNumber		= 0;
@@ -29,7 +38,9 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	boolean				repeatAll			= false;
 	boolean				shuffle				= false;
 	int					tick				= 0;
+	public boolean		playing				= false;
 	public int			waitTicks			= 0;
+	public float		volume				= 0.5F;
 	private short		facing;
 	SoundSystemHelper sndSystem;
 	
@@ -157,11 +168,8 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	public void playSelectedRecord() {
 		if (worldObj.isRemote) {
 			if (getStackInSlot(recordNumber) == null) return;
-			PacketDispatcher
-					.sendPacketToServer(new PacketPlayRecord(
-							((ItemRecord) getStackInSlot(recordNumber)
-									.getItem()).recordName, xCoord, yCoord,
-							zCoord).makePacket());
+			new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber).getItem())
+					.recordName, xCoord, yCoord, zCoord).sendToServer();
 			return;
 		}
 		
@@ -180,6 +188,10 @@ public class TileJukeBox extends TileEntity implements IInventory {
 
 		lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber)
 				.getItem()).recordName;
+		playing = true;
+		
+		new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber).getItem())
+				.recordName, xCoord, yCoord, zCoord).sendToAllPlayers();
 	}
 	
 	public void previousRecord() {
@@ -221,8 +233,9 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 	
 	public void setPlaying(boolean playing) {
-		if (!isPlayingRecord() && playing) playSelectedRecord();
-		else if (isPlayingRecord() && !playing) stopPlayingRecord();
+		this.playing = playing;
+		//if (!isPlayingRecord() && playing) playSelectedRecord();
+		//else if (isPlayingRecord() && !playing) stopPlayingRecord();
 	}
 	
 	public void setRecordPlaying(int recordNumber) {
@@ -265,7 +278,11 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	}
 	
 	public void stopPlayingRecord() {
-		new PacketStopPlaying(xCoord, yCoord, zCoord).sendToServer();
+		playing = false;
+		if (JukeboxReloaded.proxy.getEffectiveSide().isServer())
+			new PacketStopPlaying(xCoord, yCoord, zCoord).sendToAllPlayers();
+		else
+			new PacketStopPlaying(xCoord, yCoord, zCoord).sendToServer();
 	}
 	
 	@Override
@@ -284,12 +301,13 @@ public class TileJukeBox extends TileEntity implements IInventory {
 		// yCoord +1, zCoord + random.nextDouble(), 0, 100, 0);
 		
 		if (tick % 10 != 0) return;
-		if (waitTicks-- <= 0) return;
+		if (waitTicks-- >= 0) return;
 		
+		waitTicks = 0;
 		if (SoundSystemHelper.getSoundSystem() == null) return; // Thanks to alex
 		// streaming is only used on the client for playing in the jukebox..
 		if (!isPlayingRecord()) {
-			final boolean wasPlaying = isPlayingRecord();
+			final boolean wasPlaying = playing;
 			if (!wasPlaying) return;
 			// if repeating
 			if (repeat) playSelectedRecord();
@@ -333,4 +351,98 @@ public class TileJukeBox extends TileEntity implements IInventory {
 	public SoundSystemHelper getSoundSystem() {
 		return sndSystem;
 	}
+	
+	//ComputerCraft API functions
+	
+	/**
+	 * @see dan200.computer.api.IPeripheral#getType()
+	 */
+	@Override
+	public String getType() {
+		return "jukebox";
+	}
+
+	/**
+	 * @see dan200.computer.api.IPeripheral#getMethodNames()
+	 */
+	@Override
+	public String[] getMethodNames() {
+		return new String[] { "isPlaying", "next", "prev",
+				"play", "stop", "setShuffle", "getShuffle",
+				"setRepeatAll", "setRepeatNone", "setRepeatOne",
+				"selectRecord", "getRecordInfo" };
+	}
+
+	/**
+	 * @see dan200.computer.api.IPeripheral#callMethod(dan200.computer.api.IComputerAccess, int, java.lang.Object[])
+	 */
+	@Override
+	public Object[] callMethod(IComputerAccess computer, int method,
+			Object[] args) throws Exception {
+		switch (method) {
+			case 0:
+				return new Object[] {playing};
+			case 1:
+				nextRecord();
+				return new Object[] {};
+			case 2:
+				previousRecord();
+				return new Object[] {};
+			case 3:
+				playSelectedRecord();
+				return new Object[] {};
+			case 4:
+				stopPlayingRecord();
+				return new Object[] {};
+			case 5:
+				boolean newshuffle;
+				try {
+					newshuffle = Boolean.valueOf((Boolean) args[0]);
+					this.setShuffle(newshuffle);
+					markForUpdate();
+				}
+				catch (Exception e) {
+					throw new Exception("Error parsing: " + args[0]);
+				}
+				return new Object[] {};
+			case 6:
+				return new Object[] {shuffle};
+			case 7:
+				this.setRepeatMode(1);
+				return new Object[] {}; 
+			case 8:
+				this.setRepeatMode(0);
+				return new Object[] {}; 
+			case 9:
+				this.setRepeatMode(2);
+				return new Object[] {}; 
+			case 10:
+				this.setRecordPlaying(Integer.valueOf(args[0].toString()));
+				return new Object[] {};
+			case 11:
+				return new Object[] { ((ItemRecord) getStackInSlot(recordNumber).getItem()).getRecordTitle() };
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * @see dan200.computer.api.IPeripheral#canAttachToSide(int)
+	 */
+	@Override
+	public boolean canAttachToSide(int side) {
+		return true;
+	}
+
+	/**
+	 * @see dan200.computer.api.IPeripheral#attach(dan200.computer.api.IComputerAccess)
+	 */
+	@Override
+	public void attach(IComputerAccess computer) {}
+
+	/**
+	 * @see dan200.computer.api.IPeripheral#detach(dan200.computer.api.IComputerAccess)
+	 */
+	@Override
+	public void detach(IComputerAccess computer) {}
 }

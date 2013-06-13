@@ -5,7 +5,6 @@
 
 	<property name="mod.base" location="${basedir}" />
 	<property name="mod.src" location="${mod.base}/common" />
-	<property name="mod.src_other" location="${mod.base}/common_extra" />
 	<property name="mod.bin" location="${mod.base}/bin" />
 
 	<property name="temp.dir" location="${mod.base}/tmp" />
@@ -170,7 +169,7 @@
 		<delete dir="${temp.dir}" />
 		<copy todir="${temp.src}">
 			<fileset dir="${mod.src}" />
-			<fileset dir="${mod.src_other}" />
+			<!--<fileset dir="${mod.src_other}" />-->
 		</copy>
 		<replace dir="${temp.src}/cazzar/mods/jukeboxreloaded/lib" token="@VERSION@" value="${version}" />
 		<replace dir="${temp.src}/cazzar/mods/jukeboxreloaded/lib" token="@BUILD_NUMBER@" value="${build_number.build_number}" />

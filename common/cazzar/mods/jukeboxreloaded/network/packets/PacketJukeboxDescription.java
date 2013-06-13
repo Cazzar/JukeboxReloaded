@@ -23,7 +23,7 @@ public class PacketJukeboxDescription extends PacketJukebox {
 		y = tile.yCoord;
 		z = tile.zCoord;
 		recordNumber = tile.getCurrentRecordNumer();
-		playingRecord = tile.isPlayingRecord();
+		playingRecord = tile.playing;
 		repeatMode = tile.getReplayMode();
 		shuffle = tile.shuffleEnabled();
 		facing = tile.getFacing();

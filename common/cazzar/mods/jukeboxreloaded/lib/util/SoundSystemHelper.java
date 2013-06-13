@@ -2,19 +2,22 @@ package cazzar.mods.jukeboxreloaded.lib.util;
 
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
+
 import cpw.mods.fml.relauncher.Side;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.sound.PlayStreamingEvent;
 import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
 import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
+
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
-import de.cuina.fireandfuel.CodecJLayerMP3;
 
 public class SoundSystemHelper {
 	private static boolean		registeredCodecs	= false;
@@ -25,6 +28,10 @@ public class SoundSystemHelper {
 	
 	public static SoundSystem getSoundSystem() {
 		return SoundManager.sndSystem;
+	}
+	
+	public static boolean isSoundEnabled() {
+		return getSoundSystem() == null;
 	}
 	
 	public static void registerCodecs() {

@@ -115,6 +115,29 @@ public class GUIJukeBox extends GuiContainer {
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2,
 			int var3) {
 		
+		
+		btnPlay.enabled = !(btnStop.enabled = tileJukeBox.isPlayingRecord());
+		btnShuffle.enabled = !tileJukeBox.shuffleEnabled();
+		btnShuffleOff.enabled = tileJukeBox.shuffleEnabled();
+		
+		switch (tileJukeBox.getReplayMode()) {
+			case 0:
+				btnRepeatOff.enabled = false;
+				btnRepeatOne.enabled = true;
+				btnRepeatAll.enabled = true;
+				break;
+			case 1:
+				btnRepeatOff.enabled = true;
+				btnRepeatOne.enabled = true;
+				btnRepeatAll.enabled = false;
+				break;
+			case 2:
+				btnRepeatOff.enabled = true;
+				btnRepeatOne.enabled = false;
+				btnRepeatAll.enabled = true;
+				break;
+		}
+		
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(GUIJUKEBOX_TEXTURE_FILE);
 		final int xStart = (width - xSize) / 2;
@@ -186,27 +209,5 @@ public class GUIJukeBox extends GuiContainer {
 		buttonList.add(btnShuffleOff = new TexturedButton(SHUFFLE_OFF,
 				xStart + 128, yStart + 40, 20, 20, GUIJUKEBOX_TEXTURE_FILE,
 				176, 158, 176, 138, 176, 178));
-		
-		btnPlay.enabled = !(btnStop.enabled = tileJukeBox.isPlayingRecord());
-		btnShuffle.enabled = !tileJukeBox.shuffleEnabled();
-		btnShuffleOff.enabled = tileJukeBox.shuffleEnabled();
-		
-		switch (tileJukeBox.getReplayMode()) {
-			case 0:
-				btnRepeatOff.enabled = false;
-				btnRepeatOne.enabled = true;
-				btnRepeatAll.enabled = true;
-				break;
-			case 1:
-				btnRepeatOff.enabled = true;
-				btnRepeatOne.enabled = true;
-				btnRepeatAll.enabled = false;
-				break;
-			case 2:
-				btnRepeatOff.enabled = true;
-				btnRepeatOne.enabled = false;
-				btnRepeatAll.enabled = true;
-				break;
-		}
 	}
 }
