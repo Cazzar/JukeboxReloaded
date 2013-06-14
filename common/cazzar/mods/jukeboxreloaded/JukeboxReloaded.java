@@ -47,7 +47,7 @@ public class JukeboxReloaded {
 		proxy.initOther();
 	}
 	
-	public CommonProxy proxy() {
+	public static CommonProxy proxy() {
 		return proxy;
 	}
 }

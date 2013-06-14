@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.lib.Reference;
 import cpw.mods.fml.common.Loader;
 
@@ -88,8 +89,8 @@ public class VersionHelper implements Runnable {
 	}
 	
 	public static void execute() {
-		
-		new Thread(instance).start();
+		if (JukeboxReloaded.instance().proxy().getConfig().main.enableUpdater)
+			new Thread(instance).start();
 	}
 	
 	public static byte getResult() {

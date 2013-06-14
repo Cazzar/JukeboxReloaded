@@ -266,8 +266,6 @@ public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 				repeat = repeatAll = false;
 				break;
 		}
-		
-		markForUpdate();
 	}
 	
 	public void setShuffle(boolean shuffle) {
@@ -392,8 +390,6 @@ public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 				}
 				nextRecord();
 				if (wasPlaying) playSelectedRecord();
-				
-				markForUpdate();
 				break;
 			case 2:
 				if (wasPlaying) stopPlayingRecord();
@@ -411,7 +407,6 @@ public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 				try {
 					newshuffle = Boolean.valueOf((Boolean) args[0]);
 					this.setShuffle(newshuffle);
-					markForUpdate();
 				}
 				catch (Exception e) {
 					throw new Exception("Error parsing: " + args[0]);
@@ -429,7 +424,7 @@ public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 				this.setRepeatMode(2);
 				break;
 			case 10:
-				this.setRecordPlaying(Integer.valueOf(args[0].toString()));
+				this.setRecordPlaying(((Double)args[0]).intValue() - 1);
 				break;
 			case 11:
 				String s = ((ItemRecord) getStackInSlot(recordNumber).getItem())
@@ -438,6 +433,7 @@ public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 			default:
 				return null;
 		}
+		markForUpdate();
 		return null;
 	}
 	

@@ -124,4 +124,8 @@ public class CommonProxy {
 	}
 	
 	public void SetCape(Entity ent, String capeURL) {}
+
+	public ConfigHelper getConfig() {
+		return config;
+	}
 }

@@ -19,9 +19,6 @@
 	        depends="download-forge"
 	        unless="forge.installed"
 	>
-		<!--<echo>Installing AccessTransformers</echo>
-        <copy file="${mod.base}\..\CodeChickenCore\codechickencore_at.cfg" todir="${forge.accesstransformers}" />-->
-
 		<echo>Installing Minecraft Forge...</echo>
 		<unzip src="${mod.base}/minecraftforge-src-${minecraft.version}-${forge.version}.zip"
 		       dest="${mod.base}"
@@ -112,6 +109,11 @@
 			<!--<src path="${mod.src}" />-->
 		</javac>
 	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+              target: reobfuscate
+         Reobfuscate the compiled                
+         - - - - - - - - - - - - - - - - - -->
 	<target name="reobfuscate" depends="build">
 		<unzip src="${forge.jar.built}" dest="${mcp.bin}" />
 		<echo message="Reobfuscating ${modname}." level="info" />
@@ -149,6 +151,11 @@
 		<echo file="VERSION">${minecraft.version} -- v${version}</echo>
 	</target>
 
+	<!-- - - - - - - - - - - - - - - - - - 
+              target: setup-workdir    
+         Setup the working directory for
+         the build.
+         - - - - - - - - - - - - - - - - - -->
 	<target name="setup-workdir" depends="build-forge">
 		<delete dir="${temp.dir}" />
 		<copy todir="${temp.src}">
@@ -164,6 +171,11 @@
 		         value="${build_number.build_number}"
 		/>
 	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+	          target: setupvars    
+	     Setup the variables for the build.                 
+	     - - - - - - - - - - - - - - - - - -->
 
 	<target name="setupvars" unless="vars.setup">
 		<property name="vars.setup" value="true" />
@@ -252,18 +264,23 @@
 		<property file="../scp.properties" />
 		<property file="build_number.properties" prefix="build_number" />
 	</target>
+
 	<target name="release">
-		<!--Increase the release number in the config-->
+		<!--remove the build number-->
 		<propertyfile file="${mod.src}/version.properties">
 			<entry key="build.build.number" type="int" operation="del" />
+		</propertyfile>
+		<!--<antcall target="setupvars" />-->
+		<antcall target="scp-release" />
+
+		<!--Increase the release number in the config-->
+		<propertyfile file="${mod.src}/version.properties">
 			<entry key="build.revision.number"
 			       type="int"
 			       operation="+"
 			       default="0"
 			/>
 		</propertyfile>
-		<!--<antcall target="setupvars" />-->
-		<antcall target="scp-release" />
 	</target>
 
 	<target name="test-release">
@@ -329,5 +346,4 @@
 		<GetString url="${adfly.api}${scp.downloadbase}/${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
 		/>
 	</target>
-
 </project>
