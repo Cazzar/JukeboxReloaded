@@ -5,6 +5,16 @@
 	<property name="mod.src" location="${mod.base}/common" />
 	<property name="mod.bin" location="${mod.base}/bin" />
 
+	<taskdef name="GetString"
+	         classname="net.cazzar.ant.tasks.GetString"
+	         classpath="AntTasks.jar"
+	/>
+	<taskdef name="S3Upload"
+	         classname="net.cazzar.ant.tasks.S3Upload"
+	         classpath="AntTasks.jar"
+	/>
+
+
 	<target name="download-forge" depends="setupvars" unless="forge.downloaded">
 		<echo>Downloading Minecraft Forge...</echo>
 		<delete dir="${forge.base}" />
@@ -300,7 +310,7 @@
           target: scp-test                      
          - - - - - - - - - - - - - - - - - -->
 	<target name="scp-test" depends="reobfuscate">
-		<sshexec host="${scp.server}"
+		<!--<sshexec host="${scp.server}"
 		         username="${scp.username}"
 		         password="${scp.password}"
 		         command="mkdir -p ${scp.basedir}/${modname}/test/${version}/"
@@ -310,9 +320,16 @@
 		     todir="${scp.username}@${scp.server}:${scp.basedir}/${modname}/test/${version}/"
 		     password="${scp.password}"
 		     failonerror="true"
+		/>-->
+
+		<S3Upload accessKey="${aws.accessId}"
+		          secretKey="${aws.secretKey}"
+		          bucketName="${aws.bucket}"
+		          prefix="${modname}/test/${version}"
+		          file="${mod.jar.release}"
 		/>
 
-		<echo message="The direct download URL is: ${scp.downloadbase}/${modname}/test/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
+		<echo message="The direct download URL is: ${scp.downloadbase}${modname}/test/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
 		      level="info"
 		/>
 	</target>
@@ -324,7 +341,7 @@
 	        depends="reobfuscate"
 	        description="Upload the reobfusticated release version"
 	>
-		<sshexec host="${scp.server}"
+		<!--<sshexec host="${scp.server}"
 		         username="${scp.username}"
 		         password="${scp.password}"
 		         command="mkdir -p ${scp.basedir}/${modname}/${version}/"
@@ -334,16 +351,20 @@
 		     todir="${scp.username}@${scp.server}:${scp.basedir}/${modname}/${version}/"
 		     password="${scp.password}"
 		     failonerror="true"
+		/>-->
+
+		<S3Upload accessKey="${aws.accessId}"
+		          secretKey="${aws.secretKey}"
+		          bucketName="${aws.bucket}"
+		          prefix="${modname}/${version}"
+		          file="${mod.jar.release}"
 		/>
 
-		<echo message="The direct download URL is: ${scp.downloadbase}/${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
+		<echo message="The direct download URL is: ${scp.downloadbase}${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
 		      level="info"
 		/>
-		<taskdef name="GetString"
-		         classname="net.cazzar.ant.tasks.GetString"
-		         classpath="AntTasks.jar"
-		/>
-		<GetString url="${adfly.api}${scp.downloadbase}/${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
+
+		<GetString url="${adfly.api}${scp.downloadbase}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
 		/>
 	</target>
 </project>

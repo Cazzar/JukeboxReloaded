@@ -29,7 +29,6 @@ public class ItemCustomRecord extends ItemRecord {
 	public ItemCustomRecord(int ID, String recordFile, String recordInfo,
 			String... details) {
 		super(ID, recordFile);
-		
 		setCreativeTab(JukeboxReloaded.proxy.creativeTab);
 		this.recordInfo = recordInfo;
 		this.details = details;

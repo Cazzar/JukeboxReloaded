@@ -41,6 +41,7 @@ public class ConfigHelper {
 		Config.ParseClass(main = new Main(), config);
 		Config.ParseClass(blocks = new Blocks(), config);
 		Config.ParseClass(items = new Items(), config);
-		config.save();
+		if (config.hasChanged())
+			config.save();
 	}
 }

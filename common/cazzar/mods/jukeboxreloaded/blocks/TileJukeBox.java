@@ -429,7 +429,7 @@ public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 			case 11:
 				String s = ((ItemRecord) getStackInSlot(recordNumber).getItem())
 						.getRecordTitle();
-				return new Object[] { s };
+				return new String[] { s };
 			default:
 				return null;
 		}

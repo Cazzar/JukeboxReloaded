@@ -8,7 +8,7 @@ import cazzar.mods.jukeboxreloaded.network.ThreadDownloadSongs;
 public class ClientProxy extends CommonProxy {
 	@Override
 	public void initOther() {
-		SoundSystemHelper.registerCodecs();
+		//SoundSystemHelper.registerCodecs();
 		
 		final Thread downloader = new Thread(new ThreadDownloadSongs());
 		downloader.setDaemon(true);
