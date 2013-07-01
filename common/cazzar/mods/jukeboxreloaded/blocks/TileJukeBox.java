@@ -1,6 +1,10 @@
 package cazzar.mods.jukeboxreloaded.blocks;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -9,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
-
+import net.minecraft.util.StringUtils;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.lib.InventoryUtils;
 import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
@@ -17,10 +21,10 @@ import cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
-
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.IPeripheral;
 
@@ -321,8 +325,7 @@ public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 				resetPlayingRecord();
 			}
 			// send tile information to the server to update the other clients
-			if (shuffle && !repeat)
-				new PacketShuffleDisk(this).sendToServer();
+			if (shuffle && !repeat) new PacketShuffleDisk(this).sendToServer();
 			new PacketJukeboxDescription(this).sendToServer();
 		}
 	}
@@ -424,11 +427,19 @@ public class TileJukeBox extends TileEntity implements IInventory, IPeripheral {
 				this.setRepeatMode(2);
 				break;
 			case 10:
-				this.setRecordPlaying(((Double)args[0]).intValue() - 1);
+				this.setRecordPlaying(((Double) args[0]).intValue() - 1);
 				break;
 			case 11:
-				String s = ((ItemRecord) getStackInSlot(recordNumber).getItem())
-						.getRecordTitle().trim();
+				String s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
+				if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+					s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
+				s = s.replace("kokoro", "Kagamine Rin - Kokoro")
+						.replace("love_is_war", "Hatsune Miku - Love Is war")
+						.replace("shibuya", "BECCA - SHIBUYA (Original)")
+						.replace("spica", "Hatsune Miku - SPiCa")
+						.replace("suki_daisuki", "Kagamine Rin - I Like You, I Love You")
+						.replace("we_are_popcandy",
+								"Hatsune Miku - We are POPCANDY!");
 				return new String[] { s };
 			default:
 				return null;
