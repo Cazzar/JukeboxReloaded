@@ -1,15 +1,12 @@
 package cazzar.mods.jukeboxreloaded.proxy;
 
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.Entity;
-import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 import cazzar.mods.jukeboxreloaded.network.ThreadDownloadSongs;
+import cpw.mods.fml.relauncher.Side;
 
 public class ClientProxy extends CommonProxy {
 	@Override
 	public void initOther() {
-		//SoundSystemHelper.registerCodecs();
-		
 		final Thread downloader = new Thread(new ThreadDownloadSongs());
 		downloader.setDaemon(true);
 		downloader.run();

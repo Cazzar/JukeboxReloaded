@@ -89,7 +89,7 @@ public class VersionHelper implements Runnable {
 	}
 	
 	public static void execute() {
-		if (JukeboxReloaded.instance().proxy().getConfig().main.enableUpdater)
+		if (JukeboxReloaded.proxy().getConfig().main.enableUpdater)
 			new Thread(instance).start();
 	}
 	

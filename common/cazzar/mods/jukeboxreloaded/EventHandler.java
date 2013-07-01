@@ -1,9 +1,9 @@
 package cazzar.mods.jukeboxreloaded;
 
-import cazzar.mods.jukeboxreloaded.network.packets.PacketStopAllSounds;
 import net.minecraft.entity.player.EntityPlayer;
+import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IPlayerTracker;
-import cpw.mods.fml.common.network.Player;
 
 public class EventHandler implements IPlayerTracker {
 
@@ -12,7 +12,8 @@ public class EventHandler implements IPlayerTracker {
 
 	@Override
 	public void onPlayerLogout(EntityPlayer player) {
-		new PacketStopAllSounds().sendToAllInDimension((Player)player);
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+			SoundSystemHelper.getSoundManager().stopAllSounds();
 	}
 
 	@Override

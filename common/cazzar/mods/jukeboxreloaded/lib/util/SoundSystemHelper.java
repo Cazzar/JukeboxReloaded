@@ -36,7 +36,8 @@ public class SoundSystemHelper {
 	
 	public SoundSystemHelper(TileJukeBox tile) {
 		this.tile = tile;
-		side = JukeboxReloaded.instance().proxy().getEffectiveSide();
+		JukeboxReloaded.instance();
+		side = JukeboxReloaded.proxy().getEffectiveSide();
 	}
 	
 	public void playRecord(String record, World world, float x, float y,
@@ -93,7 +94,8 @@ public class SoundSystemHelper {
 	}
 	
 	public static void stop(String identifier) {
-		if (JukeboxReloaded.instance().proxy().getEffectiveSide().isServer()) return;
+		JukeboxReloaded.instance();
+		if (JukeboxReloaded.proxy().getEffectiveSide().isServer()) return;
 		if (getSoundSystem() == null) return;
 		
 		getSoundSystem().stop(identifier);

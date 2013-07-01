@@ -364,7 +364,7 @@
 		      level="info"
 		/>
 
-		<GetString url="${adfly.api}${scp.downloadbase}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
+		<GetString url="${adfly.api}${scp.downloadbase}${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
 		/>
 	</target>
 </project>

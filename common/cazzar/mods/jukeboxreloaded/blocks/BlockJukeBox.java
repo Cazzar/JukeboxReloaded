@@ -39,12 +39,12 @@ public class BlockJukeBox extends Block {
 	
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
+		dropInventory(world, x, y, z);
+		
 		if (JukeboxReloaded.proxy.getEffectiveSide().isClient())
 			new PacketStopPlaying(x, y, z).sendToServer();
 		else
 			new PacketStopPlaying(x, y, z).sendToAllPlayers();	
-		
-		dropInventory(world, x, y, z);
 		super.breakBlock(world, x, y, z, id, meta);
 	}
 	
