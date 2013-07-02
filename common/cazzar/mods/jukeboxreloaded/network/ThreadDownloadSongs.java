@@ -17,7 +17,7 @@ public class ThreadDownloadSongs implements Runnable {
 	final String[]	songs	= { "kokoro.ogg", "love_is_war.ogg", "shibuya.ogg",
 			"spica.ogg", "suki_daisuki.ogg", "we_are_popcandy.ogg" };
 	final String	baseUrl	= "http://s3.amazonaws.com/CazzarMods/JukeboxReloaded/songs/";
-	final File		folder	= new File(Minecraft.getMinecraftDir(),
+	final File		folder	= new File(Minecraft.getMinecraft().mcDataDir,
 									"resources/mod/streaming/JukeboxReloaded/");
 	
 	@Override
@@ -37,8 +37,9 @@ public class ThreadDownloadSongs implements Runnable {
 					Util.saveUrl(new File(folder, song).getAbsolutePath(),
 							new URL(baseUrl + song));
 				
-				SoundSystemHelper.getSoundManager().soundPoolStreaming
-						.addSound(song, new File(folder, song).toURI().toURL());
+				//SoundSystemHelper.getSoundManager().soundPoolStreaming
+				//		.addSound(song, new File(folder, song).toURI().toURL());
+				//Minecraft.getMinecraft().func_110442_L().func_110536_a(resourcelocation)
 			}
 			catch (final Exception e) {
 				e.printStackTrace();

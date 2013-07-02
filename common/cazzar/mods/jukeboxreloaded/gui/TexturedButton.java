@@ -2,6 +2,7 @@ package cazzar.mods.jukeboxreloaded.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.resources.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -30,7 +31,8 @@ public class TexturedButton extends GuiButton {
 	@Override
 	public void drawButton(Minecraft mc, int par2, int par3) {
 		if (drawButton) {
-			mc.renderEngine.bindTexture(textureFile);
+			//mc.renderEngine.bindTexture(textureFile);
+			mc.renderEngine.func_110577_a(new ResourceLocation(textureFile));
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			field_82253_i = par2 >= xPosition && par3 >= yPosition
 					&& par2 < xPosition + width && par3 < yPosition + height;

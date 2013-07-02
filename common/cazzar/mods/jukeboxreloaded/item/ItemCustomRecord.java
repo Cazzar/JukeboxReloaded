@@ -62,6 +62,6 @@ public class ItemCustomRecord extends ItemRecord {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister register) {
-		itemIcon = register.registerIcon("cazzar:record_" + recordName);
+		itemIcon = register.registerIcon("record_" + recordName);
 	}
 }

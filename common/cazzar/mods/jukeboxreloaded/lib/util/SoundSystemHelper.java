@@ -24,7 +24,7 @@ public class SoundSystemHelper {
 	}
 	
 	public static SoundSystem getSoundSystem() {
-		return SoundManager.sndSystem;
+		return getSoundManager().sndSystem;
 	}
 	
 	public static boolean isSoundEnabled() {
@@ -64,8 +64,8 @@ public class SoundSystemHelper {
 		if (sndSystem.playing("BgMusic")) sndSystem.stop("BgMusic");
 		
 		float f3 = 16.0F;
-		sndSystem.newStreamingSource(true, tile.getIdentifier(), song.soundUrl,
-				song.soundName, false, x, y, z, 2, f3 * 4.0F);
+		sndSystem.newStreamingSource(true, tile.getIdentifier(), song.func_110457_b(),
+				song.func_110458_a(), false, x, y, z, 2, f3 * 4.0F);
 		sndSystem.setVolume(tile.getIdentifier(), volume * Minecraft.getMinecraft().gameSettings.soundVolume);
 		MinecraftForge.EVENT_BUS.post(new PlayStreamingSourceEvent(
 				getSoundManager(), tile.getIdentifier(), x, y, z));

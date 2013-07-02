@@ -1,10 +1,6 @@
 package cazzar.mods.jukeboxreloaded.blocks;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -13,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.StringUtils;
 import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import cazzar.mods.jukeboxreloaded.lib.InventoryUtils;
 import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
@@ -21,7 +16,6 @@ import cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
 import cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
