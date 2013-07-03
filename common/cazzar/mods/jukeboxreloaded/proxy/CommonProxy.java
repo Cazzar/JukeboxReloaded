@@ -1,6 +1,9 @@
 package cazzar.mods.jukeboxreloaded.proxy;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -28,6 +31,9 @@ public class CommonProxy {
 	public CreativeTabJukeboxReloaded creativeTab;
 	private ConfigHelper config;
 
+	public void extractTextures() {
+	}
+	
 	public void initBlocks() {
 		creativeTab = new CreativeTabJukeboxReloaded();
 		jukeBox = new BlockJukeBox(config.blocks.Jukebox);
@@ -93,8 +99,8 @@ public class CommonProxy {
 		// LanguageRegistry.instance().addStringLocalization("itemGroup.Jukebox Reloaded",
 		// "Jukebox Reloaded");
 		ClassLoader cl = this.getClass().getClassLoader();
-		LanguageRegistry.instance().loadLocalization(
-				cl.getResource("mods/cazzar/lang/en_US.xml"), "en_US", true);
+		//LanguageRegistry.instance().loadLocalization(
+		//		cl.getResource("mods/cazzar/lang/en_US.xml"), "en_US", true);
 	}
 
 	public void initNetwork() {
