@@ -1,9 +1,6 @@
 package cazzar.mods.jukeboxreloaded.proxy;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -21,7 +18,6 @@ import cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import cazzar.mods.jukeboxreloaded.item.ItemCustomRecord;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 public class CommonProxy {
@@ -89,27 +85,12 @@ public class CommonProxy {
 						1, 10));
 	}
 
-	public void initLanguage() {
-		// LanguageRegistry.addName(jukeBox, "JukeBox");
-		// LanguageRegistry.addName(kokoro, "Music Disc");
-		// LanguageRegistry.addName(loveIsWar, "Music Disc");
-		// LanguageRegistry.addName(shibuya, "Music Disc");
-		// LanguageRegistry.addName(sukiDaiSuki, "Music Disc");
-		// LanguageRegistry.addName(weArePopcandy, "Music Disc");
-		// LanguageRegistry.instance().addStringLocalization("itemGroup.Jukebox Reloaded",
-		// "Jukebox Reloaded");
-		ClassLoader cl = this.getClass().getClassLoader();
-		//LanguageRegistry.instance().loadLocalization(
-		//		cl.getResource("mods/cazzar/lang/en_US.xml"), "en_US", true);
-	}
-
 	public void initNetwork() {
 		NetworkRegistry.instance().registerGuiHandler(
 				JukeboxReloaded.instance(), new GuiHandler());
 	}
 
 	public void initOther() {
-
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 	}
 

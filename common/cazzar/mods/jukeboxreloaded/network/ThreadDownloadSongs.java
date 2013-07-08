@@ -4,9 +4,7 @@ import java.io.File;
 import java.net.URL;
 
 import net.minecraft.client.Minecraft;
-
 import cazzar.mods.jukeboxreloaded.lib.util.LogHelper;
-import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
 import cazzar.mods.jukeboxreloaded.lib.util.Util;
 
 /**
@@ -37,9 +35,10 @@ public class ThreadDownloadSongs implements Runnable {
 					Util.saveUrl(new File(folder, song).getAbsolutePath(),
 							new URL(baseUrl + song));
 				
-				//SoundSystemHelper.getSoundManager().soundPoolStreaming
-				//		.addSound(song, new File(folder, song).toURI().toURL());
-				//Minecraft.getMinecraft().func_110442_L().func_110536_a(resourcelocation)
+				
+				
+				// SoundSystemHelper.getSoundManager().soun
+				// .addSound(song, new File(folder, song).toURI().toURL());
 			}
 			catch (final Exception e) {
 				e.printStackTrace();

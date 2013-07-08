@@ -4,13 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
-
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
+import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
+import cazzar.mods.jukeboxreloaded.lib.util.SoundSystemHelper;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -35,6 +36,10 @@ public class ItemCustomRecord extends ItemRecord {
 		setUnlocalizedName("record");
 		// registerSong(recordFile);
 		records.put(recordName, this);
+		
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+			SoundSystemHelper.registerRecord("cazzar:" + recordFile + ".ogg");
+		}
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -62,6 +67,6 @@ public class ItemCustomRecord extends ItemRecord {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister register) {
-		itemIcon = register.registerIcon("cazzar:record_" + recordName);
+		itemIcon = register.registerIcon("cazzar:record_" + recordName.replace("cazzar:", ""));
 	}
 }

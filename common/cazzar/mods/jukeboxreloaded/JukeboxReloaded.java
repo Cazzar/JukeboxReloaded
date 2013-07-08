@@ -37,7 +37,6 @@ public class JukeboxReloaded {
 		proxy.initBlocks();
 		proxy.initItems();
 		proxy.initTileEntities();
-		proxy.initLanguage();
 		proxy.initRecipe();
 
 		proxy.initOther();

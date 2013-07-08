@@ -1,22 +1,19 @@
 package cazzar.mods.jukeboxreloaded.lib.util;
 
-import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
-import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
-
-import cpw.mods.fml.relauncher.Side;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.world.World;
-
 import net.minecraftforge.client.event.sound.PlayStreamingEvent;
 import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
 import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
-
 import paulscode.sound.SoundSystem;
+import cazzar.mods.jukeboxreloaded.JukeboxReloaded;
+import cazzar.mods.jukeboxreloaded.blocks.TileJukeBox;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class SoundSystemHelper {
 	public static SoundManager getSoundManager() {
@@ -29,6 +26,12 @@ public class SoundSystemHelper {
 	
 	public static boolean isSoundEnabled() {
 		return getSoundSystem() == null;
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void registerRecord(String filename) {
+		//Minecraft.getMinecraft().sndManager.addStreaming(filename);
+		getSoundManager().soundPoolStreaming.addSound(filename);
 	}
 	
 	TileJukeBox	tile;

@@ -16,7 +16,6 @@ import java.util.Random;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.resources.ResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 
 import org.lwjgl.opengl.GL11;
@@ -139,7 +138,7 @@ public class GUIJukeBox extends GuiContainer {
 		}
 		
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(new ResourceLocation(GUIJUKEBOX_TEXTURE_FILE));
+		mc.renderEngine.func_110577_a(GUIJUKEBOX_TEXTURE_FILE);
 		final int xStart = (width - xSize) / 2;
 		final int yStart = (height - ySize) / 2;
 		drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize);
@@ -157,7 +156,7 @@ public class GUIJukeBox extends GuiContainer {
 				ySize - 93, 4210752);
 		
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.func_110577_a(new ResourceLocation(GUIJUKEBOX_TEXTURE_FILE));
+		mc.renderEngine.func_110577_a(GUIJUKEBOX_TEXTURE_FILE);
 		
 		final int xOffset = 53;
 		final int yOffset = 16;
