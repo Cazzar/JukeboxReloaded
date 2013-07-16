@@ -166,11 +166,11 @@ public class GUIJukebox extends GuiContainer {
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;
 
-        for (TexturedButton btn : (List<TexturedButton>)buttonList) {
+        for (TexturedButton btn : (List<TexturedButton>) buttonList) {
             if (
                     (x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) &&
-                    (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth())
-                )
+                            (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth())
+                    )
 
                 if (!btn.getTooltip().trim().isEmpty() && btn.enabled)
                     btn.drawToolTip(x - xStart, y - yStart);
@@ -232,6 +232,4 @@ public class GUIJukebox extends GuiContainer {
                 xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE,
                 176, 158, 176, 138, 176, 178));
     }
-
-
 }
