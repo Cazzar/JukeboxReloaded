@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
+import net.cazzar.mods.jukeboxreloaded.client.particles.ParticleIcons;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
 import net.minecraft.block.Block;
@@ -125,12 +126,12 @@ public class BlockJukebox extends Block {
     }
 
 
-    // this one does inventory rendering
-    public Icon getBlockTextureFromSideAndMetadata(int blockSide, int blockMeta) {
+    /*// this one does inventory rendering
+    public Icon agetBlockTextureFromSideAndMetadata(int blockSide, int blockMeta) {
         if (blockSide == ForgeDirection.UP.ordinal()) return iconBuffer[2];
         if (blockSide == ForgeDirection.DOWN.ordinal()) return iconBuffer[0];
         return iconBuffer[1];
-    }
+    } */
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -149,16 +150,15 @@ public class BlockJukebox extends Block {
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z,
                                     EntityPlayer player, int par6, float par7, float par8, float par9) {
-        if (player.isSneaking()){
-            if (!world.isRemote){
+        if (player.isSneaking()) {
+            if (!world.isRemote) {
                 TileEntity te = world.getBlockTileEntity(x, y, z);
                 if (te instanceof TileJukebox)
                     ((TileJukebox) te).activate(player);
             }
 
             return false;
-        }
-        else {
+        } else {
             if (!world.isRemote) {
                 final TileJukebox tileJukebox = (TileJukebox) world
                         .getBlockTileEntity(x, y, z);
@@ -218,5 +218,8 @@ public class BlockJukebox extends Block {
         iconBuffer[1] = iconRegister.registerIcon("cazzar:jukeboxside");
         iconBuffer[2] = iconRegister.registerIcon("cazzar:jukeboxtop");
         iconBuffer[3] = iconRegister.registerIcon("cazzar:jukeboxfront");
+        ParticleIcons.CROTCHET = iconRegister.registerIcon("cazzar:crotchet");
+        ParticleIcons.QUAVER = iconRegister.registerIcon("cazzar:quaver");
+        ParticleIcons.DOUBLE_QUAVER = iconRegister.registerIcon("cazzar:double-quaver");
     }
 }

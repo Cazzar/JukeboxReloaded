@@ -13,6 +13,8 @@ public class Reference {
         public static final int REPEAT_ONE = 6;
         public static final int SHUFFLE_OFF = 7;
         public static final int SHUFFLE = 8;
+        public static final int VOLUME_UP = 9;
+        public static final int VOLUME_DOWN = 10;
     }
 
     public static class PacketsIDs {
@@ -34,6 +36,5 @@ public class Reference {
             "cazzar",
             "textures/gui/jukebox.png");
 
-    public static final String MOD_BUILD = "@BUILD_NUMBER@";
     public static final int VERSION_CHECK_ATTEMPTS = 3;
 }

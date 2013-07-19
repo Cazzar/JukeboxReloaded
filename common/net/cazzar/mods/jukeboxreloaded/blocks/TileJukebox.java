@@ -6,8 +6,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.IPeripheral;
 import net.cazzar.corelib.lib.SoundSystemHelper;
+import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
 import net.cazzar.corelib.util.InventoryUtils;
+import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
@@ -188,6 +190,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         facing = tag.getShort("facing");
         shuffle = tag.getBoolean("shuffle");
         setRepeatMode(tag.getInteger("rptMode"));
+        volume = tag.getFloat("volume");
 
         InventoryUtils
                 .readItemStacksFromTag(items, tag.getTagList("inventory"));
@@ -264,8 +267,13 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         final Random random = new Random();
 
         if (tick % 5 == 0 && random.nextBoolean())
-            if (isPlayingRecord())
-                worldObj.spawnParticle("note", xCoord + random.nextDouble(), yCoord + 1.2D, zCoord + random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble());
+            if (isPlayingRecord()) {
+                SoundSystemHelper.getSoundSystem().setVolume(getIdentifier(), volume * ClientUtil.mc().gameSettings.soundVolume);
+                SoundSystemHelper.stopBackgroundMusicIfPlaying();
+
+                Particles particles = Particles.values()[random.nextInt(Particles.values().length)];
+                particles.spawn(xCoord + random.nextDouble(), yCoord + 1.2D, zCoord + random.nextDouble());
+            }
 
         if (tick % 10 != 0) return;
         if (waitTicks-- >= 0) return;
@@ -301,6 +309,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         tag.setShort("facing", facing);
         tag.setInteger("rptMode", getReplayMode());
         tag.setBoolean("shuffle", shuffle);
+        tag.setFloat("volume", volume);
         tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
     }
 

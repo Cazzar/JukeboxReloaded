@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.minecraft.entity.player.EntityPlayer;
 
+@SuppressWarnings("UnusedDeclaration")
 public class PacketJukeboxDescription extends PacketJukebox {
     int x, y, z;
     int recordNumber;
@@ -13,6 +14,8 @@ public class PacketJukeboxDescription extends PacketJukebox {
     int repeatMode;
     boolean shuffle;
     short facing;
+    float volume;
+
 
     public PacketJukeboxDescription() {
     }
@@ -26,6 +29,7 @@ public class PacketJukeboxDescription extends PacketJukebox {
         repeatMode = tile.getReplayMode();
         shuffle = tile.shuffleEnabled();
         facing = tile.getFacing();
+        volume = tile.volume;
     }
 
     @Override
@@ -40,6 +44,7 @@ public class PacketJukeboxDescription extends PacketJukebox {
         tile.setRepeatMode(repeatMode);
         tile.setShuffle(shuffle);
         tile.setFacing(facing);
+        tile.volume = volume;
 
         // if (side.isServer())
         // tile.markForUpdate();
@@ -55,6 +60,7 @@ public class PacketJukeboxDescription extends PacketJukebox {
         repeatMode = in.readInt();
         shuffle = in.readBoolean();
         facing = in.readShort();
+        volume = in.readFloat();
     }
 
     @Override
@@ -67,6 +73,7 @@ public class PacketJukeboxDescription extends PacketJukebox {
         out.writeInt(repeatMode);
         out.writeBoolean(shuffle);
         out.writeShort(facing);
+        out.writeFloat(volume);
     }
 
 }

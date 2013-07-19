@@ -1,9 +1,10 @@
 package net.cazzar.mods.jukeboxreloaded.gui;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.cazzar.corelib.client.gui.TexturedButton;
+import net.cazzar.corelib.lib.SoundSystemHelper;
+import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
@@ -23,6 +24,7 @@ import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JukeboxGUIActions.*;
 public class GUIJukebox extends GuiContainer {
     TileJukebox tileJukebox;
     private TexturedButton btnPlay, btnStop, btnShuffleOn, btnShuffleOff, btnRepeatAll, btnRepeatOne, btnRepeatOff, btnNext, btnPrev;
+    private GuiButton volUp, volDown;
 
     public GUIJukebox(EntityPlayer player, TileJukebox tileJukebox) {
         super(new ContainerJukebox(player.inventory, tileJukebox));
@@ -75,7 +77,46 @@ public class GUIJukebox extends GuiContainer {
             case SHUFFLE_OFF:
                 tileJukebox.setShuffle(false);
                 break;
+            case VOLUME_UP:
+                if (tileJukebox.volume >= 1F) {
+                    tileJukebox.volume = 1F;
+                    volUp.enabled = false;
+                    volDown.enabled = true;
+                    break;
+                }
+
+                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
+
+                tileJukebox.volume += 0.05F;
+                break;
+            case VOLUME_DOWN:
+                if (tileJukebox.volume <= 0F) {
+                    tileJukebox.volume = 0F;
+                    volDown.enabled = false;
+                    volUp.enabled = true;
+                    break;
+                }
+
+                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
+
+                tileJukebox.volume -= 0.05F;
+                break;
         }
+
+        if (tileJukebox.volume <= 0F) {
+            tileJukebox.volume = 0F;
+            volDown.enabled = false;
+            volUp.enabled = true;
+        } else if (tileJukebox.volume >= 1F) {
+            tileJukebox.volume = 1F;
+            volUp.enabled = false;
+            volDown.enabled = true;
+        } else {
+            volUp.enabled = true;
+            volDown.enabled = true;
+        }
+
+
         btnPlay.enabled = !(btnStop.enabled = tileJukebox.isPlayingRecord());
         btnShuffleOn.enabled = !tileJukebox.shuffleEnabled();
         btnShuffleOff.enabled = tileJukebox.shuffleEnabled();
@@ -97,14 +138,12 @@ public class GUIJukebox extends GuiContainer {
                 break;
         }
 
-        PacketDispatcher.sendPacketToServer((new PacketJukeboxDescription(
-                tileJukebox)).makePacket());
+        new PacketJukeboxDescription(tileJukebox).sendToServer();
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float var1, int var2,
                                                    int var3) {
-
 
         btnPlay.enabled = !(btnStop.enabled = tileJukebox.isPlayingRecord());
         btnShuffleOn.enabled = !tileJukebox.shuffleEnabled();
@@ -136,6 +175,7 @@ public class GUIJukebox extends GuiContainer {
     }
 
     @Override
+    @SuppressWarnings("UncheckedCast")
     protected void drawGuiContainerForegroundLayer(int x, int y) {
 
         final String containerName = Strings.GUI_JUKEBOX_NAME.toString();
@@ -145,6 +185,9 @@ public class GUIJukebox extends GuiContainer {
         fontRenderer.drawString(
                 Strings.GUI_INVENTORY.toString(), 8,
                 ySize - 93, 4210752);
+
+        String str = (tileJukebox.volume == 1.0F) ? "10" : String.format("%.1f", tileJukebox.volume * 10);
+        fontRenderer.drawString(str, 21, 68, 4210752);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.func_110577_a(JUKEBOX_GUI_TEXTURE);
@@ -166,7 +209,12 @@ public class GUIJukebox extends GuiContainer {
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;
 
-        for (TexturedButton btn : (List<TexturedButton>) buttonList) {
+        for (GuiButton button : (List<GuiButton>) buttonList) {
+            if (!(button instanceof TexturedButton))
+                return;
+
+            TexturedButton btn = (TexturedButton) button;
+
             if (
                     (x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) &&
                             (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth())
@@ -231,5 +279,8 @@ public class GUIJukebox extends GuiContainer {
         buttonList.add(btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF,
                 xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE,
                 176, 158, 176, 138, 176, 178));
+
+        buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
+        buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
     }
 }
