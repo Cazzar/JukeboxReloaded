@@ -260,7 +260,7 @@
         </condition>
 
         <property file="../scp.properties"/>
-        <property file="build_number.properties" prefix="build_number"/>
+        <property file="properties/build_number.properties" prefix="build_number"/>
     </target>
 
     <target name="release">
