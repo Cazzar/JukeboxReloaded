@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler {
     public static final int JUKEBOX = 0;
+    public static final int PORTABLE_JUKEBOX = 1;
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world,
@@ -18,6 +19,8 @@ public class GuiHandler implements IGuiHandler {
             case JUKEBOX:
                 if (!(tile instanceof TileJukebox)) return null;
                 return new GUIJukebox(player, (TileJukebox) tile);
+            case PORTABLE_JUKEBOX:
+                return new GuiPortableJukebox(player);
             default:
                 return null;
         }
@@ -33,6 +36,8 @@ public class GuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileJukebox)) return null;
                 return new ContainerJukebox(player.inventory,
                         (TileJukebox) tile);
+            case PORTABLE_JUKEBOX:
+                return new ContainerPortableJukebox(player.inventory);
             default:
                 return null;
         }

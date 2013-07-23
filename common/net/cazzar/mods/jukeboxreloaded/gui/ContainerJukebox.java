@@ -8,11 +8,11 @@ import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 
 public class ContainerJukebox extends Container {
-    private final int PLAYER_INVENTORY_ROWS = 3;
-    private final int PLAYER_INVENTORY_COLUMNS = 9;
+    protected static final int PLAYER_INVENTORY_ROWS = 3;
+    protected static final int PLAYER_INVENTORY_COLUMNS = 9;
 
-    private final int INVENTORY_ROWS = 3;
-    private final int INVENTORY_COLUMNS = 4;
+    protected static final int INVENTORY_ROWS = 3;
+    protected static final int INVENTORY_COLUMNS = 4;
 
     TileJukebox tileJukebox;
 

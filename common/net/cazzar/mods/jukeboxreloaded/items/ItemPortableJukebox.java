@@ -40,7 +40,7 @@ public class ItemPortableJukebox extends Item {
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int worldX, int worldY, int worldZ, int side, float playerX, float playerY, float playerZ) {
         if (!world.isRemote) {
-            player.openGui(JukeboxReloaded.instance(), GuiHandler.JUKEBOX, world, worldX, worldY, worldZ);
+            player.openGui(JukeboxReloaded.instance(), GuiHandler.PORTABLE_JUKEBOX, world, worldX, worldY, worldZ);
         }
         return false;
     }

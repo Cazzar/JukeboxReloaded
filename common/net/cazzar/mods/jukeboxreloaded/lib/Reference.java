@@ -52,6 +52,7 @@ public class Reference {
     public static final ResourceLocation JUKEBOX_GUI_TEXTURE = new ResourceLocation(
             "cazzar",
             "textures/gui/jukebox.png");
+    public static final ResourceLocation PORTABLE_JUKEBOX_GUI_TEXTURE = new ResourceLocation("cazzar", "textures/gui/portableJukebox.png");
 
     public static final int VERSION_CHECK_ATTEMPTS = 3;
 }
