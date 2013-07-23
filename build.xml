@@ -125,7 +125,10 @@
         </exec>
         <echo message="Building a release jar."/>
         <jar destfile="${mod.jar.release}">
-            <fileset dir="${mcp.reobf}" includes="net/cazzar/**"/>
+            <fileset dir="${mcp.reobf}" includes="net/cazzar/**">
+                <include name="net/cazzar/**"/>
+                <include name="dan200/**"/>
+            </fileset>
             <fileset dir="${mod.src}">
                 <exclude name="mcmod.info"/>
                 <exclude name="**/*.java"/>
@@ -320,11 +323,11 @@
         <S3Upload accessKey="${aws.accessId}"
                   secretKey="${aws.secretKey}"
                   bucketName="${aws.bucket}"
-                  prefix="${modname}/${version}"
+                  prefix="${modname}"
                   file="${mod.jar.release}"
                 />
 
-        <echo message="The direct download URL is: ${scp.downloadbase}${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
+        <echo message="The direct download URL is: ${scp.downloadbase}${modname}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
               level="info"
                 />
         <taskdef name="GetString"
@@ -332,7 +335,7 @@
                  classpath="AntTasks.jar"
                 />
         <GetString
-                url="${adfly.api}${scp.downloadbase}${modname}/${version}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
+                url="${adfly.api}${scp.downloadbase}${modname}/${modname}-universal-${minecraft.version}-${version}-Forge-${build.forgeversion}.jar"
                 />
     </target>
 </project>
