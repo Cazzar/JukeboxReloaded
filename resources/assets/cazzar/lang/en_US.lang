@@ -1,5 +1,7 @@
 tile.Jukebox.name=Jukebox
 itemGroup.Jukebox Reloaded=Jukebox Reloaded
+item.PortableJukebox.name=Walkman
+gui.portableJukebox.name=Walkman
 gui.jukebox.name=Jukebox
 gui.jukebox.play=Play
 gui.jukebox.stop=Stop

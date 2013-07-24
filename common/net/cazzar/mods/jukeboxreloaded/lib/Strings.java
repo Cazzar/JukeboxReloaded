@@ -13,7 +13,8 @@ public enum Strings {
     TOOLTIP_REPEAT_ALL("gui.jukebox.repeat.all"),
     TOOLTIP_REPEAT_NONE("gui.jukebox.repeat.none"),
     TOOLTIP_SHUFFLE_ON("gui.jukebox.shuffle.on"),
-    TOOLTIP_SHUFFLE_OFF("gui.jukebox.shuffle.off");
+    TOOLTIP_SHUFFLE_OFF("gui.jukebox.shuffle.off"),
+    GUI_PORTABLE_JUKEBOX_NAME("gui.portableJukebox.name");
 
     private final String name;
 

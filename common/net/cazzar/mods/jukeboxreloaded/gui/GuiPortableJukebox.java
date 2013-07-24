@@ -18,17 +18,22 @@
 package net.cazzar.mods.jukeboxreloaded.gui;
 
 import net.cazzar.corelib.client.gui.TexturedButton;
+import net.cazzar.corelib.lib.SoundSystemHelper;
+import net.cazzar.mods.jukeboxreloaded.items.ItemPortableJukebox;
+import net.minecraft.client.gui.GuiButton;
+import net.cazzar.corelib.client.gui.TexturedButton;
 import net.cazzar.mods.jukeboxreloaded.items.PortableJukeboxHelper;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import org.lwjgl.opengl.GL11;
 
+import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JukeboxGUIActions.*;
 import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JUKEBOX_GUI_TEXTURE;
 import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JukeboxGUIActions.*;
 import static net.cazzar.mods.jukeboxreloaded.lib.Reference.PORTABLE_JUKEBOX_GUI_TEXTURE;
+import static net.cazzar.mods.jukeboxreloaded.lib.Strings.*;
 
 public class GuiPortableJukebox extends GuiContainer {
     private TexturedButton btnPlay, btnStop, /*btnShuffleOn, btnShuffleOff, btnRepeatAll, btnRepeatOne, btnRepeatOff,*/
@@ -48,6 +53,7 @@ public class GuiPortableJukebox extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+        updateButtonStates();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;

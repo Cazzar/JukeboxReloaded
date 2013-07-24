@@ -17,13 +17,13 @@ public class ContainerPortableJukebox extends Container {
                         playerInventory, inventoryColumnIndex
                         + inventoryRowIndex * 9 + 9,
                         8 + inventoryColumnIndex * 18,
-                        94 + inventoryRowIndex * 18));
+                        84 + inventoryRowIndex * 18));
 
         // Add the player's action bar slots to the container
         for (int actionBarSlotIndex = 0; actionBarSlotIndex < PLAYER_INVENTORY_COLUMNS; ++actionBarSlotIndex)
             addSlotToContainer(new net.minecraft.inventory.Slot(
                     playerInventory, actionBarSlotIndex,
-                    8 + actionBarSlotIndex * 18, 152));
+                    8 + actionBarSlotIndex * 18, 142));
     }
 
     @Override

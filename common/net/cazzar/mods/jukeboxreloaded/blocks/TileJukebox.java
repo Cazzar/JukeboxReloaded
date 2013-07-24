@@ -10,6 +10,7 @@ import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
 import net.cazzar.corelib.util.InventoryUtils;
 import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
+import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
@@ -31,9 +32,10 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     public ItemStack[] items;
     int recordNumber = 0;
     String lastPlayingRecord = "";
-    boolean repeat = true;
-    boolean repeatAll = false;
+    //boolean repeat = true;
+    //boolean repeatAll = false;
     boolean shuffle = false;
+    RepeatMode repeatMode = RepeatMode.ALL;
     int tick = 0;
     public boolean playing = false;
     public int waitTicks = 0;
@@ -68,7 +70,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         return items[slot];
     }
 
-    public int getCurrentRecordNumer() {
+    public int getCurrentRecordNumber() {
         return recordNumber;
     }
 
@@ -88,7 +90,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
 
     @Override
     public String getInvName() {
-        return "JukeBox";
+        return "Jukebox";
     }
 
     public int getLastSlotWithItem() {
@@ -103,10 +105,11 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     /**
      * @return 0: none <br/> 1: all <br/> 2: one
      */
-    public int getReplayMode() {
-        if (repeat) return 2;
-        else if (repeatAll) return 1;
-        else return 0;
+    public RepeatMode getReplayMode() {
+        //if (repeat) return 2;
+        //else if (repeatAll) return 1;
+        //else return 0;
+        return repeatMode;
     }
 
     @Override
@@ -189,11 +192,10 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         recordNumber = tag.getInteger("recordNumber");
         facing = tag.getShort("facing");
         shuffle = tag.getBoolean("shuffle");
-        setRepeatMode(tag.getInteger("rptMode"));
+        setRepeatMode(RepeatMode.get(tag.getInteger("rptMode")));
         volume = tag.getFloat("volume");
 
-        InventoryUtils
-                .readItemStacksFromTag(items, tag.getTagList("inventory"));
+        InventoryUtils.readItemStacksFromTag(items, tag.getTagList("inventory"));
     }
 
     public void resetPlayingRecord() {
@@ -226,23 +228,8 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     /**
      * @param mode 0: none <br/> 1: all <br/> 2: one
      */
-    public void setRepeatMode(int mode) {
-        switch (mode) {
-            case 0:
-                repeat = repeatAll = false;
-                break;
-            case 1:
-                repeatAll = true;
-                repeat = false;
-                break;
-            case 2:
-                repeatAll = false;
-                repeat = true;
-                break;
-            default:
-                repeat = repeatAll = false;
-                break;
-        }
+    public void setRepeatMode(RepeatMode mode) {
+        repeatMode = mode;
     }
 
     public void setShuffle(boolean shuffle) {
@@ -286,8 +273,8 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
             final boolean wasPlaying = playing;
             if (!wasPlaying) return;
             // if repeating
-            if (repeat) playSelectedRecord();
-            else if (repeatAll) {
+            if (repeatMode == RepeatMode.ONE) playSelectedRecord();
+            else if (repeatMode == RepeatMode.ALL) {
                 nextRecord();
                 if (recordNumber == getLastSlotWithItem() + 1)
                     resetPlayingRecord();
@@ -297,7 +284,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
                 resetPlayingRecord();
             }
             // send tile information to the server to update the other clients
-            if (shuffle && !repeat) new PacketShuffleDisk(this).sendToServer();
+            if (shuffle && repeatMode != RepeatMode.ONE) new PacketShuffleDisk(this).sendToServer();
             new PacketJukeboxDescription(this).sendToServer();
         }
     }
@@ -307,7 +294,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         super.writeToNBT(tag);
         tag.setInteger("recordNumber", recordNumber);
         tag.setShort("facing", facing);
-        tag.setInteger("rptMode", getReplayMode());
+        tag.setInteger("rptMode", getReplayMode().ordinal());
         tag.setBoolean("shuffle", shuffle);
         tag.setFloat("volume", volume);
         tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
@@ -344,7 +331,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
                     final Random random = new Random();
                     if (getLastSlotWithItem() <= 0) break;
                     final int nextDisk = random.nextInt(getLastSlotWithItem());
-                    if (getCurrentRecordNumer() != nextDisk)
+                    if (getCurrentRecordNumber() != nextDisk)
                         setRecordPlaying(nextDisk);
                 }
                 nextRecord();
@@ -373,13 +360,13 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
             case 6:
                 return new Object[]{shuffle};
             case 7:
-                this.setRepeatMode(1);
+                this.setRepeatMode(RepeatMode.ALL);
                 break;
             case 8:
-                this.setRepeatMode(0);
+                this.setRepeatMode(RepeatMode.OFF);
                 break;
             case 9:
-                this.setRepeatMode(2);
+                this.setRepeatMode(RepeatMode.ONE);
                 break;
             case 10:
                 this.setRecordPlaying(((Double) args[0]).intValue() - 1);

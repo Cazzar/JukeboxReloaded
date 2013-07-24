@@ -19,6 +19,7 @@ package net.cazzar.mods.jukeboxreloaded.items;
 
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
+import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -43,5 +44,9 @@ public class ItemPortableJukebox extends Item {
             player.openGui(JukeboxReloaded.instance(), GuiHandler.PORTABLE_JUKEBOX, world, worldX, worldY, worldZ);
         }
         return false;
+    }
+
+    public RepeatMode getRepeatMode() {
+        return RepeatMode.get(RepeatMode.ALL.ordinal());
     }
 }

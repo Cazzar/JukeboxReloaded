@@ -34,8 +34,7 @@ public class GuiHandler implements IGuiHandler {
         switch (ID) {
             case JUKEBOX:
                 if (!(tile instanceof TileJukebox)) return null;
-                return new ContainerJukebox(player.inventory,
-                        (TileJukebox) tile);
+                return new ContainerJukebox(player.inventory, (TileJukebox) tile);
             case PORTABLE_JUKEBOX:
                 return new ContainerPortableJukebox(player.inventory);
             default:

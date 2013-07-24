@@ -33,7 +33,7 @@ public class PacketShuffleDisk extends PacketJukebox {
                 if (jukeBox.getLastSlotWithItem() <= 0) return;
                 final int nextDisk = random.nextInt(jukeBox
                         .getLastSlotWithItem());
-                if (jukeBox.getCurrentRecordNumer() != nextDisk)
+                if (jukeBox.getCurrentRecordNumber() != nextDisk)
                     jukeBox.setRecordPlaying(nextDisk);
                 ((TileJukebox) tile).markForUpdate();
             }

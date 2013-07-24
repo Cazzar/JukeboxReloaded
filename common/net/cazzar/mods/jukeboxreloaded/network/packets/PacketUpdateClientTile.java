@@ -12,7 +12,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
 
     // packet.writeCoord(this.getCoord());
     // packet.writeBoolean(this.isPlayingRecord());
-    // packet.writeInt(this.getCurrentRecordNumer());
+    // packet.writeInt(this.getCurrentRecordNumber());
 
     int x, y, z;
     int action;
@@ -26,7 +26,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
         y = tile.yCoord;
         z = tile.zCoord;
         this.action = action;
-        currentRecord = tile.getCurrentRecordNumer();
+        currentRecord = tile.getCurrentRecordNumber();
     }
 
     @Override

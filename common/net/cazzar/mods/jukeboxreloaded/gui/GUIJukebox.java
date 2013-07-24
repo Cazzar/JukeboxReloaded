@@ -23,6 +23,7 @@ import net.cazzar.corelib.client.gui.TexturedButton;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
+import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import net.minecraft.client.gui.GuiButton;
@@ -68,7 +69,7 @@ public class GUIJukebox extends GuiContainer {
                     if (tileJukebox.getLastSlotWithItem() <= 0) return;
 
                     final int nextDisk = random.nextInt(tileJukebox.getLastSlotWithItem());
-                    if (tileJukebox.getCurrentRecordNumer() != nextDisk)
+                    if (tileJukebox.getCurrentRecordNumber() != nextDisk)
                         tileJukebox.setRecordPlaying(nextDisk);
                 }
                 tileJukebox.nextRecord();
@@ -80,13 +81,13 @@ public class GUIJukebox extends GuiContainer {
                 if (wasPlaying) tileJukebox.playSelectedRecord();
                 break;
             case REPEAT_ALL:
-                tileJukebox.setRepeatMode(1);
+                tileJukebox.setRepeatMode(RepeatMode.ALL);
                 break;
             case REPEAT_ONE:
-                tileJukebox.setRepeatMode(2);
+                tileJukebox.setRepeatMode(RepeatMode.ONE);
                 break;
             case REPEAT_OFF:
-                tileJukebox.setRepeatMode(0);
+                tileJukebox.setRepeatMode(RepeatMode.OFF);
                 break;
             case SHUFFLE:
                 tileJukebox.setShuffle(true);
@@ -97,93 +98,30 @@ public class GUIJukebox extends GuiContainer {
             case VOLUME_UP:
                 if (tileJukebox.volume >= 1F) {
                     tileJukebox.volume = 1F;
-                    volUp.enabled = false;
-                    volDown.enabled = true;
                     break;
                 }
 
                 SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
-
                 tileJukebox.volume += 0.05F;
                 break;
             case VOLUME_DOWN:
                 if (tileJukebox.volume <= 0F) {
                     tileJukebox.volume = 0F;
-                    volDown.enabled = false;
-                    volUp.enabled = true;
                     break;
                 }
 
                 SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
-
                 tileJukebox.volume -= 0.05F;
                 break;
         }
 
-        if (tileJukebox.volume <= 0F) {
-            tileJukebox.volume = 0F;
-            volDown.enabled = false;
-            volUp.enabled = true;
-        } else if (tileJukebox.volume >= 1F) {
-            tileJukebox.volume = 1F;
-            volUp.enabled = false;
-            volDown.enabled = true;
-        } else {
-            volUp.enabled = true;
-            volDown.enabled = true;
-        }
-
-
-        btnPlay.enabled = !(btnStop.enabled = tileJukebox.isPlayingRecord());
-        btnShuffleOn.enabled = !tileJukebox.shuffleEnabled();
-        btnShuffleOff.enabled = tileJukebox.shuffleEnabled();
-        switch (tileJukebox.getReplayMode()) {
-            case 0:
-                btnRepeatOff.enabled = false;
-                btnRepeatOne.enabled = true;
-                btnRepeatAll.enabled = true;
-                break;
-            case 1:
-                btnRepeatOff.enabled = true;
-                btnRepeatOne.enabled = true;
-                btnRepeatAll.enabled = false;
-                break;
-            case 2:
-                btnRepeatOff.enabled = true;
-                btnRepeatOne.enabled = false;
-                btnRepeatAll.enabled = true;
-                break;
-        }
-
+        updateButtonStates();
         new PacketJukeboxDescription(tileJukebox).sendToServer();
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float var1, int var2,
-                                                   int var3) {
-
-        btnPlay.enabled = !(btnStop.enabled = tileJukebox.isPlayingRecord());
-        btnShuffleOn.enabled = !tileJukebox.shuffleEnabled();
-        btnShuffleOff.enabled = tileJukebox.shuffleEnabled();
-
-        switch (tileJukebox.getReplayMode()) {
-            case 0:
-                btnRepeatOff.enabled = false;
-                btnRepeatOne.enabled = true;
-                btnRepeatAll.enabled = true;
-                break;
-            case 1:
-                btnRepeatOff.enabled = true;
-                btnRepeatOne.enabled = true;
-                btnRepeatAll.enabled = false;
-                break;
-            case 2:
-                btnRepeatOff.enabled = true;
-                btnRepeatOne.enabled = false;
-                btnRepeatAll.enabled = true;
-                break;
-        }
-
+    protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+        updateButtonStates();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.func_110577_a(JUKEBOX_GUI_TEXTURE);
         final int xStart = (width - xSize) / 2;
@@ -194,7 +132,6 @@ public class GUIJukebox extends GuiContainer {
     @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {
-
         final String containerName = Strings.GUI_JUKEBOX_NAME.toString();
         fontRenderer.drawString(containerName,
                 xSize / 2 - fontRenderer.getStringWidth(containerName) / 2, 6,
@@ -213,15 +150,11 @@ public class GUIJukebox extends GuiContainer {
         final int yOffset = 16;
         final int size = 18;
 
-        final int index = tileJukebox.getCurrentRecordNumer();
+        final int index = tileJukebox.getCurrentRecordNumber();
         final int column = (int) floor(index / 4D);
         final int row = index % 4;
 
-        // System.out.println(column + ":" + row + ":" + index);
-        // Args: x, y, xOffset, yOffset, Width, Height
-        // xOffset + (size * row), yOffset + (size * column),
-        drawTexturedModalRect(xOffset + size * row, yOffset + size
-                * column, 176, 0, 18, 18);
+        drawTexturedModalRect(xOffset + size * row, yOffset + size * column, 176, 0, 18, 18);
 
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;
@@ -229,14 +162,8 @@ public class GUIJukebox extends GuiContainer {
         for (GuiButton button : (List<GuiButton>) buttonList) {
             if (!(button instanceof TexturedButton))
                 return;
-
             TexturedButton btn = (TexturedButton) button;
-
-            if (
-                    (x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) &&
-                            (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth())
-                    )
-
+            if ((x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) && (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth()))
                 if (!btn.getTooltip().trim().isEmpty() && btn.enabled)
                     btn.drawToolTip(x - xStart, y - yStart);
         }
@@ -268,36 +195,57 @@ public class GUIJukebox extends GuiContainer {
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;
 
-        buttonList.add(btnPlay = new TexturedButton(this, PLAY, xStart + 7,
-                yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 38, 176, 18,
-                176, 58));
-        buttonList.add(btnStop = new TexturedButton(this, STOP, xStart + 29,
-                yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 98, 176, 78,
-                176, 118));
+        buttonList.add(btnPlay = new TexturedButton(this, PLAY, xStart + 7, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 38, 176, 18, 176, 58));
+        buttonList.add(btnStop = new TexturedButton(this, STOP, xStart + 29, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 98, 176, 78, 176, 118));
 
-        buttonList.add(btnNext = new TexturedButton(this, NEXT, xStart + 29, yStart + 39, 20,
-                20, JUKEBOX_GUI_TEXTURE, 216, 38, 216, 18, 216, 58));
-        buttonList.add(btnPrev = new TexturedButton(this, PREVIOUS, xStart + 7, yStart + 39,
-                20, 20, JUKEBOX_GUI_TEXTURE, 236, 38, 236, 18, 236, 58));
+        buttonList.add(btnNext = new TexturedButton(this, NEXT, xStart + 29, yStart + 39, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 38, 216, 18, 216, 58));
+        buttonList.add(btnPrev = new TexturedButton(this, PREVIOUS, xStart + 7, yStart + 39, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 38, 236, 18, 236, 58));
 
-        buttonList.add(btnRepeatOne = new TexturedButton(this, REPEAT_ONE,
-                xStart + 150, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE,
-                196, 98, 196, 78, 196, 118));
-        buttonList.add(btnRepeatAll = new TexturedButton(this, REPEAT_ALL,
-                xStart + 150, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE,
-                216, 98, 216, 78, 216, 118));
-        buttonList.add(btnRepeatOff = new TexturedButton(this, REPEAT_OFF,
-                xStart + 150, yStart + 63, 20, 20, JUKEBOX_GUI_TEXTURE,
-                196, 158, 196, 138, 196, 178));
+        buttonList.add(btnRepeatOne = new TexturedButton(this, REPEAT_ONE, xStart + 150, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 98, 196, 78, 196, 118));
+        buttonList.add(btnRepeatAll = new TexturedButton(this, REPEAT_ALL, xStart + 150, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 98, 216, 78, 216, 118));
+        buttonList.add(btnRepeatOff = new TexturedButton(this, REPEAT_OFF, xStart + 150, yStart + 63, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 158, 196, 138, 196, 178));
 
-        buttonList.add(btnShuffleOn = new TexturedButton(this, SHUFFLE, xStart + 128,
-                yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78,
-                236, 118));
-        buttonList.add(btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF,
-                xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE,
-                176, 158, 176, 138, 176, 178));
+        buttonList.add(btnShuffleOn = new TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118));
+        buttonList.add(btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF, xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 158, 176, 138, 176, 178));
 
         buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
         buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
+    }
+
+    public void updateButtonStates() {
+        if (tileJukebox.volume <= 0F) {
+            tileJukebox.volume = 0F;
+            volDown.enabled = false;
+            volUp.enabled = true;
+        } else if (tileJukebox.volume >= 1F) {
+            tileJukebox.volume = 1F;
+            volUp.enabled = false;
+            volDown.enabled = true;
+        } else {
+            volUp.enabled = true;
+            volDown.enabled = true;
+        }
+
+
+        btnPlay.enabled = !(btnStop.enabled = tileJukebox.isPlayingRecord());
+        btnShuffleOn.enabled = !tileJukebox.shuffleEnabled();
+        btnShuffleOff.enabled = tileJukebox.shuffleEnabled();
+
+        switch (tileJukebox.getReplayMode()) {
+            case OFF:
+                btnRepeatAll.enabled = true;
+                btnRepeatOne.enabled = true;
+                btnRepeatOff.enabled = false;
+                break;
+            case ONE:
+                btnRepeatAll.enabled = true;
+                btnRepeatOne.enabled = false;
+                btnRepeatOff.enabled = true;
+                break;
+            case ALL:
+                btnRepeatAll.enabled = false;
+                btnRepeatOne.enabled = true;
+                btnRepeatOff.enabled = true;
+        }
     }
 }

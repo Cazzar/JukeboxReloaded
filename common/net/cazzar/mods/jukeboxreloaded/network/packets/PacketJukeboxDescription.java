@@ -4,9 +4,10 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.relauncher.Side;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
+import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.minecraft.entity.player.EntityPlayer;
 
-@SuppressWarnings("UnusedDeclaration")
+@SuppressWarnings("UnusedDeclaration") //Due to us using it reflectively
 public class PacketJukeboxDescription extends PacketJukebox {
     int x, y, z;
     int recordNumber;
@@ -24,9 +25,9 @@ public class PacketJukeboxDescription extends PacketJukebox {
         x = tile.xCoord;
         y = tile.yCoord;
         z = tile.zCoord;
-        recordNumber = tile.getCurrentRecordNumer();
+        recordNumber = tile.getCurrentRecordNumber();
         playingRecord = tile.playing;
-        repeatMode = tile.getReplayMode();
+        repeatMode = tile.getReplayMode().ordinal();
         shuffle = tile.shuffleEnabled();
         facing = tile.getFacing();
         volume = tile.volume;
@@ -41,7 +42,7 @@ public class PacketJukeboxDescription extends PacketJukebox {
         tile.setRecordPlaying(recordNumber);
         tile.setPlaying(playingRecord);
         //tile.setPlayingID(playingRecord);
-        tile.setRepeatMode(repeatMode);
+        tile.setRepeatMode(RepeatMode.get(repeatMode));
         tile.setShuffle(shuffle);
         tile.setFacing(facing);
         tile.volume = volume;
