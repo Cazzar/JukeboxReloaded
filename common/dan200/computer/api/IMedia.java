@@ -6,9 +6,6 @@
 
 package dan200.computer.api;
 
-/**
- * TODO: Document me
- */
 public interface IMedia {
     public String getLabel(net.minecraft.item.ItemStack stack);
 
