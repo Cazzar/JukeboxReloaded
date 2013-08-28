@@ -1,3 +1,14 @@
 tile.Jukebox.name=Jukebox
 itemGroup.Jukebox Reloaded=Jukebox Reloaded
+item.PortableJukebox.name=Walkman
+gui.portableJukebox.name=Walkman
 gui.jukebox.name=Jukebox
+gui.jukebox.play=Play
+gui.jukebox.stop=Stop
+gui.jukebox.next=Next
+gui.jukebox.prev=Previous
+gui.jukebox.repeat.one=Repeat one
+gui.jukebox.repeat.all=Repeat all
+gui.jukebox.repeat.none=Repeat none
+gui.jukebox.shuffle.on=Enable shuffle
+gui.jukebox.shuffle.off=Disable shuffle

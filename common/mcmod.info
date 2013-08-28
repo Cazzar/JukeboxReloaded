@@ -4,18 +4,12 @@
   "name": "Jukebox Reloaded",
   "description": "A rebuild of the vanilla jukebox",
   "version": "@VERSION@",
-  "url": "",
+  "url": "http://cazzar.net",
   "updateUrl": "",
   "authorList": [
-    "cazzar"
+    "cazzar",
+    "not StarHero"
   ],
-  "credits": "Textures by mousecop",
-  "logoFile": "",
-  "screenshots": [
-  ],
-  "parent":"",
-  "dependencies": [
-  	"CodeChickenCore"
-  ]
+  "credits": "Textures by mousecop, Schillaaa for the button textures, Knallbi and Schillaaa for the German translation."
 }
 ]
