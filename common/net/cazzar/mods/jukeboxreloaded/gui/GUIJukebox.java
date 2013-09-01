@@ -215,37 +215,37 @@ public class GUIJukebox extends GuiContainer {
     public void updateButtonStates() {
         if (tileJukebox.volume <= 0F) {
             tileJukebox.volume = 0F;
-            volDown.enabled = false;
-            volUp.enabled = true;
+            ((GuiButton)volDown).enabled = false;
+            ((GuiButton)volUp).enabled = true;
         } else if (tileJukebox.volume >= 1F) {
             tileJukebox.volume = 1F;
-            volUp.enabled = false;
-            volDown.enabled = true;
+            ((GuiButton)volUp).enabled = false;
+            ((GuiButton)volDown).enabled = true;
         } else {
-            volUp.enabled = true;
-            volDown.enabled = true;
+            ((GuiButton)volUp).enabled = true;
+            ((GuiButton)volDown).enabled = true;
         }
 
 
-        btnPlay.enabled = !(btnStop.enabled = tileJukebox.isPlayingRecord());
-        btnShuffleOn.enabled = !tileJukebox.shuffleEnabled();
-        btnShuffleOff.enabled = tileJukebox.shuffleEnabled();
+        ((GuiButton)btnPlay).enabled = !(btnStop.enabled = tileJukebox.isPlayingRecord());
+        ((GuiButton)btnShuffleOn).enabled = !tileJukebox.shuffleEnabled();
+        ((GuiButton)btnShuffleOff).enabled = tileJukebox.shuffleEnabled();
 
         switch (tileJukebox.getReplayMode()) {
             case OFF:
-                btnRepeatAll.enabled = true;
-                btnRepeatOne.enabled = true;
-                btnRepeatOff.enabled = false;
+                ((GuiButton)btnRepeatAll).enabled = true;
+                ((GuiButton)btnRepeatOne).enabled = true;
+                ((GuiButton)btnRepeatOff).enabled = false;
                 break;
             case ONE:
-                btnRepeatAll.enabled = true;
-                btnRepeatOne.enabled = false;
-                btnRepeatOff.enabled = true;
+                ((GuiButton)btnRepeatAll).enabled = true;
+                ((GuiButton)btnRepeatOne).enabled = false;
+                ((GuiButton)btnRepeatOff).enabled = true;
                 break;
             case ALL:
-                btnRepeatAll.enabled = false;
-                btnRepeatOne.enabled = true;
-                btnRepeatOff.enabled = true;
+                ((GuiButton)btnRepeatAll).enabled = false;
+                ((GuiButton)btnRepeatOne).enabled = true;
+                ((GuiButton)btnRepeatOff).enabled = true;
         }
     }
 }
