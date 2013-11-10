@@ -52,7 +52,7 @@ public class GuiPortableJukebox extends GuiContainer {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;
-        mc.renderEngine.func_110577_a(PORTABLE_JUKEBOX_GUI_TEXTURE);
+        mc.renderEngine.bindTexture(PORTABLE_JUKEBOX_GUI_TEXTURE);
         drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize);
     }
 

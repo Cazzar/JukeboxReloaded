@@ -19,6 +19,7 @@ package net.cazzar.mods.jukeboxreloaded.proxy;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 import net.cazzar.corelib.items.ItemCustomRecord;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
@@ -29,14 +30,17 @@ import net.cazzar.mods.jukeboxreloaded.events.EventHandler;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import net.cazzar.mods.jukeboxreloaded.items.ItemPortableJukebox;
 import net.minecraft.block.Block;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.WeightedRandomChestContent;
-import net.minecraftforge.common.ChestGenHooks;
+import net.minecraft.village.MerchantRecipe;
+import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.io.File;
+import java.util.Random;
 
 public class CommonProxy {
     public BlockJukebox jukeBox;
@@ -81,13 +85,13 @@ public class CommonProxy {
         sukiDaiSuki.setCreativeTab(creativeTab);
         weArePopcandy.setCreativeTab(creativeTab);
 
-        int weight = 5;
+        /*int weight = 5;
         ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(kokoro), 1, 1, weight));
         ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(loveIsWar), 1, 1, weight));
         ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(shibuya), 1, 1, weight));
         ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(spica), 1, 1, weight));
         ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(sukiDaiSuki), 1, 1, weight));
-        ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(weArePopcandy), 1, 1, weight));
+        ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(weArePopcandy), 1, 1, weight));*/
     }
 
     public void initNetwork() {
@@ -115,5 +119,34 @@ public class CommonProxy {
 
     public ConfigHelper getConfig() {
         return config;
+    }
+
+    public void initVillagers() {
+        VillagerRegistry.instance().registerVillagerId(3000);
+        VillagerRegistry.instance().registerVillageTradeHandler(3000, new VillagerRegistry.IVillageTradeHandler() {
+            @Override
+            public void manipulateTradesForVillager(EntityVillager villager, MerchantRecipeList recipeList, Random random) {
+                switch (random.nextInt(6) + 1){
+                    case 1:
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), kokoro));
+                        break;
+                    case 2:
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), loveIsWar));
+                        break;
+                    case 3:
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), shibuya));
+                        break;
+                    case 4:
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), spica));
+                        break;
+                    case 5:
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), sukiDaiSuki));
+                        break;
+                    case 6:
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), weArePopcandy));
+                        break;
+                }
+            }
+        });
     }
 }

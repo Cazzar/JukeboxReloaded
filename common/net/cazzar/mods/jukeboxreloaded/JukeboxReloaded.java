@@ -4,6 +4,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import net.cazzar.corelib.lib.LogHelper;
@@ -41,6 +42,10 @@ public class JukeboxReloaded {
         proxy.initRecipe();
 
         proxy.initOther();
+    }
+    @EventHandler
+    public void init(FMLInitializationEvent evt) {
+         proxy.initVillagers();
     }
 
     public static CommonProxy proxy() {

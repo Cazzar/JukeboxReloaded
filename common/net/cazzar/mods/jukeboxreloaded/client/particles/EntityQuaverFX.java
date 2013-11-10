@@ -9,6 +9,6 @@ public class EntityQuaverFX extends EntityNoteFX {
     public EntityQuaverFX(World world, double x, double y, double z) {
         super(world, x, y, z);
 
-        func_110125_a(ParticleIcons.QUAVER);
+       this.setParticleIcon(ParticleIcons.QUAVER);
     }
 }
