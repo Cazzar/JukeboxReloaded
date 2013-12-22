@@ -13,7 +13,7 @@ import net.cazzar.mods.jukeboxreloaded.lib.util.VersionHelper;
 import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
 import net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.MOD_VERSION)
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME)
 @NetworkMod(clientSideRequired = true, serverSideRequired = true, channels = {Reference.CHANNEL_NAME}, packetHandler = PacketHandler.class)
 public class JukeboxReloaded {
     public static LogHelper logger = new LogHelper(Reference.MOD_ID);
@@ -30,6 +30,7 @@ public class JukeboxReloaded {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        event.getModMetadata().version = getVersionFromJar();
         //LogHelper.init();
         proxy.initNetwork();
         proxy.initConfig(event.getSuggestedConfigurationFile());
@@ -50,5 +51,10 @@ public class JukeboxReloaded {
 
     public static CommonProxy proxy() {
         return proxy;
+    }
+
+    public String getVersionFromJar() {
+        String s = getClass().getPackage().getImplementationVersion();
+        return s.isEmpty() ? "UNKNOWN" : s;
     }
 }

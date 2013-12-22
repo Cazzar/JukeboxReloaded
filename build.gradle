@@ -1,35 +1,45 @@
 // this is the part that adds the GMCP plugin to your project
 buildscript {
-	repositories { 
-		mavenCentral() 
-		maven {
-			name 'forge'
-			url 'http://files.minecraftforge.net/maven'
-		}
-	}
-	dependencies { classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT' }
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://oss.sonatype.org/content/groups/public/'
+        }
+        maven {
+            name 'forge'
+            url 'http://files.minecraftforge.net/maven'
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+        classpath 'org.ajoberstar:gradle-git:0.7.0-SNAPSHOT'
+    }
 }
 apply plugin: "forge"  // actually applies the plugin.
+import org.ajoberstar.gradle.git.tasks.*
 
 group = 'net.cazzar.mods.jukeboxreloaded'  // your base page
 version = "2.0.0"
 archivesBaseName = 'JukeboxReloaded'
 minecraft { version = "1.6.4-9.11.1.964" }
+configurations { deployerJars }
 
-logger.lifecycle ""+version
+def actualVersion = version
+
+logger.lifecycle "" + version
 
 version = "MC${minecraft.version}-$version"
 
-processResources
-{
+processResources {
     // replace stuff in text files, not binary ones.
     from(sourceSets.main.resources.srcDirs) {
         include '**/*.lang'
         include '**/*.info'
-        
-        expand 'version':project.version, 'mcversion':project.minecraft.version // replace version and MCVersion
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+        // replace version and MCVersion
     }
-        
+
     // copy everything else, thats not text
     from(sourceSets.main.resources.srcDirs) {
         exclude '**/*.lang'
@@ -37,14 +47,61 @@ processResources
     }
 }
 
-jar { classifier = 'universal'}
+jar { classifier = 'universal' }
 
 repositories {
-	mavenCentral()
-	maven { url 'https://s3.amazonaws.com/CazzarMods/repo/' } 
+    mavenCentral()
+    maven { url 'https://s3.amazonaws.com/CazzarMods/repo/' }
 }
-dependencies { compile 'net.cazzar.corelib:CazzarCoreLib:MC1.6.4-1.0.2-5281b7b:deobf' }
+dependencies {
+    compile 'net.cazzar.corelib:CazzarCoreLib:MC1.6.4-1.1.0-14b3b9a'
+    deployerJars 'org.springframework.build.aws:org.springframework.build.aws.maven:3.0.0.RELEASE'
+}
 
-tasks.withType(Compile) {
+compileJava {
     options.encoding = 'UTF-8'
+}
+
+
+task tag(type: GitTag) {
+    tagName = actualVersion
+    message = "Release of ${version}"
+}
+
+task push(type: GitPush) {
+    tags = true;
+}
+
+uploadArchives {
+    dependsOn tag, push
+    repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+
+        repository(url: 's3://CazzarMods/repo/') {
+            authentication([userName: project.awsUserID, passphrase: project.awsSecretKey])
+        }
+        pom {
+            groupId = project.group
+            version = project.version
+            artifactId = project.archivesBaseName
+
+            project {
+                //noinspection GrUnresolvedAccess
+                //noinspection GroovyAssignabilityCheck
+                name project.archivesBaseName
+
+                developers {
+                    developer {
+                        id 'cazzar'
+                        //noinspection GroovyAssignabilityCheck
+                        name 'Cayde Dixon'
+                        roles {
+                            role 'packager'
+                            role 'developer'
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

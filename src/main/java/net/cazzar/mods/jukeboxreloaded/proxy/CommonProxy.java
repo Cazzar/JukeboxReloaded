@@ -62,36 +62,22 @@ public class CommonProxy {
             config.save();
     }
 
+    @SuppressWarnings("RedundantCast")
     public void initItems() {
-        //if (config.items.record1 != -1)
         GameRegistry.registerItem(kokoro = new ItemCustomRecord(config.items.record1, "cazzar:kokoro.ogg", "ココロ", new String[]{"Sung by Kagamine Rin", "writer トラボルタ feat. 鏡音リン"}), "kokoro");
-        //if (config.items.record2 != -1)
         GameRegistry.registerItem(loveIsWar = new ItemCustomRecord(config.items.record2, "cazzar:love_is_war.ogg", "Love is War", new String[]{"Sung by Hatsune Miku", "Writer - Supercell feat. 初音ミク"}), "love_is_war");
-        //if (config.items.record3 != -1)
         GameRegistry.registerItem(shibuya = new ItemCustomRecord(config.items.record3, "cazzar:shibuya.ogg", "SHIBUYA (Original)", new String[]{"by BECCA"}), "shibuya");
-        //if (config.items.record4 != -1)
         GameRegistry.registerItem(spica = new ItemCustomRecord(config.items.record4, "cazzar:spica.ogg", "SPiCa", new String[]{"by とく"}), "spica");
-        //if (config.items.record5 != -1)
         GameRegistry.registerItem(sukiDaiSuki = new ItemCustomRecord(config.items.record5, "cazzar:suki_daisuki.ogg", "すすすす、すき、だあいすき", new String[]{"Sung by Kagamine Rin", "Writer - かたほとりP"}), "suki_daisuki");
-        //if (config.items.record6 != -1)
         GameRegistry.registerItem(weArePopcandy = new ItemCustomRecord(config.items.record6, "cazzar:we_are_popcandy.ogg", "We are POPCANDY!", new String[]{"Sung by Hatsune Miku", "Writer RUNO"}), "we_are_popcandy");
-        //if (config.items.portableJukeboxId != -1)
         GameRegistry.registerItem(portableJukebox = new ItemPortableJukebox(config.items.portableJukeboxId), "Portable Jukebox");
 
-        kokoro.setCreativeTab(creativeTab);
-        loveIsWar.setCreativeTab(creativeTab);
-        shibuya.setCreativeTab(creativeTab);
-        spica.setCreativeTab(creativeTab);
-        sukiDaiSuki.setCreativeTab(creativeTab);
-        weArePopcandy.setCreativeTab(creativeTab);
-
-        /*int weight = 5;
-        ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(kokoro), 1, 1, weight));
-        ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(loveIsWar), 1, 1, weight));
-        ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(shibuya), 1, 1, weight));
-        ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(spica), 1, 1, weight));
-        ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(sukiDaiSuki), 1, 1, weight));
-        ChestGenHooks.addItem(ChestGenHooks.DUNGEON_CHEST, new WeightedRandomChestContent(new ItemStack(weArePopcandy), 1, 1, weight));*/
+        ((Item)kokoro).setCreativeTab(creativeTab);
+        ((Item)loveIsWar).setCreativeTab(creativeTab);
+        ((Item)shibuya).setCreativeTab(creativeTab);
+        ((Item)spica).setCreativeTab(creativeTab);
+        ((Item)sukiDaiSuki).setCreativeTab(creativeTab);
+        ((Item)weArePopcandy).setCreativeTab(creativeTab);
     }
 
     public void initNetwork() {
