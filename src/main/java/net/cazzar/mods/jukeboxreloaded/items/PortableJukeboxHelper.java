@@ -17,7 +17,6 @@
 
 package net.cazzar.mods.jukeboxreloaded.items;
 
-import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
@@ -64,7 +63,7 @@ public class PortableJukeboxHelper {
         return tags.getFloat("volume");
     }
 
-    public void play() {
+    /*public void play() {
         if (SoundSystemHelper.isPlaying(SoundSystemHelper.getEntityChannel(ent)))
             SoundSystemHelper.stop(SoundSystemHelper.getEntityChannel(ent));
 
@@ -82,7 +81,7 @@ public class PortableJukeboxHelper {
 
     public void stop() {
         SoundSystemHelper.stop(SoundSystemHelper.getEntityChannel(ent));
-    }
+    }*/
 
     public void next() {
         for (int ii = 0; ii < 2; ii++) {
@@ -95,8 +94,8 @@ public class PortableJukeboxHelper {
                 if (!(itemStack.getItem() instanceof ItemRecord)) continue;
 
                 setSelectedRecord(i);
-                stop();
-                play();
+//                stop();
+//                play();
                 return;
             }
         }
@@ -112,8 +111,8 @@ public class PortableJukeboxHelper {
                 if (!(itemStack.getItem() instanceof ItemRecord)) continue;
 
                 setSelectedRecord(i);
-                stop();
-                play();
+//                stop();
+//                play();
                 return;
             }
         }

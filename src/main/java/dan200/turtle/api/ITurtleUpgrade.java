@@ -7,7 +7,7 @@
 package dan200.turtle.api;
 
 import dan200.computer.api.IHostedPeripheral;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 /**
  * The primary interface for defining an upgrade for Turtles. A turtle upgrade can either be a new tool, or a new
@@ -88,5 +88,5 @@ public interface ITurtleUpgrade {
      *
      * @return The Icon that you wish to be used to render your turtle peripheral.
      */
-    public Icon getIcon(ITurtleAccess turtle, TurtleSide side);
+    public IIcon getIcon(ITurtleAccess turtle, TurtleSide side);
 }

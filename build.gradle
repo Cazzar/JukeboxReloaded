@@ -10,18 +10,15 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
-        classpath 'org.ajoberstar:gradle-git:0.7.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
     }
 }
 apply plugin: "forge"  // actually applies the plugin.
-import org.ajoberstar.gradle.git.tasks.*
 
 group = 'net.cazzar.mods.jukeboxreloaded'  // your base page
 version = "2.0.0"
 archivesBaseName = 'JukeboxReloaded'
-minecraft { version = "1.6.4-9.11.1.964" }
-configurations { deployerJars }
+minecraft { version = '1.7.2-10.12.0.996' }
 
 def actualVersion = version
 
@@ -53,57 +50,13 @@ jar { classifier = 'universal' }
 
 repositories {
     mavenCentral()
-    maven { url 'https://s3.amazonaws.com/CazzarMods/repo/' }
+    maven { url 'http://maven.cazzar.net' }
 }
 dependencies {
-    compile 'net.cazzar.corelib:CazzarCoreLib:MC1.6.4-1.1.0-14b3b9a'
-    deployerJars 'org.springframework.build.aws:org.springframework.build.aws.maven:3.0.0.RELEASE'
+    compile 'net.cazzar.corelib:CazzarCore-1.7:MC1.7.2-1.1.0.3'
+    //compile 'net.cazzar.corelib:CazzarCoreLib:MC1.7.2-1.1.0.3'
 }
 
 compileJava {
     options.encoding = 'UTF-8'
-}
-
-
-task tag(type: GitTag) {
-    tagName = actualVersion
-    message = "Release of ${version}"
-}
-
-task push(type: GitPush) {
-    tags = true;
-}
-
-uploadArchives {
-    dependsOn tag, push
-    repositories.mavenDeployer {
-        configuration = configurations.deployerJars
-
-        repository(url: 's3://CazzarMods/repo/') {
-            authentication([userName: project.awsUserID, passphrase: project.awsSecretKey])
-        }
-        pom {
-            groupId = project.group
-            version = project.version
-            artifactId = project.archivesBaseName
-
-            project {
-                //noinspection GrUnresolvedAccess
-                //noinspection GroovyAssignabilityCheck
-                name project.archivesBaseName
-
-                developers {
-                    developer {
-                        id 'cazzar'
-                        //noinspection GroovyAssignabilityCheck
-                        name 'Cayde Dixon'
-                        roles {
-                            role 'packager'
-                            role 'developer'
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

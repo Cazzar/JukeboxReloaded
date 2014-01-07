@@ -19,7 +19,6 @@ package net.cazzar.mods.jukeboxreloaded.network.packets;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
@@ -44,15 +43,15 @@ public class PacketPlayRecord extends PacketJukebox {
     public void execute(EntityPlayer player, Side side)
             throws ProtocolException {
         if (side.isServer()) {
-            PacketDispatcher.sendPacketToAllPlayers(makePacket());
+//            PacketDispatcher.sendPacketToAllPlayers(makePacket());
             return;
         }
 
-        final TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
+        final TileEntity te = player.worldObj.func_147438_o(x, y, z);
         if (te instanceof TileJukebox) {
             TileJukebox t = ((TileJukebox) te);
             t.setPlaying(true);
-            SoundSystemHelper.playRecord(record, x, y, z, t.volume, t.getIdentifier());
+            SoundSystemHelper.playRecord(player.worldObj, record, x, y, z);
         }
     }
 

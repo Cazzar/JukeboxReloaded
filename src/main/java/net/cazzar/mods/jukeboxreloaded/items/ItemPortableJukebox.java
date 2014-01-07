@@ -29,8 +29,8 @@ import net.minecraft.world.World;
  * @Author: Cayde
  */
 public class ItemPortableJukebox extends Item {
-    public ItemPortableJukebox(int id) {
-        super(id);
+    public ItemPortableJukebox() {
+        super();
         setUnlocalizedName("PortableJukebox");
         setCreativeTab(JukeboxReloaded.proxy.creativeTab);
 

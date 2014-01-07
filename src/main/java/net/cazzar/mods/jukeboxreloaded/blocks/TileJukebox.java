@@ -5,16 +5,17 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.IPeripheral;
+import net.cazzar.corelib.lib.InventoryUtils;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
-import net.cazzar.corelib.util.InventoryUtils;
 import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -22,8 +23,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.util.Random;
 
@@ -74,10 +75,10 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         return recordNumber;
     }
 
-    @Override
+    /*@Override
     public Packet getDescriptionPacket() {
         return (new PacketJukeboxDescription(this)).makePacket();
-    }
+    }*/
 
     public short getFacing() {
         return facing;
@@ -89,7 +90,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     }
 
     @Override
-    public String getInvName() {
+    public String func_145825_b() {
         return "Jukebox";
     }
 
@@ -130,12 +131,12 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     }
 
     @Override
-    public boolean isInvNameLocalized() {
+    public boolean func_145818_k_() {
         return false;
     }
 
     public boolean isPlayingRecord() {
-        return SoundSystemHelper.isPlaying(getIdentifier());
+        return SoundSystemHelper.isPlaying(this.field_145850_b, getIdentifier());
     }
 
     @Override
@@ -144,7 +145,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     }
 
     public void markForUpdate() {
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        field_145850_b.func_147438_o(field_145851_c, field_145848_d, field_145849_e);
     }
 
     public void nextRecord() {
@@ -156,11 +157,9 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     }
 
     public void playSelectedRecord() {
-        if (worldObj.isRemote) {
+        if (field_145850_b.isRemote) {
             if (getStackInSlot(recordNumber) == null) return;
-            new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber)
-                    .getItem()).recordName, xCoord, yCoord, zCoord)
-                    .sendToServer();
+            new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a, field_145851_c, field_145848_d, field_145849_e).sendToServer();
             return;
         }
 
@@ -172,13 +171,10 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         // worldObj.playRecord(((ItemRecord) getStackInSlot(recordNumber)
         // .getItem()).recordName, xCoord, yCoord, zCoord);
 
-        lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber)
-                .getItem()).recordName;
+        lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a;
         playing = true;
 
-        new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber)
-                .getItem()).recordName, xCoord, yCoord, zCoord)
-                .sendToAllPlayers();
+        new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a, field_145851_c, field_145848_d, field_145849_e).sendToAllPlayers();
     }
 
     public void previousRecord() {
@@ -187,15 +183,15 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void func_145839_a(NBTTagCompound tag) {
+        super.func_145839_a(tag);
         recordNumber = tag.getInteger("recordNumber");
         facing = tag.getShort("facing");
         shuffle = tag.getBoolean("shuffle");
         setRepeatMode(RepeatMode.get(tag.getInteger("rptMode")));
         volume = tag.getFloat("volume");
 
-        InventoryUtils.readItemStacksFromTag(items, tag.getTagList("inventory"));
+        InventoryUtils.readItemStacksFromTag(items, tag.func_150295_c("inventory", items.length));
     }
 
     public void resetPlayingRecord() {
@@ -242,32 +238,26 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
 
     public void stopPlayingRecord() {
         playing = false;
-        if (CommonUtil.isServer()) new PacketStopPlaying(
-                xCoord, yCoord, zCoord).sendToAllPlayers();
-        else new PacketStopPlaying(xCoord, yCoord, zCoord).sendToServer();
+        if (CommonUtil.isServer()) new PacketStopPlaying(field_145851_c, field_145848_d, field_145849_e).sendToAllPlayers();
+        else new PacketStopPlaying(field_145851_c, field_145848_d, field_145849_e).sendToServer();
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void updateEntity() {
+    public void func_145845_h() {
         tick++;
         final Random random = new Random();
 
         if (tick % 5 == 0 && random.nextBoolean())
             if (isPlayingRecord()) {
-                SoundSystemHelper.getSoundSystem().setVolume(getIdentifier(), volume * ClientUtil.mc().gameSettings.soundVolume);
-                SoundSystemHelper.stopBackgroundMusicIfPlaying();
-
                 Particles particles = Particles.values()[random.nextInt(Particles.values().length)];
-                particles.spawn(xCoord + random.nextDouble(), yCoord + 1.2D, zCoord + random.nextDouble());
+                particles.spawn(field_145851_c + random.nextDouble(), field_145848_d + 1.2D, field_145849_e + random.nextDouble());
             }
 
         if (tick % 10 != 0) return;
         if (waitTicks-- >= 0) return;
 
         waitTicks = 0;
-        if (!SoundSystemHelper.isSoundEnabled()) return; // Thanks to
-        // alex
         // streaming is only used on the client for playing in the jukebox..
         if (!isPlayingRecord()) {
             final boolean wasPlaying = playing;
@@ -290,8 +280,8 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public void func_145841_b(NBTTagCompound tag) {
+        super.func_145841_b(tag);
         tag.setInteger("recordNumber", recordNumber);
         tag.setShort("facing", facing);
         tag.setInteger("rptMode", getReplayMode().ordinal());
@@ -300,8 +290,9 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
     }
 
-    public String getIdentifier() {
-        return xCoord + ":" + yCoord + ":" + zCoord;
+    public ChunkCoordinates getIdentifier() {
+        //x, y, z
+        return new ChunkCoordinates(this.field_145851_c, this.field_145848_d, this.field_145849_e);
     }
 
     // ComputerCraft API functions
@@ -372,9 +363,9 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
                 this.setRecordPlaying(((Double) args[0]).intValue() - 1);
                 break;
             case 11:
-                String s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
+                String s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a;
                 if (FMLCommonHandler.instance().getEffectiveSide().isClient())
-                    s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
+                    s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a;
                 s = s.replace("cazzar:kokoro", "Kagamine Rin - Kokoro")
                         .replace("cazzar:love_is_war", "Hatsune Miku - Love Is war")
                         .replace("cazzar:shibuya", "BECCA - SHIBUYA (Original)")
@@ -403,23 +394,6 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     public void detach(IComputerAccess computer) {
     }
 
-    public void activate(EntityPlayer player) {
-        if (!player.isSneaking()) return;
-
-        ItemStack held = player.getHeldItem();
-
-        if (held == null) {
-            if (this.pageUpgrade)
-                dropItemInWorld(new ItemStack(Item.paper));
-        } else if (held.getItem() == Item.paper) {
-            if (this.pageUpgrade) return;
-            this.pageUpgrade = true;
-
-            if (!player.capabilities.isCreativeMode)
-                held.stackSize--;
-        }
-    }
-
     private void dropItemInWorld(ItemStack itemStack) {
         Random rand = new Random();
 
@@ -428,19 +402,16 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
             final float dY = rand.nextFloat() * 0.8F + 0.1F;
             final float dZ = rand.nextFloat() * 0.8F + 0.1F;
 
-            final EntityItem entityItem = new EntityItem(worldObj, xCoord + dX, yCoord
-                    + dY, zCoord + dZ, new ItemStack(itemStack.itemID,
-                    itemStack.stackSize, itemStack.getItemDamage()));
+            final EntityItem entityItem = new EntityItem(field_145850_b, field_145851_c + dX, field_145848_d + dY, field_145849_e + dZ, new ItemStack(itemStack.getItem(), itemStack.stackSize, itemStack.getItemDamage()));
 
             if (itemStack.hasTagCompound())
-                entityItem.getEntityItem().setTagCompound(
-                        (NBTTagCompound) itemStack.getTagCompound().copy());
+                entityItem.getEntityItem().setTagCompound((NBTTagCompound) itemStack.getTagCompound().copy());
 
             final float factor = 0.05F;
             entityItem.motionX = rand.nextGaussian() * factor;
             entityItem.motionY = rand.nextGaussian() * factor + 0.2F;
             entityItem.motionZ = rand.nextGaussian() * factor;
-            worldObj.spawnEntityInWorld(entityItem);
+            field_145850_b.spawnEntityInWorld(entityItem);
             itemStack.stackSize = 0;
         }
     }

@@ -6,17 +6,16 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import net.cazzar.corelib.lib.LogHelper;
 import net.cazzar.mods.jukeboxreloaded.lib.Reference;
 import net.cazzar.mods.jukeboxreloaded.lib.util.VersionHelper;
-import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
 import net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME)
-@NetworkMod(clientSideRequired = true, serverSideRequired = true, channels = {Reference.CHANNEL_NAME}, packetHandler = PacketHandler.class)
+//@NetworkMod(clientSideRequired = true, serverSideRequired = true, channels = {Reference.CHANNEL_NAME}, packetHandler = PacketHandler.class)
 public class JukeboxReloaded {
-    public static LogHelper logger = new LogHelper(Reference.MOD_ID);
+    public static Logger logger = LogHelper.getLogger(Reference.MOD_ID);
 
     @Instance(Reference.MOD_ID)
     private static JukeboxReloaded instance;

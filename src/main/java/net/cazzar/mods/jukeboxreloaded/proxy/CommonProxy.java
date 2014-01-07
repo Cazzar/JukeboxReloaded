@@ -26,17 +26,16 @@ import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.client.CreativeTabJukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.configuration.ConfigHelper;
-import net.cazzar.mods.jukeboxreloaded.events.EventHandler;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import net.cazzar.mods.jukeboxreloaded.items.ItemPortableJukebox;
-import net.minecraft.block.Block;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.io.File;
@@ -51,8 +50,8 @@ public class CommonProxy {
 
     public void initBlocks() {
         creativeTab = new CreativeTabJukeboxReloaded();
-        jukeBox = new BlockJukebox(config.blocks.Jukebox);
-        GameRegistry.registerBlock(jukeBox, "blockJukebox");
+        jukeBox = new BlockJukebox();
+        GameRegistry.registerBlock(jukeBox, "jukebox");
     }
 
     public void initConfig(File suggested) {
@@ -64,13 +63,13 @@ public class CommonProxy {
 
     @SuppressWarnings("RedundantCast")
     public void initItems() {
-        GameRegistry.registerItem(kokoro = new ItemCustomRecord(config.items.record1, "cazzar:kokoro.ogg", "ココロ", new String[]{"Sung by Kagamine Rin", "writer トラボルタ feat. 鏡音リン"}), "kokoro");
-        GameRegistry.registerItem(loveIsWar = new ItemCustomRecord(config.items.record2, "cazzar:love_is_war.ogg", "Love is War", new String[]{"Sung by Hatsune Miku", "Writer - Supercell feat. 初音ミク"}), "love_is_war");
-        GameRegistry.registerItem(shibuya = new ItemCustomRecord(config.items.record3, "cazzar:shibuya.ogg", "SHIBUYA (Original)", new String[]{"by BECCA"}), "shibuya");
-        GameRegistry.registerItem(spica = new ItemCustomRecord(config.items.record4, "cazzar:spica.ogg", "SPiCa", new String[]{"by とく"}), "spica");
-        GameRegistry.registerItem(sukiDaiSuki = new ItemCustomRecord(config.items.record5, "cazzar:suki_daisuki.ogg", "すすすす、すき、だあいすき", new String[]{"Sung by Kagamine Rin", "Writer - かたほとりP"}), "suki_daisuki");
-        GameRegistry.registerItem(weArePopcandy = new ItemCustomRecord(config.items.record6, "cazzar:we_are_popcandy.ogg", "We are POPCANDY!", new String[]{"Sung by Hatsune Miku", "Writer RUNO"}), "we_are_popcandy");
-        GameRegistry.registerItem(portableJukebox = new ItemPortableJukebox(config.items.portableJukeboxId), "Portable Jukebox");
+        GameRegistry.registerItem(kokoro = new ItemCustomRecord("cazzar:kokoro", "ogg", "ココロ", "Sung by Kagamine Rin", "writer トラボルタ feat. 鏡音リン"), "kokoro");
+        GameRegistry.registerItem(loveIsWar = new ItemCustomRecord("cazzar:love_is_war", "ogg", "Love is War", "Sung by Hatsune Miku", "Writer - Supercell feat. 初音ミク"), "love_is_war");
+        GameRegistry.registerItem(shibuya = new ItemCustomRecord("cazzar:shibuya", "ogg", "SHIBUYA (Original)", "by BECCA"), "shibuya");
+        GameRegistry.registerItem(spica = new ItemCustomRecord("cazzar:spica", "ogg", "SPiCa", "by とく"), "spica");
+        GameRegistry.registerItem(sukiDaiSuki = new ItemCustomRecord("cazzar:suki_daisuki", "ogg", "すすすす、すき、だあいすき", "Sung by Kagamine Rin", "Writer - かたほとりP"), "suki_daisuki");
+        GameRegistry.registerItem(weArePopcandy = new ItemCustomRecord("cazzar:we_are_popcandy", "ogg", "We are POPCANDY!", "Sung by Hatsune Miku", "Writer RUNO"), "we_are_popcandy");
+//        GameRegistry.registerItem(portableJukebox = new ItemPortableJukebox(config.items.portableJukeboxId), "Portable Jukebox");
 
         ((Item)kokoro).setCreativeTab(creativeTab);
         ((Item)loveIsWar).setCreativeTab(creativeTab);
@@ -81,11 +80,11 @@ public class CommonProxy {
     }
 
     public void initNetwork() {
-        NetworkRegistry.instance().registerGuiHandler(JukeboxReloaded.instance(), new GuiHandler());
+        NetworkRegistry.INSTANCE.registerGuiHandler(JukeboxReloaded.instance(), new GuiHandler());
     }
 
     public void initOther() {
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
+//        MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 
     public void initRecipe() {
@@ -94,9 +93,9 @@ public class CommonProxy {
                 "NJN",
                 "WWW",
                 'W', "plankWood",
-                'C', new ItemStack(Block.chest),
-                'J', new ItemStack(Block.jukebox),
-                'N', new ItemStack(Block.music)));
+                'C', new ItemStack(Blocks.chest),
+                'J', new ItemStack(Blocks.jukebox),
+                'N', new ItemStack(Blocks.noteblock)));
     }
 
     public void initTileEntities() {
@@ -114,22 +113,22 @@ public class CommonProxy {
             public void manipulateTradesForVillager(EntityVillager villager, MerchantRecipeList recipeList, Random random) {
                 switch (random.nextInt(6) + 1){
                     case 1:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), kokoro));
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), kokoro));
                         break;
                     case 2:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), loveIsWar));
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), loveIsWar));
                         break;
                     case 3:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), shibuya));
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), shibuya));
                         break;
                     case 4:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), spica));
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), spica));
                         break;
                     case 5:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), sukiDaiSuki));
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), sukiDaiSuki));
                         break;
                     case 6:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Item.emerald), weArePopcandy));
+                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), weArePopcandy));
                         break;
                 }
             }
