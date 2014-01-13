@@ -8,6 +8,7 @@ import net.cazzar.mods.jukeboxreloaded.client.particles.ParticleIcons;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,7 +30,7 @@ import java.util.Random;
 //import net.minecraft.util.Icon;
 //import net.minecraftforge.common.ForgeDirection;
 
-public class BlockJukebox extends Block {
+public class BlockJukebox extends BlockContainer {
     private final IIcon[] iconBuffer = new IIcon[4];
 
     private final Random rand = new Random();
@@ -37,7 +38,7 @@ public class BlockJukebox extends Block {
     public BlockJukebox() {
         super(Material.field_151576_e);
         this.func_149647_a(JukeboxReloaded.proxy.creativeTab);
-        func_149658_d("Jukebox");
+        func_149663_c("Jukebox");
         func_149672_a(field_149780_i);
 //        setCreativeTab(JukeboxReloaded.proxy.creativeTab);
 //        setUnlocalizedName("Jukebox");
@@ -58,7 +59,7 @@ public class BlockJukebox extends Block {
     }
 
     @Override
-    public TileEntity createTileEntity(World world, int metadata) {
+    public TileEntity func_149915_a(World world, int metadata) {
         return new TileJukebox(metadata);
     }
 
@@ -80,7 +81,7 @@ public class BlockJukebox extends Block {
                 final float dZ = rand.nextFloat() * 0.8F + 0.1F;
 
 
-               JukeboxReloaded.logger.info("Dropping %s", itemStack);
+                JukeboxReloaded.logger.info("Dropping %s", itemStack);
                 final EntityItem entityItem = new EntityItem(world, x + dX, y
                         + dY, z + dZ, new ItemStack(itemStack.getItem(),
                         itemStack.stackSize, itemStack.getItemDamage()));
@@ -156,23 +157,17 @@ public class BlockJukebox extends Block {
 
     @Override
     public boolean func_149727_a(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
-        if (player.isSneaking()) {
-            if (!world.isRemote) {
-                TileEntity te = world.func_147438_o(x, y, z);
-                if (te instanceof TileJukebox)
-                    ((TileJukebox) te).activate(player);
-            }
-
-            return false;
-        } else {
+        if (!player.isSneaking()) {
             if (!world.isRemote) {
                 final TileJukebox tileJukebox = (TileJukebox) world.func_147438_o(x, y, z);
 
                 if (tileJukebox != null) player.openGui(JukeboxReloaded.instance(), GuiHandler.JUKEBOX, world, x, y, z);
-                else System.out.println("Tile is null");
+//                else System.out.println("Tile is null");
             }
             return true;
         }
+
+        return false;
     }
 
     @Override
@@ -212,7 +207,6 @@ public class BlockJukebox extends Block {
                 ((TileJukebox) tile).playSelectedRecord();
         }
     }*/
-
     @Override
     @SideOnly(Side.CLIENT)
     public void func_149651_a(IIconRegister iconRegister) {

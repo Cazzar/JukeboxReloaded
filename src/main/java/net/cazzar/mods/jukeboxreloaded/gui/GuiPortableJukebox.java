@@ -47,29 +47,29 @@ public class GuiPortableJukebox extends GuiContainer {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+    protected void func_146976_a(float f, int i, int j) {
         //updateButtonStates();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        final int xStart = (width - xSize) / 2;
-        final int yStart = (height - ySize) / 2;
-        mc.renderEngine.bindTexture(PORTABLE_JUKEBOX_GUI_TEXTURE);
-        drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize);
+        final int xStart = (this.field_146294_l - this.field_146999_f) / 2;//(width - xSize) / 2;
+        final int yStart = (this.field_146295_m - this.field_147000_g) / 2;//(height - ySize) / 2;
+        field_146297_k.renderEngine.bindTexture(PORTABLE_JUKEBOX_GUI_TEXTURE);
+        drawTexturedModalRect(xStart, yStart, 0, 0, field_146999_f, field_147000_g);
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        switch (button.id) {
+    protected void func_146284_a(GuiButton button) {
+        switch (button.field_146127_k) {
             case PLAY:
-                helper.play();
+                //helper.play();
                 break;
             case STOP:
-                helper.stop();
+                //helper.stop();
                 break;
             case NEXT:
-                helper.next();
+                //helper.next();
                 break;
             case PREVIOUS:
-                helper.prev();
+                //helper.prev();
                 break;
         }
     }
@@ -84,19 +84,19 @@ public class GuiPortableJukebox extends GuiContainer {
 
     @SuppressWarnings("unchecked")
     public void initButtons() {
-        final int xStart = (width - xSize) / 2;
-        final int yStart = (height - ySize) / 2;
+        final int xStart = (this.field_146294_l - this.field_146999_f) / 2;//(width - xSize) / 2;
+        final int yStart = (this.field_146295_m - this.field_147000_g) / 2;//(height - ySize) / 2;
 
-        buttonList.add(btnPlay = new TexturedButton(this, PLAY, xStart + 7,
+        field_146292_n.add(btnPlay = new TexturedButton(this, PLAY, xStart + 7,
                 yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 38, 176, 18,
                 176, 58));
-        buttonList.add(btnStop = new TexturedButton(this, STOP, xStart + 29,
+        field_146292_n.add(btnStop = new TexturedButton(this, STOP, xStart + 29,
                 yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 98, 176, 78,
                 176, 118));
 
-        buttonList.add(btnNext = new TexturedButton(this, NEXT, xStart + 29, yStart + 39, 20,
+        field_146292_n.add(btnNext = new TexturedButton(this, NEXT, xStart + 29, yStart + 39, 20,
                 20, JUKEBOX_GUI_TEXTURE, 216, 38, 216, 18, 216, 58));
-        buttonList.add(btnPrev = new TexturedButton(this, PREVIOUS, xStart + 7, yStart + 39,
+        field_146292_n.add(btnPrev = new TexturedButton(this, PREVIOUS, xStart + 7, yStart + 39,
                 20, 20, JUKEBOX_GUI_TEXTURE, 236, 38, 236, 18, 236, 58));
 
         /*buttonList.add(btnRepeatOne = new TexturedButton(this, REPEAT_ONE,
@@ -116,8 +116,8 @@ public class GuiPortableJukebox extends GuiContainer {
                 xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE,
                 176, 158, 176, 138, 176, 178));
         */
-        buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
-        buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
+//        field_146292_n.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
+//        field_146292_n.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
     }
 
     private void initTooltips() {

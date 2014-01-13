@@ -1,8 +1,7 @@
 package net.cazzar.mods.jukeboxreloaded.network.packets;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -17,38 +16,38 @@ public class PacketShuffleDisk extends PacketJukebox {
     }
 
     public PacketShuffleDisk(TileJukebox tile) {
-        x = tile.xCoord;
-        y = tile.yCoord;
-        z = tile.zCoord;
+        x = tile.field_145851_c;
+        y = tile.field_145848_d;
+        z = tile.field_145849_e;
     }
 
     @Override
     public void execute(EntityPlayer player, Side side)
             throws ProtocolException {
         if (side.isServer()) {
-            final TileEntity tile = player.worldObj.getBlockTileEntity(x, y, z);
+            final TileEntity tile = player.worldObj.func_147438_o(x, y, z);
             if (tile instanceof TileJukebox) {
-                final TileJukebox jukeBox = (TileJukebox) tile;
+                final TileJukebox jukebox = (TileJukebox) tile;
                 final Random random = new Random();
-                if (jukeBox.getLastSlotWithItem() <= 0) return;
-                final int nextDisk = random.nextInt(jukeBox
+                if (jukebox.getLastSlotWithItem() <= 0) return;
+                final int nextDisk = random.nextInt(jukebox
                         .getLastSlotWithItem());
-                if (jukeBox.getCurrentRecordNumber() != nextDisk)
-                    jukeBox.setRecordPlaying(nextDisk);
+                if (jukebox.getCurrentRecordNumber() != nextDisk)
+                    jukebox.setRecordPlaying(nextDisk);
                 ((TileJukebox) tile).markForUpdate();
             }
         }
     }
 
     @Override
-    public void read(ByteArrayDataInput in) {
+    public void read(ByteBuf in) {
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
     }
 
     @Override
-    public void write(ByteArrayDataOutput out) {
+    public void write(ByteBuf out) {
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);

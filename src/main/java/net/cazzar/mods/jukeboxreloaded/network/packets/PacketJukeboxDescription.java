@@ -1,8 +1,7 @@
 package net.cazzar.mods.jukeboxreloaded.network.packets;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,9 +21,9 @@ public class PacketJukeboxDescription extends PacketJukebox {
     }
 
     public PacketJukeboxDescription(TileJukebox tile) {
-        x = tile.xCoord;
-        y = tile.yCoord;
-        z = tile.zCoord;
+        x = tile.field_145851_c;
+        y = tile.field_145848_d;
+        z = tile.field_145849_e;
         recordNumber = tile.getCurrentRecordNumber();
         playingRecord = tile.playing;
         repeatMode = tile.getReplayMode().ordinal();
@@ -34,25 +33,21 @@ public class PacketJukeboxDescription extends PacketJukebox {
     }
 
     @Override
-    public void execute(EntityPlayer player, Side side)
-            throws ProtocolException {
-        final TileJukebox tile = (TileJukebox) player.worldObj
-                .getBlockTileEntity(x, y, z);
+    public void execute(EntityPlayer player, Side side) throws ProtocolException {
+        final TileJukebox tile = (TileJukebox) player.worldObj.func_147438_o(x, y, z);
 
         tile.setRecordPlaying(recordNumber);
         tile.setPlaying(playingRecord);
-        //tile.setPlayingID(playingRecord);
         tile.setRepeatMode(RepeatMode.get(repeatMode));
         tile.setShuffle(shuffle);
         tile.setFacing(facing);
         tile.volume = volume;
-
-        // if (side.isServer())
-        // tile.markForUpdate();
     }
 
     @Override
-    public void read(ByteArrayDataInput in) {
+    public void read(ByteBuf in) {
+        super.read(in);
+
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
@@ -65,7 +60,9 @@ public class PacketJukeboxDescription extends PacketJukebox {
     }
 
     @Override
-    public void write(ByteArrayDataOutput out) {
+    public void write(ByteBuf out) {
+        super.write(out);
+
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);

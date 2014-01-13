@@ -20,8 +20,6 @@ package net.cazzar.mods.jukeboxreloaded.gui;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.cazzar.corelib.client.gui.TexturedButton;
-import net.cazzar.corelib.lib.SoundSystemHelper;
-import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
@@ -42,20 +40,23 @@ import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JukeboxGUIActions.*;
 public class GUIJukebox extends GuiContainer {
     TileJukebox tileJukebox;
     private TexturedButton btnPlay, btnStop, btnShuffleOn, btnShuffleOff, btnRepeatAll, btnRepeatOne, btnRepeatOff, btnNext, btnPrev;
-    private GuiButton volUp, volDown;
+//    private GuiButton volUp, volDown;
 
     public GUIJukebox(EntityPlayer player, TileJukebox tileJukebox) {
         super(new ContainerJukebox(player.inventory, tileJukebox));
         this.tileJukebox = tileJukebox;
-        xSize = 176;
-        ySize = 176;
+        //xSize
+        field_146999_f = 176;
+        //ySize = 176;
+        field_147000_g = 176;
     }
 
     @Override
-    protected void actionPerformed(GuiButton btn) {
+//  protected void actionPerformed(GuiButton btn) {
+    protected void func_146284_a(GuiButton btn) {
         final boolean wasPlaying = tileJukebox.isPlayingRecord();
 
-        switch (btn.id) {
+        switch (btn.field_146127_k) {
             case PLAY:
                 tileJukebox.playSelectedRecord();
                 break;
@@ -95,13 +96,13 @@ public class GUIJukebox extends GuiContainer {
             case SHUFFLE_OFF:
                 tileJukebox.setShuffle(false);
                 break;
-            case VOLUME_UP:
+            /*case VOLUME_UP:
                 if (tileJukebox.volume >= 1F) {
                     tileJukebox.volume = 1F;
                     break;
                 }
 
-                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
+//                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
                 tileJukebox.volume += 0.05F;
                 break;
             case VOLUME_DOWN:
@@ -110,9 +111,9 @@ public class GUIJukebox extends GuiContainer {
                     break;
                 }
 
-                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
+//                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
                 tileJukebox.volume -= 0.05F;
-                break;
+                break;*/
         }
 
         updateButtonStates();
@@ -120,31 +121,28 @@ public class GUIJukebox extends GuiContainer {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+    protected void func_146976_a(float var1, int var2, int var3) {
         updateButtonStates();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE);
-        final int xStart = (width - xSize) / 2;
-        final int yStart = (height - ySize) / 2;
-        drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize);
+        field_146297_k.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE);
+        final int xStart = (this.field_146294_l - this.field_146999_f) / 2;//(width - xSize) / 2;
+        final int yStart = (this.field_146295_m - this.field_147000_g) / 2;//(height - ySize) / 2;
+//        drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize);
+        drawTexturedModalRect(xStart, yStart, 0, 0, field_146999_f, field_147000_g);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y) {
+    protected void func_146979_b(int x, int y) {
         final String containerName = Strings.GUI_JUKEBOX_NAME.toString();
-        fontRenderer.drawString(containerName,
-                xSize / 2 - fontRenderer.getStringWidth(containerName) / 2, 6,
-                4210752);
-        fontRenderer.drawString(
-                Strings.GUI_INVENTORY.toString(), 8,
-                ySize - 93, 4210752);
+        field_146289_q.drawString(containerName, field_146999_f / 2 - field_146289_q.getStringWidth(containerName) / 2, 6, 4210752);
+        field_146289_q.drawString(Strings.GUI_INVENTORY.toString(), 8, field_147000_g - 93, 4210752);
 
-        String str = (tileJukebox.volume == 1.0F) ? "10" : String.format("%.1f", tileJukebox.volume * 10);
-        fontRenderer.drawString(str, 21, 68, 4210752);
+        //String str = (tileJukebox.volume == 1.0F) ? "10" : String.format("%.1f", tileJukebox.volume * 10);
+        //field_146289_q.drawString(str, 21, 68, 4210752);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE);
+        field_146297_k.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE);
 
         final int xOffset = 53;
         final int yOffset = 16;
@@ -156,16 +154,18 @@ public class GUIJukebox extends GuiContainer {
 
         drawTexturedModalRect(xOffset + size * row, yOffset + size * column, 176, 0, 18, 18);
 
-        final int xStart = (width - xSize) / 2;
-        final int yStart = (height - ySize) / 2;
+        final int xStart = (this.field_146294_l - this.field_146999_f) / 2;//(width - xSize) / 2;
+        final int yStart = (this.field_146295_m - this.field_147000_g) / 2;//(height - ySize) / 2;
 
-        for (GuiButton button : (List<GuiButton>) buttonList) {
+        for (GuiButton button : (List<GuiButton>) field_146292_n) {
             if (!(button instanceof TexturedButton))
                 return;
             TexturedButton btn = (TexturedButton) button;
-            if ((x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) && (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth()))
-                if (!btn.getTooltip().trim().isEmpty() && btn.enabled)
-                    btn.drawToolTip(x - xStart, y - yStart);
+//            if ((x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) && (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth()))
+            if ((x >= btn.field_146128_h && x <= btn.field_146128_h + btn.getHeight()) && (y >= btn.field_146129_i && y <= btn.field_146129_i + btn.getWidth()))
+                if (!btn.getTooltip().trim().isEmpty() && btn.field_146124_l) {
+//                    btn.drawToolTip(x - xStart, y - yStart);
+                }
         }
     }
 
@@ -192,60 +192,61 @@ public class GUIJukebox extends GuiContainer {
 
     @SuppressWarnings("unchecked")
     private void initButtons() {
-        final int xStart = (width - xSize) / 2;
-        final int yStart = (height - ySize) / 2;
+        final int xStart = (this.field_146294_l - this.field_146999_f) / 2;//(width - xSize) / 2;
+        final int yStart = (this.field_146295_m - this.field_147000_g) / 2;//(height - ySize) / 2;
 
-        buttonList.add(btnPlay = new TexturedButton(this, PLAY, xStart + 7, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 38, 176, 18, 176, 58));
-        buttonList.add(btnStop = new TexturedButton(this, STOP, xStart + 29, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 98, 176, 78, 176, 118));
+        field_146292_n.add(btnPlay = new TexturedButton(this, PLAY, xStart + 7, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 38, 176, 18, 176, 58));
+        field_146292_n.add(btnStop = new TexturedButton(this, STOP, xStart + 29, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 98, 176, 78, 176, 118));
 
-        buttonList.add(btnNext = new TexturedButton(this, NEXT, xStart + 29, yStart + 39, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 38, 216, 18, 216, 58));
-        buttonList.add(btnPrev = new TexturedButton(this, PREVIOUS, xStart + 7, yStart + 39, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 38, 236, 18, 236, 58));
+        field_146292_n.add(btnNext = new TexturedButton(this, NEXT, xStart + 29, yStart + 39, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 38, 216, 18, 216, 58));
+        field_146292_n.add(btnPrev = new TexturedButton(this, PREVIOUS, xStart + 7, yStart + 39, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 38, 236, 18, 236, 58));
 
-        buttonList.add(btnRepeatOne = new TexturedButton(this, REPEAT_ONE, xStart + 150, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 98, 196, 78, 196, 118));
-        buttonList.add(btnRepeatAll = new TexturedButton(this, REPEAT_ALL, xStart + 150, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 98, 216, 78, 216, 118));
-        buttonList.add(btnRepeatOff = new TexturedButton(this, REPEAT_OFF, xStart + 150, yStart + 63, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 158, 196, 138, 196, 178));
+        field_146292_n.add(btnRepeatOne = new TexturedButton(this, REPEAT_ONE, xStart + 150, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 98, 196, 78, 196, 118));
+        field_146292_n.add(btnRepeatAll = new TexturedButton(this, REPEAT_ALL, xStart + 150, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 98, 216, 78, 216, 118));
+        field_146292_n.add(btnRepeatOff = new TexturedButton(this, REPEAT_OFF, xStart + 150, yStart + 63, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 158, 196, 138, 196, 178));
 
-        buttonList.add(btnShuffleOn = new TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118));
-        buttonList.add(btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF, xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 158, 176, 138, 176, 178));
+        field_146292_n.add(btnShuffleOn = new TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118));
+        field_146292_n.add(btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF, xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 158, 176, 138, 176, 178));
 
-        buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
-        buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
+//        field_146292_n.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
+//        field_146292_n.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
     }
 
+    @SuppressWarnings("RedundantCast")
     public void updateButtonStates() {
-        if (tileJukebox.volume <= 0F) {
-            tileJukebox.volume = 0F;
-            ((GuiButton)volDown).enabled = false;
-            ((GuiButton)volUp).enabled = true;
-        } else if (tileJukebox.volume >= 1F) {
-            tileJukebox.volume = 1F;
-            ((GuiButton)volUp).enabled = false;
-            ((GuiButton)volDown).enabled = true;
-        } else {
-            ((GuiButton)volUp).enabled = true;
-            ((GuiButton)volDown).enabled = true;
-        }
+//        if (tileJukebox.volume <= 0F) {
+//            tileJukebox.volume = 0F;
+//            ((GuiButton)volDown).field_146124_l = false;
+//            ((GuiButton)volUp).field_146124_l = true;
+//        } else if (tileJukebox.volume >= 1F) {
+//            tileJukebox.volume = 1F;
+//            ((GuiButton)volUp).field_146124_l = false;
+//            ((GuiButton)volDown).field_146124_l = true;
+//        } else {
+//            ((GuiButton)volUp).field_146124_l = true;
+//            ((GuiButton)volDown).field_146124_l = true;
+//        }
 
 
-        ((GuiButton)btnPlay).enabled = !(((GuiButton)btnStop).enabled = tileJukebox.isPlayingRecord());
-        ((GuiButton)btnShuffleOn).enabled = !tileJukebox.shuffleEnabled();
-        ((GuiButton)btnShuffleOff).enabled = tileJukebox.shuffleEnabled();
+        ((GuiButton)btnPlay).field_146124_l = !(((GuiButton)btnStop).field_146124_l = tileJukebox.isPlayingRecord());
+        ((GuiButton)btnShuffleOn).field_146124_l = !tileJukebox.shuffleEnabled();
+        ((GuiButton)btnShuffleOff).field_146124_l = tileJukebox.shuffleEnabled();
 
         switch (tileJukebox.getReplayMode()) {
             case OFF:
-                ((GuiButton)btnRepeatAll).enabled = true;
-                ((GuiButton)btnRepeatOne).enabled = true;
-                ((GuiButton)btnRepeatOff).enabled = false;
+                ((GuiButton)btnRepeatAll).field_146124_l = true;
+                ((GuiButton)btnRepeatOne).field_146124_l = true;
+                ((GuiButton)btnRepeatOff).field_146124_l = false;
                 break;
             case ONE:
-                ((GuiButton)btnRepeatAll).enabled = true;
-                ((GuiButton)btnRepeatOne).enabled = false;
-                ((GuiButton)btnRepeatOff).enabled = true;
+                ((GuiButton)btnRepeatAll).field_146124_l = true;
+                ((GuiButton)btnRepeatOne).field_146124_l = false;
+                ((GuiButton)btnRepeatOff).field_146124_l = true;
                 break;
             case ALL:
-                ((GuiButton)btnRepeatAll).enabled = false;
-                ((GuiButton)btnRepeatOne).enabled = true;
-                ((GuiButton)btnRepeatOff).enabled = true;
+                ((GuiButton)btnRepeatAll).field_146124_l = false;
+                ((GuiButton)btnRepeatOne).field_146124_l = true;
+                ((GuiButton)btnRepeatOff).field_146124_l = true;
         }
     }
 }

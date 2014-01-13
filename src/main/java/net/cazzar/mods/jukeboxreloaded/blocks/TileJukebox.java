@@ -6,8 +6,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.IPeripheral;
 import net.cazzar.corelib.lib.InventoryUtils;
-import net.cazzar.corelib.lib.SoundSystemHelper;
-import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
 import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
@@ -15,18 +13,19 @@ import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
-import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 
 import java.util.Random;
+
+import static net.cazzar.mods.jukeboxreloaded.JukeboxReloaded.proxy;
 
 public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     int metadata;
@@ -75,10 +74,11 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         return recordNumber;
     }
 
-    /*@Override
-    public Packet getDescriptionPacket() {
-        return (new PacketJukeboxDescription(this)).makePacket();
-    }*/
+    @Override
+    public Packet func_145844_m() {
+//        return (new PacketJukeboxDescription(this)).makePacket();
+        return proxy().getChannel().generatePacketFrom(new PacketJukeboxDescription(this));
+    }
 
     public short getFacing() {
         return facing;
@@ -136,7 +136,8 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     }
 
     public boolean isPlayingRecord() {
-        return SoundSystemHelper.isPlaying(this.field_145850_b, getIdentifier());
+//        return SoundSystemHelper.isPlaying(this.field_145850_b, getIdentifier());
+        return playing;
     }
 
     @Override
@@ -238,7 +239,8 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
 
     public void stopPlayingRecord() {
         playing = false;
-        if (CommonUtil.isServer()) new PacketStopPlaying(field_145851_c, field_145848_d, field_145849_e).sendToAllPlayers();
+        if (CommonUtil.isServer())
+            new PacketStopPlaying(field_145851_c, field_145848_d, field_145849_e).sendToAllPlayers();
         else new PacketStopPlaying(field_145851_c, field_145848_d, field_145849_e).sendToServer();
     }
 

@@ -1,13 +1,13 @@
 package net.cazzar.mods.jukeboxreloaded.network.packets;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 import net.cazzar.corelib.lib.SoundSystemHelper;
+import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * @author Cayde
@@ -26,9 +26,8 @@ public class PacketStopPlaying extends PacketJukebox {
     }
 
     @Override
-    public void execute(EntityPlayer player, Side side)
-            throws ProtocolException {
-        final TileEntity te = player.worldObj.getBlockTileEntity(x, y, z);
+    public void execute(EntityPlayer player, Side side) throws ProtocolException {
+        final TileEntity te = player.worldObj.func_147438_o(x, y, z);
         if (te instanceof TileJukebox) {
             ((TileJukebox) te).setPlaying(false);
             ((TileJukebox) te).waitTicks = 20;
@@ -36,22 +35,23 @@ public class PacketStopPlaying extends PacketJukebox {
         }
 
         if (side.isServer()) {
-            PacketDispatcher.sendPacketToAllPlayers(makePacket());
+            sendToAllPlayers();
             return;
         }
 
-        SoundSystemHelper.stop(x + ":" + y + ":" + z);
+
+        SoundSystemHelper.stop(ClientUtil.mc().renderGlobal, new ChunkCoordinates(x, y, z));
     }
 
     @Override
-    public void read(ByteArrayDataInput in) {
+    public void read(ByteBuf in) {
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
     }
 
     @Override
-    public void write(ByteArrayDataOutput out) {
+    public void write(ByteBuf out) {
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);

@@ -1,8 +1,7 @@
 package net.cazzar.mods.jukeboxreloaded.network.packets;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -22,9 +21,9 @@ public class PacketUpdateClientTile extends PacketJukebox {
     }
 
     public PacketUpdateClientTile(TileJukebox tile, int action) {
-        x = tile.xCoord;
-        y = tile.yCoord;
-        z = tile.zCoord;
+        x = tile.field_145851_c;
+        y = tile.field_145848_d;
+        z = tile.field_145849_e;
         this.action = action;
         currentRecord = tile.getCurrentRecordNumber();
     }
@@ -33,8 +32,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
     public void execute(EntityPlayer player, Side side)
             throws ProtocolException {
         if (side.isClient()) {
-            final TileJukebox tile = (TileJukebox) player.worldObj
-                    .getBlockTileEntity(x, y, z);
+            final TileJukebox tile = (TileJukebox) player.worldObj.func_147438_o(x, y, z);
 
             switch (action) {
                 case PLAY:
@@ -55,7 +53,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
     }
 
     @Override
-    public void read(ByteArrayDataInput in) {
+    public void read(ByteBuf in) {
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
@@ -64,7 +62,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
     }
 
     @Override
-    public void write(ByteArrayDataOutput out) {
+    public void write(ByteBuf out) {
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);

@@ -17,9 +17,8 @@
 
 package net.cazzar.mods.jukeboxreloaded.network.packets;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,13 +39,7 @@ public class PacketPlayRecord extends PacketJukebox {
     }
 
     @Override
-    public void execute(EntityPlayer player, Side side)
-            throws ProtocolException {
-        if (side.isServer()) {
-//            PacketDispatcher.sendPacketToAllPlayers(makePacket());
-            return;
-        }
-
+    public void execute(EntityPlayer player, Side side) throws ProtocolException {
         final TileEntity te = player.worldObj.func_147438_o(x, y, z);
         if (te instanceof TileJukebox) {
             TileJukebox t = ((TileJukebox) te);
@@ -56,18 +49,18 @@ public class PacketPlayRecord extends PacketJukebox {
     }
 
     @Override
-    public void read(ByteArrayDataInput in) {
+    public void read(ByteBuf in) {
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
-        record = in.readUTF();
+        record = readString(in);
     }
 
     @Override
-    public void write(ByteArrayDataOutput out) {
+    public void write(ByteBuf out) {
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);
-        out.writeUTF(record);
+        writeString(out, record);
     }
 }

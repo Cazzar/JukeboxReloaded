@@ -17,9 +17,11 @@
 
 package net.cazzar.mods.jukeboxreloaded.proxy;
 
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import cpw.mods.fml.relauncher.Side;
 import net.cazzar.corelib.items.ItemCustomRecord;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
@@ -28,6 +30,7 @@ import net.cazzar.mods.jukeboxreloaded.client.CreativeTabJukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.configuration.ConfigHelper;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import net.cazzar.mods.jukeboxreloaded.items.ItemPortableJukebox;
+import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -39,6 +42,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.io.File;
+import java.util.EnumMap;
 import java.util.Random;
 
 public class CommonProxy {
@@ -47,6 +51,12 @@ public class CommonProxy {
     public ItemPortableJukebox portableJukebox;
     public CreativeTabJukeboxReloaded creativeTab;
     private ConfigHelper config;
+
+    public EnumMap<Side, FMLEmbeddedChannel> getChannelMap() {
+        return channelMap;
+    }
+
+    private EnumMap<Side,FMLEmbeddedChannel> channelMap;
 
     public void initBlocks() {
         creativeTab = new CreativeTabJukeboxReloaded();
@@ -63,11 +73,11 @@ public class CommonProxy {
 
     @SuppressWarnings("RedundantCast")
     public void initItems() {
-        GameRegistry.registerItem(kokoro = new ItemCustomRecord("cazzar:kokoro", "ogg", "ココロ", "Sung by Kagamine Rin", "writer トラボルタ feat. 鏡音リン"), "kokoro");
-        GameRegistry.registerItem(loveIsWar = new ItemCustomRecord("cazzar:love_is_war", "ogg", "Love is War", "Sung by Hatsune Miku", "Writer - Supercell feat. 初音ミク"), "love_is_war");
+        GameRegistry.registerItem(kokoro = new ItemCustomRecord("cazzar:kokoro", "ogg", "\u30b3\u30b3\u30ed", "Sung by Kagamine Rin", "writer \u30c8\u30e9\u30dc\u30eb\u30bf feat. \u93e1\u97f3\u30ea\u30f3"), "kokoro");
+        GameRegistry.registerItem(loveIsWar = new ItemCustomRecord("cazzar:love_is_war", "ogg", "Love is War", "Sung by Hatsune Miku", "Writer - Supercell feat. \u521d\u97f3\u30df\u30af"), "love_is_war");
         GameRegistry.registerItem(shibuya = new ItemCustomRecord("cazzar:shibuya", "ogg", "SHIBUYA (Original)", "by BECCA"), "shibuya");
-        GameRegistry.registerItem(spica = new ItemCustomRecord("cazzar:spica", "ogg", "SPiCa", "by とく"), "spica");
-        GameRegistry.registerItem(sukiDaiSuki = new ItemCustomRecord("cazzar:suki_daisuki", "ogg", "すすすす、すき、だあいすき", "Sung by Kagamine Rin", "Writer - かたほとりP"), "suki_daisuki");
+        GameRegistry.registerItem(spica = new ItemCustomRecord("cazzar:spica", "ogg", "SPiCa", "by \u3068\u304f"), "spica");
+        GameRegistry.registerItem(sukiDaiSuki = new ItemCustomRecord("cazzar:suki_daisuki", "ogg", "\u3059\u3059\u3059\u3059\u3001\u3059\u304d\u3001\u3060\u3042\u3044\u3059\u304d", "Sung by Kagamine Rin", "Writer - \u304b\u305f\u307b\u3068\u308aP"), "suki_daisuki");
         GameRegistry.registerItem(weArePopcandy = new ItemCustomRecord("cazzar:we_are_popcandy", "ogg", "We are POPCANDY!", "Sung by Hatsune Miku", "Writer RUNO"), "we_are_popcandy");
 //        GameRegistry.registerItem(portableJukebox = new ItemPortableJukebox(config.items.portableJukeboxId), "Portable Jukebox");
 
@@ -81,6 +91,7 @@ public class CommonProxy {
 
     public void initNetwork() {
         NetworkRegistry.INSTANCE.registerGuiHandler(JukeboxReloaded.instance(), new GuiHandler());
+        channelMap = NetworkRegistry.INSTANCE.newChannel("JukeboxReloaded", new PacketHandler());
     }
 
     public void initOther() {
@@ -133,5 +144,9 @@ public class CommonProxy {
                 }
             }
         });
+    }
+
+    public FMLEmbeddedChannel getChannel() {
+        return channelMap.get(Side.SERVER);
     }
 }

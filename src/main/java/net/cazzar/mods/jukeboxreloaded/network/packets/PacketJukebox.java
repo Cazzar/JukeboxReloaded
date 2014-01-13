@@ -1,22 +1,18 @@
 package net.cazzar.mods.jukeboxreloaded.network.packets;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
-import net.cazzar.mods.jukeboxreloaded.lib.Reference;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.server.MinecraftServer;
 
-import static net.cazzar.mods.jukeboxreloaded.lib.Reference.PacketsIDs.*;
+import static cpw.mods.fml.common.network.FMLOutboundHandler.FML_MESSAGETARGET;
+import static cpw.mods.fml.common.network.FMLOutboundHandler.FML_MESSAGETARGETARGS;
+import static cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget.*;
+import static net.cazzar.mods.jukeboxreloaded.JukeboxReloaded.proxy;
 
 public abstract class PacketJukebox {
     public static class ProtocolException extends Exception {
-
         private static final long serialVersionUID = 4758559873161416283L;
 
         public ProtocolException() {
@@ -35,66 +31,46 @@ public abstract class PacketJukebox {
         }
     }
 
-    private static final BiMap<Integer, Class<? extends PacketJukebox>> idMap;
-
-    static {
-        final ImmutableBiMap.Builder<Integer, Class<? extends PacketJukebox>> builder = ImmutableBiMap
-                .builder();
-
-        builder.put(JUKEBOX_DATA, PacketJukeboxDescription.class);
-        builder.put(CLIENT_UPDATE_TILE_JUKEBOX, PacketUpdateClientTile.class);
-        builder.put(SERVER_SHUFFLE_DISK, PacketShuffleDisk.class);
-        builder.put(PLAY_RECORD, PacketPlayRecord.class);
-        builder.put(STOP_RECORD, PacketStopPlaying.class);
-        builder.put(STOP_ALL, PacketStopAllSounds.class);
-
-        idMap = builder.build();
-    }
-
-    public static PacketJukebox constructPacket(int packetId)
-            throws ProtocolException, InstantiationException,
-            IllegalAccessException {
-        final Class<? extends PacketJukebox> clazz = idMap.get(Integer
-                .valueOf(packetId));
-        if (clazz == null) throw new ProtocolException("Unknown Packet Id!");
-        else return clazz.newInstance();
-    }
+    public EntityPlayer player;
 
     public abstract void execute(EntityPlayer player, Side side)
             throws ProtocolException;
 
-    public final int getPacketId() {
-        if (idMap.inverse().containsKey(getClass())) return idMap.inverse()
-                .get(getClass()).intValue();
-        else throw new RuntimeException("Packet " + getClass().getSimpleName()
-                + " is missing a mapping!");
+    public void read(ByteBuf in) {
+        player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(readString(in));
     }
 
-    public final Packet makePacket() {
-        final ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeByte(getPacketId());
-        write(out);
-        return PacketDispatcher.getPacket(Reference.CHANNEL_NAME,
-                out.toByteArray());
+    public String readString(ByteBuf bytes) {
+        return ByteBufUtils.readUTF8String(bytes);
     }
 
-    public abstract void read(ByteArrayDataInput in);
-
-    public void sendToAllInDimension(int dimID) {
-        PacketDispatcher.sendPacketToAllInDimension(makePacket(), dimID);
+    public void writeString(ByteBuf bytes, String s) {
+        ByteBufUtils.writeUTF8String(bytes, s);
     }
 
-    public void sendToAllInDimension(Player player) {
-        PacketDispatcher.sendPacketToPlayer(makePacket(), player);
+    public boolean sendToAllInDimension(int dimID) {
+        proxy().getChannel().attr(FML_MESSAGETARGET).set(DIMENSION);
+        proxy().getChannel().attr(FML_MESSAGETARGETARGS).set(dimID);
+        return proxy().getChannel().writeOutbound(this);
     }
 
-    public void sendToAllPlayers() {
-        PacketDispatcher.sendPacketToAllPlayers(makePacket());
+    public boolean sendToPlayer(EntityPlayer player) {
+        proxy().getChannel().attr(FML_MESSAGETARGET).set(PLAYER);
+        proxy().getChannel().attr(FML_MESSAGETARGETARGS).set(player);
+        return proxy().getChannel().writeOutbound(this);
     }
 
-    public void sendToServer() {
-        PacketDispatcher.sendPacketToServer(makePacket());
+    public boolean sendToAllPlayers() {
+        proxy().getChannel().attr(FML_MESSAGETARGET).set(ALL);
+        return proxy().getChannel().writeOutbound(this);
     }
 
-    public abstract void write(ByteArrayDataOutput out);
+    public boolean sendToServer() {
+        proxy().getChannel().attr(FML_MESSAGETARGET).set(TOSERVER);
+        return proxy().getChannel().writeOutbound(this);
+    }
+
+    public void write(ByteBuf out){
+        writeString(out, player.func_146103_bH().getName());
+    }
 }

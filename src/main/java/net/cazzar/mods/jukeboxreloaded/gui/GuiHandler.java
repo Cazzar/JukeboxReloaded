@@ -11,9 +11,8 @@ public class GuiHandler implements IGuiHandler {
     public static final int PORTABLE_JUKEBOX = 1;
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world,
-                                      int x, int y, int z) {
-        final TileEntity tile = world.getBlockTileEntity(x, y, z);
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        final TileEntity tile = world.func_147438_o(x, y, z);
 
         switch (ID) {
             case JUKEBOX:
@@ -27,9 +26,8 @@ public class GuiHandler implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world,
-                                      int x, int y, int z) {
-        final TileEntity tile = world.getBlockTileEntity(x, y, z);
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        final TileEntity tile = world.func_147438_o(x, y, z);
 
         switch (ID) {
             case JUKEBOX:
