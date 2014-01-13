@@ -4,7 +4,6 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 
 import static cpw.mods.fml.common.network.FMLOutboundHandler.FML_MESSAGETARGET;
 import static cpw.mods.fml.common.network.FMLOutboundHandler.FML_MESSAGETARGETARGS;
@@ -31,14 +30,10 @@ public abstract class PacketJukebox {
         }
     }
 
-    public EntityPlayer player;
-
     public abstract void execute(EntityPlayer player, Side side)
             throws ProtocolException;
 
-    public void read(ByteBuf in) {
-        player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(readString(in));
-    }
+    public abstract void read(ByteBuf in);
 
     public String readString(ByteBuf bytes) {
         return ByteBufUtils.readUTF8String(bytes);
@@ -70,7 +65,5 @@ public abstract class PacketJukebox {
         return proxy().getChannel().writeOutbound(this);
     }
 
-    public void write(ByteBuf out){
-        writeString(out, player.func_146103_bH().getName());
-    }
+    public abstract void write(ByteBuf out);
 }

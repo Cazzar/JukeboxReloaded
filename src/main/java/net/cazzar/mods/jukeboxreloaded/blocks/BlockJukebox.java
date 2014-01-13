@@ -156,6 +156,11 @@ public class BlockJukebox extends BlockContainer {
     }
 
     @Override
+    public boolean func_149686_d() {
+    return false;
+    }
+
+    @Override
     public boolean func_149727_a(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
         if (!player.isSneaking()) {
             if (!world.isRemote) {
@@ -168,6 +173,11 @@ public class BlockJukebox extends BlockContainer {
         }
 
         return false;
+    }
+
+    @Override
+    public int func_149645_b() {
+        return JukeboxReloaded.proxy().getJukeboxRenderID();
     }
 
     @Override

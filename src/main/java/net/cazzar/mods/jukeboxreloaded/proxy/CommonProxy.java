@@ -17,6 +17,7 @@
 
 package net.cazzar.mods.jukeboxreloaded.proxy;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -26,6 +27,7 @@ import net.cazzar.corelib.items.ItemCustomRecord;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
+import net.cazzar.mods.jukeboxreloaded.blocks.render.JukeboxRenderingHandler;
 import net.cazzar.mods.jukeboxreloaded.client.CreativeTabJukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.configuration.ConfigHelper;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
@@ -51,6 +53,11 @@ public class CommonProxy {
     public ItemPortableJukebox portableJukebox;
     public CreativeTabJukeboxReloaded creativeTab;
     private ConfigHelper config;
+    private int jukeboxRenderID;
+
+    public int getJukeboxRenderID() {
+        return jukeboxRenderID;
+    }
 
     public EnumMap<Side, FMLEmbeddedChannel> getChannelMap() {
         return channelMap;
@@ -59,6 +66,8 @@ public class CommonProxy {
     private EnumMap<Side,FMLEmbeddedChannel> channelMap;
 
     public void initBlocks() {
+        jukeboxRenderID = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(jukeboxRenderID, new JukeboxRenderingHandler());
         creativeTab = new CreativeTabJukeboxReloaded();
         jukeBox = new BlockJukebox();
         GameRegistry.registerBlock(jukeBox, "jukebox");

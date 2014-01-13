@@ -46,8 +46,6 @@ public class PacketJukeboxDescription extends PacketJukebox {
 
     @Override
     public void read(ByteBuf in) {
-        super.read(in);
-
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
@@ -61,8 +59,6 @@ public class PacketJukeboxDescription extends PacketJukebox {
 
     @Override
     public void write(ByteBuf out) {
-        super.write(out);
-
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);

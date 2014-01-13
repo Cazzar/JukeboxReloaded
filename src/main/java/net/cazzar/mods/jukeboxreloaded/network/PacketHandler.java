@@ -28,7 +28,7 @@ public class PacketHandler extends FMLIndexedMessageToMessageCodec<PacketJukebox
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, PacketJukebox packet) {
         packet.read(data);
         try {
-            packet.execute(packet.player, ctx.attr(NetworkRegistry.CHANNEL_SOURCE).get());
+            packet.execute(null, ctx.attr(NetworkRegistry.CHANNEL_SOURCE).get());
         } catch (PacketJukebox.ProtocolException e) {
             e.printStackTrace();
         }
