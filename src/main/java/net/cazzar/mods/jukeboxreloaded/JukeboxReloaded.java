@@ -55,6 +55,6 @@ public class JukeboxReloaded {
 
     public String getVersionFromJar() {
         String s = getClass().getPackage().getImplementationVersion();
-        return s.isEmpty() ? "UNKNOWN" : s;
+        return s == null || s.isEmpty() ? "UNKNOWN" : s;
     }
 }
