@@ -18,11 +18,19 @@ apply plugin: "forge"  // actually applies the plugin.
 group = 'net.cazzar.mods.jukeboxreloaded'  // your base page
 version = "2.0.0"
 archivesBaseName = 'JukeboxReloaded'
-minecraft { version = '1.7.2-10.12.0.996' }
+
+if (!hasProperty('forgeVersion'))
+    ext.set('forgeVersion', '1.7.2-10.12.0.996')
+if (!hasProperty("assetsDir"))
+    ext.set('assetsDir', 'run/assets')
+minecraft {
+    version = project.forgeVersion
+    assetDir = project.assetsDir
+}
 
 def actualVersion = version
 
-logger.lifecycle "" + version
+//logger.lifecycle "" + version
 if (System.getenv("BUILD_NUMBER") != null) {
     version = "MC${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
     actualVersion += "." + System.getenv("BUILD_NUMBER");
@@ -53,10 +61,13 @@ repositories {
     maven { url 'http://maven.cazzar.net' }
 }
 dependencies {
-    compile 'net.cazzar.corelib:CazzarCore-1.7:MC1.7.2-1.1.0.4'
-    //compile 'net.cazzar.corelib:CazzarCoreLib:MC1.7.2-1.1.0.3'
+    if (System.getenv("BUILD_NUMBER") != null)
+        compile 'net.cazzar.corelib:CazzarCore-1.7:MC1.7.2-1.1.0.4'
+    else
+        compile project (":CazzarCoreLib")
 }
 
 compileJava {
     options.encoding = 'UTF-8'
 }
+
