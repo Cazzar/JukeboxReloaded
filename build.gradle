@@ -49,7 +49,12 @@ processResources {
     }
 }
 
-jar { classifier = 'universal' }
+jar { 
+    classifier = 'universal' 
+    manifest {
+        attributes "Implementation-Version": actualVersion
+    }
+}
 
 repositories {
     mavenCentral()
