@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.IPeripheral;
 import net.cazzar.corelib.lib.InventoryUtils;
+import net.cazzar.corelib.tile.SyncedTileEntity;
 import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
 import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
@@ -20,15 +21,11 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 
 import java.util.Random;
 
-import static net.cazzar.mods.jukeboxreloaded.JukeboxReloaded.proxy;
-
-public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
+public class TileJukebox extends SyncedTileEntity implements IInventory, IPeripheral {
     int metadata;
     public ItemStack[] items;
     int recordNumber = 0;
@@ -75,11 +72,17 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         return recordNumber;
     }
 
-    @Override
-    public Packet func_145844_m() {
-//        return (new PacketJukeboxDescription(this)).makePacket();
-        return proxy().getChannel().generatePacketFrom(new PacketJukeboxDescription(this));
-    }
+//    @Override
+//    public Packet func_145844_m() {
+//        NBTTagCompound tag = new NBTTagCompound();
+//        func_145841_b(tag);
+//        return new S35PacketUpdateTileEntity(field_145851_c, field_145848_d, field_145849_e, metadata, tag);
+//    }
+//
+//    @Override
+//    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+//        func_145839_a(pkt.func_148857_g());
+//    }
 
     public short getFacing() {
         return facing;
