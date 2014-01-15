@@ -6,21 +6,23 @@ import cpw.mods.fml.relauncher.SideOnly;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.IPeripheral;
 import net.cazzar.corelib.lib.InventoryUtils;
+import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.tile.SyncedTileEntity;
 import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
 import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
 
 import java.util.Random;
@@ -141,6 +143,9 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, IPeriph
 
     public boolean isPlayingRecord() {
 //        return SoundSystemHelper.isPlaying(this.field_145850_b, getIdentifier());
+        if (ClientUtil.isClient())
+            return SoundSystemHelper.isPlaying(ClientUtil.mc().renderGlobal, getIdentifier());
+
         return playing;
     }
 
@@ -162,41 +167,18 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, IPeriph
     }
 
     public void playSelectedRecord() {
-        if (field_145850_b.isRemote) {
-            if (getStackInSlot(recordNumber) == null) return;
-            new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a, field_145851_c, field_145848_d, field_145849_e).setSender(ClientUtil.mc().thePlayer).sendToServer();
-            return;
-        }
 
         if (getStackInSlot(recordNumber) == null) return;
-
-        // if (!(getStackInSlot(recordNumber).getItem() instanceof ItemRecord))
-        // return; // no I will not play.
-
-        // worldObj.playRecord(((ItemRecord) getStackInSlot(recordNumber)
-        // .getItem()).recordName, xCoord, yCoord, zCoord);
 
         lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a;
         playing = true;
 
-        new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a, field_145851_c, field_145848_d, field_145849_e).sendToAllPlayers();
+        this.field_145850_b.playAuxSFX(1005, field_145851_c, field_145848_d, field_145849_e, Item.func_150891_b(getStackInSlot(recordNumber).getItem()));
     }
 
     public void previousRecord() {
         if (recordNumber == 0) recordNumber = getSizeInventory() - 1;
         else recordNumber--;
-    }
-
-    @Override
-    public void func_145839_a(NBTTagCompound tag) {
-        super.func_145839_a(tag);
-        recordNumber = tag.getInteger("recordNumber");
-        facing = tag.getShort("facing");
-        shuffle = tag.getBoolean("shuffle");
-        setRepeatMode(RepeatMode.get(tag.getInteger("rptMode")));
-        volume = tag.getFloat("volume");
-
-        InventoryUtils.readItemStacksFromTag(items, tag.func_150295_c("inventory", items.length));
     }
 
     public void resetPlayingRecord() {
@@ -216,7 +198,8 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, IPeriph
     }
 
     public void setPlaying(boolean playing) {
-        this.playing = playing;
+        if (playing) playSelectedRecord();
+        else stopPlayingRecord();
     }
 
     public void setRecordPlaying(int recordNumber) {
@@ -296,6 +279,25 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, IPeriph
         tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(items));
     }
 
+    @Override
+    public void func_145839_a(NBTTagCompound tag) {
+        super.func_145839_a(tag);
+        recordNumber = tag.getInteger("recordNumber");
+        facing = tag.getShort("facing");
+        shuffle = tag.getBoolean("shuffle");
+        setRepeatMode(RepeatMode.get(tag.getInteger("rptMode")));
+        volume = tag.getFloat("volume");
+        InventoryUtils.readItemStacksFromTag(items, (NBTTagList) tag.getTag("inventory"));
+    }
+
+    public void addExtraNBTToPacket(NBTTagCompound tag) {
+        tag.setBoolean("playing", isPlayingRecord());
+    }
+
+    public void readExtraNBTFromPacket(NBTTagCompound tag) {
+        if (tag.getBoolean("playing")) setPlaying(true);
+    }
+
     public ChunkCoordinates getIdentifier() {
         //x, y, z
         return new ChunkCoordinates(this.field_145851_c, this.field_145848_d, this.field_145849_e);
@@ -310,9 +312,7 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, IPeriph
 
     @Override
     public String[] getMethodNames() {
-        return new String[]{"isPlaying", "next", "prev", "play", "stop",
-                "setShuffle", "getShuffle", "setRepeatAll", "setRepeatNone",
-                "setRepeatOne", "selectRecord", "getRecordInfo"};
+        return new String[]{"isPlaying", "next", "prev", "play", "stop", "setShuffle", "getShuffle", "setRepeatAll", "setRepeatNone", "setRepeatOne", "selectRecord", "getRecordInfo"};
     }
 
     @Override

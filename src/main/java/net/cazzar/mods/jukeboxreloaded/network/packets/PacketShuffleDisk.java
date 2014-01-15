@@ -13,8 +13,9 @@ import java.util.Random;
 public class PacketShuffleDisk extends PacketJukebox {
 
     int x, y, z;
-    EntityPlayer sender = ClientUtil.mc().thePlayer;
+    EntityPlayer sender;
 
+    @SuppressWarnings("UnusedDeclaration")
     public PacketShuffleDisk() {
     }
 
@@ -22,8 +23,10 @@ public class PacketShuffleDisk extends PacketJukebox {
         x = tile.field_145851_c;
         y = tile.field_145848_d;
         z = tile.field_145849_e;
+        sender = ClientUtil.mc().thePlayer;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public PacketShuffleDisk setSender(EntityPlayer player) {
         sender = player;

@@ -16,8 +16,9 @@ import net.minecraft.util.ChunkCoordinates;
 public class PacketStopPlaying extends PacketJukebox {
 
     public int x, y, z;
-    EntityPlayer sender = ClientUtil.mc().thePlayer;
+    EntityPlayer sender;
 
+    @SuppressWarnings("UnusedDeclaration")
     public PacketStopPlaying() {
     }
 
@@ -25,6 +26,7 @@ public class PacketStopPlaying extends PacketJukebox {
         this.x = x;
         this.y = y;
         this.z = z;
+        sender = ClientUtil.mc().thePlayer;
     }
 
     @Override
@@ -51,7 +53,6 @@ public class PacketStopPlaying extends PacketJukebox {
             sendToAllPlayers();
             return;
         }
-
 
         SoundSystemHelper.stop(ClientUtil.mc().renderGlobal, new ChunkCoordinates(x, y, z));
     }

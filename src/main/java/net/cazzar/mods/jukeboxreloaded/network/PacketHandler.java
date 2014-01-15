@@ -1,11 +1,11 @@
 package net.cazzar.mods.jukeboxreloaded.network;
 
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.cazzar.mods.jukeboxreloaded.network.packets.*;
 
+import static net.cazzar.corelib.util.CommonUtil.getSide;
 import static net.cazzar.mods.jukeboxreloaded.lib.Reference.PacketsIDs.*;
 
 public class PacketHandler extends FMLIndexedMessageToMessageCodec<PacketJukebox> {
@@ -27,7 +27,7 @@ public class PacketHandler extends FMLIndexedMessageToMessageCodec<PacketJukebox
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, PacketJukebox packet) {
         packet.read(data);
         try {
-            packet.execute(packet.getSender(), ctx.attr(NetworkRegistry.CHANNEL_SOURCE).get());
+            packet.execute(packet.getSender(), getSide());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -2,11 +2,9 @@ package net.cazzar.mods.jukeboxreloaded.blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.client.particles.ParticleIcons;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -52,10 +50,13 @@ public class BlockJukebox extends BlockContainer {
     public void func_149749_a(World world, int x, int y, int z, Block block, int meta) {
         dropInventory(world, x, y, z);
 
-        if (ClientUtil.isClient())
-            new PacketStopPlaying(x, y, z).sendToServer();
-        else
-            new PacketStopPlaying(x, y, z).sendToAllPlayers();
+//        if (ClientUtil.isClient())
+//            new PacketStopPlaying(x, y, z).sendToServer();
+//        else
+//            new PacketStopPlaying(x, y, z).sendToAllPlayers();
+
+        world.playAuxSFX(1005, x, y, z, 0);
+
         super.func_149749_a(world, x, y, z, block, meta);
     }
 
@@ -178,6 +179,8 @@ public class BlockJukebox extends BlockContainer {
             return true;
         }
 
+//        if (player.getHeldItem().getItem() instanceof ItemRecord)
+//            world.playRecord("records." + ((ItemRecord)player.getHeldItem().getItem()).func_150927_i());
         return false;
     }
 

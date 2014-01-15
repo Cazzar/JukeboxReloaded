@@ -62,8 +62,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
                     tile.setRecordPlaying(currentRecord);
                     break;
             }
-        } else throw new ProtocolException(
-                "Cannot send this packet to the server!");
+        } else throw new ProtocolException("Cannot send this packet to the server!");
     }
 
     @Override
