@@ -2,8 +2,10 @@ package net.cazzar.mods.jukeboxreloaded.network.packets;
 
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
+import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.Random;
@@ -11,6 +13,7 @@ import java.util.Random;
 public class PacketShuffleDisk extends PacketJukebox {
 
     int x, y, z;
+    EntityPlayer sender = ClientUtil.mc().thePlayer;
 
     public PacketShuffleDisk() {
     }
@@ -19,6 +22,17 @@ public class PacketShuffleDisk extends PacketJukebox {
         x = tile.field_145851_c;
         y = tile.field_145848_d;
         z = tile.field_145849_e;
+    }
+
+    @Override
+    public PacketShuffleDisk setSender(EntityPlayer player) {
+        sender = player;
+        return this;
+    }
+
+    @Override
+    public EntityPlayer getSender() {
+        return sender;
     }
 
     @Override
@@ -41,6 +55,7 @@ public class PacketShuffleDisk extends PacketJukebox {
 
     @Override
     public void read(ByteBuf in) {
+        sender = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(readString(in));
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
@@ -48,6 +63,7 @@ public class PacketShuffleDisk extends PacketJukebox {
 
     @Override
     public void write(ByteBuf out) {
+        writeString(out, sender.func_146103_bH().getName());
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);

@@ -9,7 +9,6 @@ import net.cazzar.mods.jukeboxreloaded.network.packets.*;
 import static net.cazzar.mods.jukeboxreloaded.lib.Reference.PacketsIDs.*;
 
 public class PacketHandler extends FMLIndexedMessageToMessageCodec<PacketJukebox> {
-
     public PacketHandler() {
         addDiscriminator(JUKEBOX_DATA, PacketJukeboxDescription.class);
         addDiscriminator(CLIENT_UPDATE_TILE_JUKEBOX, PacketUpdateClientTile.class);
@@ -28,8 +27,8 @@ public class PacketHandler extends FMLIndexedMessageToMessageCodec<PacketJukebox
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, PacketJukebox packet) {
         packet.read(data);
         try {
-            packet.execute(null, ctx.attr(NetworkRegistry.CHANNEL_SOURCE).get());
-        } catch (PacketJukebox.ProtocolException e) {
+            packet.execute(packet.getSender(), ctx.attr(NetworkRegistry.CHANNEL_SOURCE).get());
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

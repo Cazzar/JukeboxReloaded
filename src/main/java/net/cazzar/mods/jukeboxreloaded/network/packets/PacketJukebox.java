@@ -30,6 +30,9 @@ public abstract class PacketJukebox {
         }
     }
 
+    public abstract <T> T setSender(EntityPlayer player);
+    public abstract EntityPlayer getSender();
+
     public abstract void execute(EntityPlayer player, Side side)
             throws ProtocolException;
 

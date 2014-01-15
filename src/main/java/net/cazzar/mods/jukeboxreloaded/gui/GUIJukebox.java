@@ -164,7 +164,7 @@ public class GUIJukebox extends GuiContainer {
 //            if ((x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) && (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth()))
             if ((x >= btn.field_146128_h && x <= btn.field_146128_h + btn.getHeight()) && (y >= btn.field_146129_i && y <= btn.field_146129_i + btn.getWidth()))
                 if (!btn.getTooltip().trim().isEmpty() && btn.field_146124_l) {
-//                    btn.drawToolTip(x - xStart, y - yStart);
+                    btn.drawToolTip(x - xStart, y - yStart);
                 }
         }
     }

@@ -40,6 +40,7 @@ public class BlockJukebox extends BlockContainer {
         this.func_149647_a(JukeboxReloaded.proxy.creativeTab);
         func_149663_c("Jukebox");
         func_149672_a(field_149780_i);
+        field_149756_F = 2;
 //        setCreativeTab(JukeboxReloaded.proxy.creativeTab);
 //        setUnlocalizedName("Jukebox");
 //        setHardness(1.0F);
@@ -157,7 +158,12 @@ public class BlockJukebox extends BlockContainer {
 
     @Override
     public boolean func_149686_d() {
-    return false;
+        return false;
+    }
+
+    @Override
+    public boolean func_149662_c() {
+        return false;
     }
 
     @Override

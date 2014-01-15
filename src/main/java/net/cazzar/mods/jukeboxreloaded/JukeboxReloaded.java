@@ -40,6 +40,7 @@ public class JukeboxReloaded {
         proxy.initItems();
         proxy.initTileEntities();
         proxy.initRecipe();
+        proxy.initRendering();
 
         proxy.initOther();
     }

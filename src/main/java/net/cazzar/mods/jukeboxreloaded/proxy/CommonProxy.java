@@ -27,7 +27,6 @@ import net.cazzar.corelib.items.ItemCustomRecord;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
-import net.cazzar.mods.jukeboxreloaded.blocks.render.JukeboxRenderingHandler;
 import net.cazzar.mods.jukeboxreloaded.client.CreativeTabJukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.configuration.ConfigHelper;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
@@ -67,7 +66,7 @@ public class CommonProxy {
 
     public void initBlocks() {
         jukeboxRenderID = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(jukeboxRenderID, new JukeboxRenderingHandler());
+//        RenderingRegistry.registerBlockHandler(jukeboxRenderID, new JukeboxRenderingHandler());
         creativeTab = new CreativeTabJukeboxReloaded();
         jukeBox = new BlockJukebox();
         GameRegistry.registerBlock(jukeBox, "jukebox");
@@ -153,6 +152,10 @@ public class CommonProxy {
                 }
             }
         });
+    }
+
+    public void initRendering() {
+
     }
 
     public FMLEmbeddedChannel getChannel() {

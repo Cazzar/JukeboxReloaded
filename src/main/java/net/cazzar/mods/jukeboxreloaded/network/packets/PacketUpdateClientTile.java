@@ -2,8 +2,10 @@ package net.cazzar.mods.jukeboxreloaded.network.packets;
 
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
+import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 
 import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JukeboxGUIActions.*;
 
@@ -16,6 +18,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
     int x, y, z;
     int action;
     int currentRecord;
+    EntityPlayer sender = ClientUtil.mc().thePlayer;
 
     public PacketUpdateClientTile() {
     }
@@ -26,6 +29,17 @@ public class PacketUpdateClientTile extends PacketJukebox {
         z = tile.field_145849_e;
         this.action = action;
         currentRecord = tile.getCurrentRecordNumber();
+    }
+
+    @Override
+    public PacketUpdateClientTile setSender(EntityPlayer player) {
+        sender = player;
+        return this;
+    }
+
+    @Override
+    public EntityPlayer getSender() {
+        return sender;
     }
 
     @Override
@@ -54,6 +68,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
 
     @Override
     public void read(ByteBuf in) {
+        sender = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(readString(in));
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
@@ -63,6 +78,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
 
     @Override
     public void write(ByteBuf out) {
+        writeString(out, sender.func_146103_bH().getName());
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);

@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.IPeripheral;
 import net.cazzar.corelib.lib.InventoryUtils;
+import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
 import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
@@ -160,7 +161,7 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     public void playSelectedRecord() {
         if (field_145850_b.isRemote) {
             if (getStackInSlot(recordNumber) == null) return;
-            new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a, field_145851_c, field_145848_d, field_145849_e).sendToServer();
+            new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber).getItem()).field_150929_a, field_145851_c, field_145848_d, field_145849_e).setSender(ClientUtil.mc().thePlayer).sendToServer();
             return;
         }
 
