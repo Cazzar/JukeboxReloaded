@@ -18,7 +18,7 @@ class CommonProxy {
     }
     def initOther() = {}
     def initNetworking() = {
-        NetworkRegistry.INSTANCE.newChannel(Reference.MOD_ID, new DynamicPacketHandler(classOf[PacketPlayRecord]))
+        NetworkRegistry.INSTANCE.newChannel("JukeboxReloaded", new DynamicPacketHandler(classOf[PacketPlayRecord]))
         NetworkRegistry.INSTANCE.registerGuiHandler(JukeboxReloaded, GuiHandler)
     }
 }

@@ -82,7 +82,8 @@ class BlockJukebox extends BlockContainer(Material.field_151575_d) {
                 player.openGui(JukeboxReloaded, GuiHandler.JUKEBOX, world, x, y, z)
                 true
             }
+            else false
         }
-        false
+        else false
     }
 }

@@ -5,34 +5,26 @@ import net.minecraft.entity.player.{EntityPlayer, InventoryPlayer}
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
 import net.cazzar.mods.jukeboxreloaded.common.Reference._
 import net.minecraft.item.{ItemStack, ItemRecord}
-import com.google.common.collect.Lists
 import net.cazzar.mods.jukeboxreloaded.common.gui.impl.RecordSlot
 
 class ContainerJukebox(inventory: InventoryPlayer, tile: TileJukebox) extends Container {
-//    val items = Lists.newArrayList(classOf[ItemRecord])
     var slot = 0
-    //
-    0.to(JUKEBOX_INVENTORY_ROWS - 1).foreach({
-        (row) => {
-            0.to(JUKEBOX_INVENTORY_COLUMNS - 1).foreach({
-                (col) => {
-                    addSlotToContainer(new RecordSlot(tile, slot, 54 + col * 18, 17 + row * 18))
-                    slot += 1
-                }
-            })
-        }
-    })
 
-    0.to(PLAYER_INVENTORY_ROWS - 1).foreach({
-        (col) => {
-            0.to(PLAYER_INVENTORY_COLUMNS - 1).foreach({
-                (row) => {
-                    addSlotToContainer(new Slot(inventory, col + row * 9 + 9, 8 + row * 18, 94 + row * 18))
-                    slot += 1
-                }
-            })
+    for (col <- 0 to JUKEBOX_INVENTORY_ROWS)
+        for (row <- 0 to JUKEBOX_INVENTORY_COLUMNS) {
+            addSlotToContainer(new RecordSlot(tile, slot, 54 + row * 18, 17 + col * 18))
+            slot += 1
         }
-    })
+
+
+    for (inventoryRowIndex <- 0 to PLAYER_INVENTORY_ROWS)
+        for (inventoryColumnIndex <- 0 to PLAYER_INVENTORY_COLUMNS) {
+            addSlotToContainer(new Slot(inventory, inventoryColumnIndex + inventoryRowIndex * 9 + 9, 8 + inventoryColumnIndex * 18, 94 + inventoryRowIndex * 18))
+        }
+
+    for (actionBarSlotIndex <- 0 to PLAYER_INVENTORY_COLUMNS) {
+        addSlotToContainer(new Slot(inventory, actionBarSlotIndex, 8 + actionBarSlotIndex * 18, 152))
+    }
 
     override def canInteractWith(player: EntityPlayer) = true
 
