@@ -27,10 +27,10 @@ def actualVersion = version
 
 logger.lifecycle "" + version
 if (System.getenv("BUILD_NUMBER") != null) {
-    version = "MC${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
+    version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
     actualVersion += "." + System.getenv("BUILD_NUMBER");
 }
-else version = "MC${minecraft.version}-$version"
+else version = "${minecraft.version}-$version"
 
 processResources {
     // replace stuff in text files, not binary ones.
