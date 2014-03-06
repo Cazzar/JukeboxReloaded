@@ -32,7 +32,6 @@ class PacketPlayRecord(var tile: TileJukebox, var record: String) extends IPacke
         out.writeInt(tile.identifier().posY)
         out.writeInt(tile.identifier().posZ)
         writeUTF8String(out, record)
-        writeUTF8String(out, mc.thePlayer.func_146103_bH().getName)
+        writeUTF8String(out, mc.thePlayer.func_146103_bH.getName)
     }
-
 }

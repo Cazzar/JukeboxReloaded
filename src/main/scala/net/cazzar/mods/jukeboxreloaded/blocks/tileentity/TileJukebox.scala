@@ -10,6 +10,7 @@ import net.minecraft.item.{ItemRecord, ItemStack}
 import net.minecraft.inventory.IInventory
 import net.minecraft.entity.player.EntityPlayer
 import net.cazzar.mods.jukeboxreloaded.common.ReplayMode
+import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
 
 class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     private var isPlayingLocal = false
@@ -26,16 +27,26 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
 
     def this() = this(0)
 
+    def nextRecord() = {}
+
+    def previousRecord() = {}
+
     //write
     override def func_145841_b(tag: NBTTagCompound) = {
         super.func_145841_b(tag)
         facing = tag.getShort("facing")
+        current = tag.getShort("current")
+        replayMode = ReplayMode(tag.getInteger("replayMode"))
+        shuffle = tag.getBoolean("shuffle")
     }
 
     //save
     override def func_145839_a(tag: NBTTagCompound) = {
         super.func_145839_a(tag)
         tag.setShort("facing", facing)
+        tag.setShort("current", current)
+        tag.setInteger("replayMode", replayMode.id)
+        tag.setBoolean("shuffle", shuffle)
     }
 
     def addExtraNBTToPacket(tag: NBTTagCompound) = {
@@ -44,6 +55,11 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
 
     def readExtraNBTFromPacket(tag: NBTTagCompound) = {
         setPlaying(tag.getBoolean("playing"))
+
+        JukeboxReloaded.logger.info(facing)
+        JukeboxReloaded.logger.info(current)
+        JukeboxReloaded.logger.info(replayMode)
+        JukeboxReloaded.logger.info(shuffle)
     }
 
     def setPlaying(playing: Boolean): Boolean = {

@@ -9,9 +9,13 @@ import org.lwjgl.opengl.GL11._
 import net.cazzar.mods.jukeboxreloaded.common.{Strings, Reference}
 import net.cazzar.mods.jukeboxreloaded.common.ReplayMode._
 import Reference.JUKEBOX_GUI_TEXTURE
-import net.cazzar.mods.jukeboxreloaded.common.Reference.GuiActions._
+import Reference.GuiActions._
 import net.cazzar.corelib.client.gui.TexturedButton
-import org.lwjgl.opengl.{GL11, GL30}
+import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.common.network.FMLOutboundHandler
+import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget
+import net.cazzar.mods.jukeboxreloaded.packets.PacketJukeboxGuiAction
 
 class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(new ContainerJukebox(player.inventory, tile)) {
     field_146999_f = 176
@@ -33,20 +37,19 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
     var btnShuffleOn: TexturedButton = null
     var btnShuffleOff: TexturedButton = null
 
-
     override def func_146979_b(x: Int, y: Int) = {
         val name = Strings.GUI_JUKEBOX_NAME
         field_146289_q.drawString(name, field_146999_f / 2 - field_146289_q.getStringWidth(name) / 2, 6, 4210752)
         field_146289_q.drawString(Strings.GUI_INVENTORY, 8, field_147000_g - 93, 4210752)
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F)
+        glColor4f(1.0F, 1.0F, 1.0F, 1.0F)
         field_146297_k.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE)
         val xOffset = 53
         val yOffset = 16
         val size = 18
 
         val index = tile.current
-        val column = Math.floor(index/4D).asInstanceOf[Int]
+        val column = Math.floor(index / 4D).asInstanceOf[Int]
         val row = index % 4
 
         drawTexturedModalRect(xOffset + size * row, yOffset + size * column, 176, 0, 18, 18)
@@ -77,16 +80,11 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
 
     //actionPerformed
     override def func_146284_a(button: GuiButton) = {
-        val wasPlaying = tile.playing
-        button.field_146127_k match {
-            case PLAY => tile.playSelectedRecord()
-            case STOP => tile.stopPlayingRecord()
-            case NEXT =>
-                if (wasPlaying) tile.stopPlayingRecord()
-            case _ => null
-        }
+        //this is only server -> client so we have to hack backwards.
+        //tile.markForUpdate()
 
-        tile.markForUpdate()
+        JukeboxReloaded.proxy.channel.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER)
+        JukeboxReloaded.proxy.channel.get(Side.CLIENT).writeOutbound(new PacketJukeboxGuiAction(tile, button.field_146127_k))
     }
 
     def initButtons() = {

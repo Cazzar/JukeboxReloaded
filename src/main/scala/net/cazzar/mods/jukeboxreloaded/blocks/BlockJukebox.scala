@@ -1,6 +1,6 @@
 package net.cazzar.mods.jukeboxreloaded.blocks
 
-import net.minecraft.block.BlockContainer
+import net.minecraft.block.{Block, BlockContainer}
 import net.minecraft.block.material.Material
 import net.minecraft.util.{MathHelper, IIcon}
 import net.minecraft.world.{World, IBlockAccess}
@@ -9,10 +9,11 @@ import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.entity.EntityLivingBase
-import net.minecraft.item.ItemStack
+import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.entity.player.EntityPlayer
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
 import net.cazzar.mods.jukeboxreloaded.common.gui.GuiHandler
+import net.minecraft.creativetab.CreativeTabs
 
 class BlockJukebox extends BlockContainer(Material.field_151575_d) {
     var iconBuffer: Array[IIcon] = new Array[IIcon](4)
@@ -84,6 +85,6 @@ class BlockJukebox extends BlockContainer(Material.field_151575_d) {
             }
             else false
         }
-        else false
+        else !player.isSneaking
     }
 }
