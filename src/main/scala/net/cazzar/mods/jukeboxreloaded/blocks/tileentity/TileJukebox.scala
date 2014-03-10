@@ -32,8 +32,8 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     def previousRecord() = {}
 
     //write
-    override def func_145841_b(tag: NBTTagCompound) = {
-        super.func_145841_b(tag)
+    override def writeToNBT(tag: NBTTagCompound) = {
+        super.writeToNBT(tag)
         facing = tag.getShort("facing")
         current = tag.getShort("current")
         replayMode = ReplayMode(tag.getInteger("replayMode"))
@@ -41,8 +41,8 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     }
 
     //save
-    override def func_145839_a(tag: NBTTagCompound) = {
-        super.func_145839_a(tag)
+    override def readFromNBT(tag: NBTTagCompound) = {
+        super.readFromNBT(tag)
         tag.setShort("facing", facing)
         tag.setShort("current", current)
         tag.setInteger("replayMode", replayMode.id)
@@ -74,26 +74,26 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     }
 
     def playSelectedRecord() = {
-        if (field_145850_b.isRemote) {
+        if (worldObj.isRemote) {
             //send packet
 
         }
         else {
             isPlayingLocal = true
-            field_145850_b.playRecord(getStackInSlot(current).getItem.asInstanceOf[ItemRecord].field_150929_a, this.field_145851_c, this.field_145848_d, this.field_145849_e)
+            worldObj.playRecord(getStackInSlot(current).getItem.asInstanceOf[ItemRecord].recordName, this.xCoord, this.yCoord, this.zCoord)
         }
     }
 
     def stopPlayingRecord() = {
-        if (field_145850_b.isRemote) {
+        if (worldObj.isRemote) {
             //send packet?
         }
 
         isPlayingLocal = false
-        field_145850_b.playRecord(null, this.field_145851_c, this.field_145848_d, this.field_145849_e)
+        worldObj.playRecord(null, this.xCoord, this.yCoord, this.zCoord)
     }
 
-    def identifier(): ChunkCoordinates = new ChunkCoordinates(this.field_145851_c, this.field_145848_d, this.field_145849_e)
+    def identifier(): ChunkCoordinates = new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord)
 
     override def getSizeInventory: Int = 12
 
@@ -133,6 +133,6 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     def isItemValidForSlot(p1: Int, p2: ItemStack): Boolean = p2.getItem.isInstanceOf[ItemRecord]
 
     def markForUpdate() = {
-        field_145850_b.func_147471_g(this.field_145851_c, this.field_145848_d, this.field_145849_e)
+        worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord)
     }
 }

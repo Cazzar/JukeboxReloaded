@@ -15,17 +15,17 @@ import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
 import cpw.mods.fml.relauncher.Side
 import cpw.mods.fml.common.network.FMLOutboundHandler
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget
-import net.cazzar.mods.jukeboxreloaded.packets.PacketJukeboxGuiAction
+import net.cazzar.mods.jukeboxreloaded.networking.packets.PacketJukeboxGuiAction
 
 class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(new ContainerJukebox(player.inventory, tile)) {
-    field_146999_f = 176
-    field_147000_g = 176
+    xSize = 176
+    ySize = 176
 
     //(width - xSize) / 2
-    def xStart = (this.field_146294_l - this.field_146999_f) / 2
+    def xStart = (this.width - this.xSize) / 2
 
     //(height - ySize) / 2
-    def yStart = (this.field_146295_m - this.field_147000_g) / 2
+    def yStart = (this.height - this.ySize) / 2
 
     var btnPlay: TexturedButton = null
     var btnStop: TexturedButton = null
@@ -39,8 +39,8 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
 
     override def func_146979_b(x: Int, y: Int) = {
         val name = Strings.GUI_JUKEBOX_NAME
-        field_146289_q.drawString(name, field_146999_f / 2 - field_146289_q.getStringWidth(name) / 2, 6, 4210752)
-        field_146289_q.drawString(Strings.GUI_INVENTORY, 8, field_147000_g - 93, 4210752)
+        fontRendererObj.drawString(name, width / 2 - fontRendererObj.getStringWidth(name) / 2, 6, 4210752)
+        fontRendererObj.drawString(Strings.GUI_INVENTORY, 8, field_147000_g - 93, 4210752)
 
         glColor4f(1.0F, 1.0F, 1.0F, 1.0F)
         field_146297_k.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE)

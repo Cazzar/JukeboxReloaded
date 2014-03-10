@@ -1,4 +1,4 @@
-package net.cazzar.mods.jukeboxreloaded.packets
+package net.cazzar.mods.jukeboxreloaded.networking.packets
 
 import net.cazzar.corelib.network.packets.IPacket
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox

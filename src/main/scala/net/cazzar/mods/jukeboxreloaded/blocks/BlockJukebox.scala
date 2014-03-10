@@ -15,17 +15,17 @@ import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
 import net.cazzar.mods.jukeboxreloaded.common.gui.GuiHandler
 import net.minecraft.creativetab.CreativeTabs
 
-class BlockJukebox extends BlockContainer(Material.field_151575_d) {
+class BlockJukebox extends BlockContainer(Material.rock) {
     var iconBuffer: Array[IIcon] = new Array[IIcon](4)
 
-    this.func_149663_c("Jukebox")
+    this.setBlockName("Jukebox")
 
-    override def func_149915_a(world: World, meta: Int): TileEntity = new TileJukebox(meta)
+    override def createNewTileEntity(world: World, meta: Int): TileEntity = new TileJukebox(meta)
 
-    override def func_149673_e(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int): IIcon = {
+    override def getIcon(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int): IIcon = {
         if (side == ForgeDirection.UP.ordinal) return iconBuffer(2)
         if (side == ForgeDirection.DOWN.ordinal) return iconBuffer(0)
-        val te: TileJukebox = world.func_147438_o(x, y, z).asInstanceOf[TileJukebox]
+        val te: TileJukebox = world.getTileEntity(x, y, z).asInstanceOf[TileJukebox]
 
         var front, left, right: ForgeDirection = ForgeDirection.UNKNOWN
         front = ForgeDirection.getOrientation(te.facing)
@@ -39,13 +39,12 @@ class BlockJukebox extends BlockContainer(Material.field_151575_d) {
                 right = left.getOpposite
         }
 
-        if (side == left.ordinal() || side == right.ordinal())
-            return iconBuffer(1)
-        if (side == front.ordinal()) return iconBuffer(3)
-        iconBuffer(0)
+        if (side == left.ordinal() || side == right.ordinal()) iconBuffer(1)
+        else if (side == front.ordinal()) iconBuffer(3)
+        else iconBuffer(0)
     }
 
-    override def func_149691_a(side: Int, meta: Int): IIcon = ForgeDirection.getOrientation(side) match {
+    override def getIcon(side: Int, meta: Int): IIcon = ForgeDirection.getOrientation(side) match {
         case ForgeDirection.UP => iconBuffer(2)
         case ForgeDirection.DOWN => iconBuffer(0)
         case _ => iconBuffer(1)
@@ -53,10 +52,10 @@ class BlockJukebox extends BlockContainer(Material.field_151575_d) {
 
     override def hasTileEntity(meta: Int): Boolean = true
 
-    override def func_149689_a(world: World, x: Int, y: Int, z: Int, player: EntityLivingBase, stack: ItemStack) = {
-        super.func_149689_a(world, x, y, z, player, stack)
+    override def onBlockPlacedBy(world: World, x: Int, y: Int, z: Int, player: EntityLivingBase, stack: ItemStack) = {
+        super.onBlockPlacedBy(world, x, y, z, player, stack)
         val heading: Int = MathHelper.floor_double(player.rotationYaw * 4F / 360F + 0.5D) & 3
-        val tile: TileJukebox = world.func_147438_o(x, y, z).asInstanceOf[TileJukebox]
+        val tile: TileJukebox = world.getTileEntity(x, y, z).asInstanceOf[TileJukebox]
 
         heading match {
             case 0 => tile.facing = 2
@@ -66,7 +65,7 @@ class BlockJukebox extends BlockContainer(Material.field_151575_d) {
         }
     }
 
-    override def func_149651_a(register: IIconRegister) = {
+    override def registerBlockIcons(register: IIconRegister) = {
         iconBuffer(0) = register.registerIcon("cazzar:jukeboxbottom")
         iconBuffer(1) = register.registerIcon("cazzar:jukeboxside")
         iconBuffer(2) = register.registerIcon("cazzar:jukeboxtop")
@@ -76,9 +75,9 @@ class BlockJukebox extends BlockContainer(Material.field_151575_d) {
         //ParticleIcons.DOUBLE_QUAVER = iconRegister.registerIcon("cazzar:double-quaver");
     }
 
-    override def func_149727_a(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, par6: Int, playerX: Float, playery: Float, playerZ: Float): Boolean = {
+    override def onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, par6: Int, playerX: Float, playery: Float, playerZ: Float): Boolean = {
         if (!player.isSneaking && !world.isRemote) {
-            val tile: TileJukebox = world.func_147438_o(x, y, z).asInstanceOf[TileJukebox]
+            val tile: TileJukebox = world.getTileEntity(x, y, z).asInstanceOf[TileJukebox]
             if (tile != null) {
                 player.openGui(JukeboxReloaded, GuiHandler.JUKEBOX, world, x, y, z)
                 true
