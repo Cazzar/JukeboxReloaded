@@ -10,16 +10,14 @@ object GuiHandler extends IGuiHandler{
     val JUKEBOX: Int = 0
 
     def getServerGuiElement(id: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): AnyRef = id match {
-        case JUKEBOX => {
-            val tile: TileJukebox = world.func_147438_o(x, y, z).asInstanceOf[TileJukebox]
+        case JUKEBOX =>
+            val tile: TileJukebox = world.getTileEntity(x, y, z).asInstanceOf[TileJukebox]
             new ContainerJukebox(player.inventory, tile)
-        }
     }
 
     def getClientGuiElement(id: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): AnyRef = id match {
-        case JUKEBOX => {
-            val tile: TileJukebox = world.func_147438_o(x, y, z).asInstanceOf[TileJukebox]
+        case JUKEBOX =>
+            val tile: TileJukebox = world.getTileEntity(x, y, z).asInstanceOf[TileJukebox]
             new GuiJukebox(player, tile)
-        }
     }
 }

@@ -37,13 +37,13 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
     var btnShuffleOn: TexturedButton = null
     var btnShuffleOff: TexturedButton = null
 
-    override def func_146979_b(x: Int, y: Int) = {
+    override def drawGuiContainerForegroundLayer(x: Int, y: Int) = {
         val name = Strings.GUI_JUKEBOX_NAME
         fontRendererObj.drawString(name, width / 2 - fontRendererObj.getStringWidth(name) / 2, 6, 4210752)
-        fontRendererObj.drawString(Strings.GUI_INVENTORY, 8, field_147000_g - 93, 4210752)
+        fontRendererObj.drawString(Strings.GUI_INVENTORY, 8, ySize - 93, 4210752)
 
         glColor4f(1.0F, 1.0F, 1.0F, 1.0F)
-        field_146297_k.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE)
+        mc.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE)
         val xOffset = 53
         val yOffset = 16
         val size = 18
@@ -55,12 +55,12 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
         drawTexturedModalRect(xOffset + size * row, yOffset + size * column, 176, 0, 18, 18)
 
         import scala.collection.JavaConversions._
-        for (button <- field_146292_n.asInstanceOf[java.util.List[GuiButton]]) {
+        for (button <- buttonList.asInstanceOf[java.util.List[GuiButton]]) {
             button match {
                 case btn: TexturedButton =>
                     //if ((x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) && (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth()))
-                    if ((x >= btn.field_146128_h && x <= btn.field_146128_h + btn.getHeight) && (y >= btn.field_146129_i && y <= btn.field_146129_i + btn.getWidth))
-                        if (!btn.getTooltip.trim().isEmpty && btn.field_146124_l) {
+                    if ((x >= btn.xPosition && x <= btn.xPosition + btn.getHeight) && (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth))
+                        if (!btn.getTooltip.trim().isEmpty && btn.enabled) {
                             btn.drawToolTip(x - xStart, y - yStart)
                         }
                 case _ =>
@@ -68,23 +68,23 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
         }
     }
 
-    def func_146976_a(p1: Float, p2: Int, p3: Int) = {
+    def drawGuiContainerBackgroundLayer(p1: Float, p2: Int, p3: Int) = {
         updateButtonStates()
         glColor4f(1F, 1F, 1F, 1F)
-        field_146297_k.renderEngine.bindTexture(Reference.JUKEBOX_GUI_TEXTURE)
-        val xStart = (this.field_146294_l - this.field_146999_f) / 2
-        val yStart = (this.field_146295_m - this.field_147000_g) / 2
+        mc.renderEngine.bindTexture(Reference.JUKEBOX_GUI_TEXTURE)
+//        val xStart = (this.field_146294_l - this.field_146999_f) / 2
+//        val yStart = (this.field_146295_m - this.field_147000_g) / 2
 
-        drawTexturedModalRect(xStart, yStart, 0, 0, field_146999_f, field_147000_g)
+        drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize)
     }
 
     //actionPerformed
-    override def func_146284_a(button: GuiButton) = {
+    override def actionPerformed(button: GuiButton) = {
         //this is only server -> client so we have to hack backwards.
         //tile.markForUpdate()
 
         JukeboxReloaded.proxy.channel.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER)
-        JukeboxReloaded.proxy.channel.get(Side.CLIENT).writeOutbound(new PacketJukeboxGuiAction(tile, button.field_146127_k))
+        JukeboxReloaded.proxy.channel.get(Side.CLIENT).writeOutbound(new PacketJukeboxGuiAction(tile, button.id))
     }
 
     def initButtons() = {
@@ -98,7 +98,7 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
         btnShuffleOn = new TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118)
         btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF, xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 158, 176, 138, 176, 178)
 
-        val list: java.util.List[GuiButton] = field_146292_n.asInstanceOf[java.util.List[GuiButton]]
+        val list: java.util.List[GuiButton] = buttonList.asInstanceOf[java.util.List[GuiButton]]
         list.add(btnPlay)
         list.add(btnStop)
         list.add(btnNext)
@@ -132,24 +132,24 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
 
 
     def updateButtonStates() = {
-        btnStop.field_146124_l = tile.playing
-        btnPlay.field_146124_l = !tile.playing
-        btnShuffleOn.field_146124_l = !tile.shuffle
-        btnShuffleOff.field_146124_l = tile.shuffle
+        btnStop.enabled = tile.playing
+        btnPlay.enabled = !tile.playing
+        btnShuffleOn.enabled = !tile.shuffle
+        btnShuffleOff.enabled = tile.shuffle
 
         tile.replayMode match {
             case ALL =>
-                btnRepeatAll.field_146124_l = false
-                btnRepeatOne.field_146124_l = true
-                btnRepeatOff.field_146124_l = true
+                btnRepeatAll.enabled = false
+                btnRepeatOne.enabled = true
+                btnRepeatOff.enabled = true
             case ONE =>
-                btnRepeatAll.field_146124_l = true
-                btnRepeatOne.field_146124_l = false
-                btnRepeatOff.field_146124_l = true
+                btnRepeatAll.enabled = true
+                btnRepeatOne.enabled = false
+                btnRepeatOff.enabled = true
             case OFF =>
-                btnRepeatAll.field_146124_l = true
-                btnRepeatOne.field_146124_l = true
-                btnRepeatOff.field_146124_l = false
+                btnRepeatAll.enabled = true
+                btnRepeatOne.enabled = true
+                btnRepeatOff.enabled = false
         }
     }
 }

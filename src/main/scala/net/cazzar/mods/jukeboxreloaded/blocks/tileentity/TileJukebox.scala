@@ -9,7 +9,7 @@ import net.minecraft.util.ChunkCoordinates
 import net.minecraft.item.{ItemRecord, ItemStack}
 import net.minecraft.inventory.IInventory
 import net.minecraft.entity.player.EntityPlayer
-import net.cazzar.mods.jukeboxreloaded.common.ReplayMode
+import net.cazzar.mods.jukeboxreloaded.common.{Strings, ReplayMode}
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
 
 class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
@@ -135,4 +135,12 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     def markForUpdate() = {
         worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord)
     }
+
+    override def closeInventory(): Unit = {}
+
+    override def openInventory(): Unit = {}
+
+    override def hasCustomInventoryName: Boolean = true
+
+    override def getInventoryName: String = Strings.GUI_JUKEBOX_NAME
 }
