@@ -39,7 +39,7 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
 
     override def drawGuiContainerForegroundLayer(x: Int, y: Int) = {
         val name = Strings.GUI_JUKEBOX_NAME
-        fontRendererObj.drawString(name, width / 2 - fontRendererObj.getStringWidth(name) / 2, 6, 4210752)
+        fontRendererObj.drawString(name, xSize / 2 - (fontRendererObj.getStringWidth(name) / 2), 6, 4210752)
         fontRendererObj.drawString(Strings.GUI_INVENTORY, 8, ySize - 93, 4210752)
 
         glColor4f(1.0F, 1.0F, 1.0F, 1.0F)
@@ -58,7 +58,6 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
         for (button <- buttonList.asInstanceOf[java.util.List[GuiButton]]) {
             button match {
                 case btn: TexturedButton =>
-                    //if ((x >= btn.xPosition && x <= btn.xPosition + btn.getHeight()) && (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth()))
                     if ((x >= btn.xPosition && x <= btn.xPosition + btn.getHeight) && (y >= btn.yPosition && y <= btn.yPosition + btn.getWidth))
                         if (!btn.getTooltip.trim().isEmpty && btn.enabled) {
                             btn.drawToolTip(x - xStart, y - yStart)
@@ -72,8 +71,8 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
         updateButtonStates()
         glColor4f(1F, 1F, 1F, 1F)
         mc.renderEngine.bindTexture(Reference.JUKEBOX_GUI_TEXTURE)
-//        val xStart = (this.field_146294_l - this.field_146999_f) / 2
-//        val yStart = (this.field_146295_m - this.field_147000_g) / 2
+        //        val xStart = (this.field_146294_l - this.field_146999_f) / 2
+        //        val yStart = (this.field_146295_m - this.field_147000_g) / 2
 
         drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize)
     }

@@ -12,13 +12,14 @@ class PacketHandler extends FMLIndexedMessageToMessageCodec[IPacket]{
     addDiscriminator(0, classOf[PacketJukeboxGuiAction])
     addDiscriminator(1, classOf[PacketPlayRecord])
 
-    override def decodeInto(ctx: ChannelHandlerContext, source: ByteBuf, msg: IPacket) = msg.write(source)
+    override def decodeInto(ctx: ChannelHandlerContext, source: ByteBuf, msg: IPacket) = {
+        msg.read(source)
+        val player = ctx.channel.attr(NetworkRegistry.NET_HANDLER).get().asInstanceOf[NetHandlerPlayServer].playerEntity
+        if (player.worldObj.isRemote) msg.executeServer(player)
+        else msg.executeClient(player)
+    }
 
     override def encodeInto(ctx: ChannelHandlerContext, msg: IPacket, target: ByteBuf) = {
-        msg.read(target)
-        CommonUtil.getSide match {
-            case Side.CLIENT => msg.executeClient(ClientUtil.mc().thePlayer)
-            case Side.SERVER => msg.executeServer(ctx.channel.attr(NetworkRegistry.NET_HANDLER).get().asInstanceOf[NetHandlerPlayServer].playerEntity)
-        }
+        msg.write(target)
     }
 }

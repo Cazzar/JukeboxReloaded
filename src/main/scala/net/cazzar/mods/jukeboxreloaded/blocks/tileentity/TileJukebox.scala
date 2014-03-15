@@ -22,31 +22,37 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     var facing = ForgeDirection.NORTH.ordinal.asInstanceOf[Short]
     var items = new Array[ItemStack](getSizeInventory)
     var lastRecord = ""
-    var current: Short = 0
+    var current = 0
     var replayMode = ReplayMode.ALL
 
     def this() = this(0)
 
-    def nextRecord() = {}
+    def nextRecord() = {
+        current += 1
+        if (current >= getSizeInventory) current = 0
+    }
 
-    def previousRecord() = {}
+    def previousRecord() = {
+        current -= 1
+        if (current < 0) current = getSizeInventory - 1
+    }
 
     //write
     override def writeToNBT(tag: NBTTagCompound) = {
         super.writeToNBT(tag)
-        facing = tag.getShort("facing")
-        current = tag.getShort("current")
-        replayMode = ReplayMode(tag.getInteger("replayMode"))
-        shuffle = tag.getBoolean("shuffle")
+        tag.setShort("facing", facing)
+        tag.setInteger("current", current)
+        tag.setInteger("replayMode", replayMode.id)
+        tag.setBoolean("shuffle", shuffle)
     }
 
     //save
     override def readFromNBT(tag: NBTTagCompound) = {
         super.readFromNBT(tag)
-        tag.setShort("facing", facing)
-        tag.setShort("current", current)
-        tag.setInteger("replayMode", replayMode.id)
-        tag.setBoolean("shuffle", shuffle)
+        facing = tag.getShort("facing")
+        current = tag.getInteger("current")
+        replayMode = ReplayMode(tag.getInteger("replayMode"))
+        shuffle = tag.getBoolean("shuffle")
     }
 
     def addExtraNBTToPacket(tag: NBTTagCompound) = {
@@ -55,11 +61,6 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
 
     def readExtraNBTFromPacket(tag: NBTTagCompound) = {
         setPlaying(tag.getBoolean("playing"))
-
-        JukeboxReloaded.logger.info(facing)
-        JukeboxReloaded.logger.info(current)
-        JukeboxReloaded.logger.info(replayMode)
-        JukeboxReloaded.logger.info(shuffle)
     }
 
     def setPlaying(playing: Boolean): Boolean = {
@@ -74,11 +75,7 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     }
 
     def playSelectedRecord() = {
-        if (worldObj.isRemote) {
-            //send packet
-
-        }
-        else {
+        if (getStackInSlot(current) != null) {
             isPlayingLocal = true
             worldObj.playRecord(getStackInSlot(current).getItem.asInstanceOf[ItemRecord].recordName, this.xCoord, this.yCoord, this.zCoord)
         }

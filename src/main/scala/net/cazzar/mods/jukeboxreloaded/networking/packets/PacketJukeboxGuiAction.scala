@@ -8,13 +8,14 @@ import net.minecraft.entity.player.EntityPlayer
 
 class PacketJukeboxGuiAction(var tile: TileJukebox, var action: Int) extends IPacket {
     var x, y, z = 0
+
     def this() = this(null, 0)
 
     def read(in: ByteBuf) = {
         action = in.readInt()
-//        val player = MinecraftServer.getServer.getConfigurationManager.getPlayerForUsername(readUTF8String(in))
+        //        val player = MinecraftServer.getServer.getConfigurationManager.getPlayerForUsername(readUTF8String(in))
 
-//        tile = player.worldObj.func_147438_o(in.readInt(), in.readInt(), in.readInt()).asInstanceOf[TileJukebox]
+        //        tile = player.worldObj.func_147438_o(in.readInt(), in.readInt(), in.readInt()).asInstanceOf[TileJukebox]
 
         x = in.readInt()
         y = in.readInt()
@@ -23,19 +24,17 @@ class PacketJukeboxGuiAction(var tile: TileJukebox, var action: Int) extends IPa
 
     def write(out: ByteBuf) = {
         out.writeInt(action)
-//        writeUTF8String(out, ClientUtil.mc().thePlayer.func_146103_bH.getName)
+        //        writeUTF8String(out, ClientUtil.mc().thePlayer.func_146103_bH.getName)
         //x
         //this.field_145851_c
         out.writeInt(tile.xCoord)
         //y
         //this.field_145848_d
         out.writeInt(tile.yCoord)
-        out.writeInt(tile.zCoord)  //z
+        out.writeInt(tile.zCoord) //z
     }
 
-    override def executeServer(player: EntityPlayer): Unit = executeClient(player)
-
-    override def executeClient(player: EntityPlayer): Unit = {
+    override def executeServer(player: EntityPlayer): Unit = {
         tile = player.worldObj.getTileEntity(x, y, z).asInstanceOf[TileJukebox]
 
         action match {
@@ -51,6 +50,11 @@ class PacketJukeboxGuiAction(var tile: TileJukebox, var action: Int) extends IPa
 
             case _ => null
         }
+
         tile.markForUpdate()
+    }
+
+    override def executeClient(player: EntityPlayer): Unit = {
+        executeServer(player)
     }
 }
