@@ -16,6 +16,7 @@ import cpw.mods.fml.relauncher.Side
 import cpw.mods.fml.common.network.FMLOutboundHandler
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget
 import net.cazzar.mods.jukeboxreloaded.networking.packets.PacketJukeboxGuiAction
+import net.cazzar.corelib.lib.SoundSystemHelper
 
 class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(new ContainerJukebox(player.inventory, tile)) {
     xSize = 176
@@ -131,6 +132,10 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
 
 
     def updateButtonStates() = {
+//        println(SoundSystemHelper.isPlaying(mc.renderGlobal, tile.identifier) + " : " + tile.identifier.toString)
+//
+//        println(SoundSystemHelper.getSoundHandler.isSoundPlaying(SoundSystemHelper.getSoundForChunkCoordinates(mc.renderGlobal, tile.identifier)))
+        println(SoundSystemHelper.getSoundForChunkCoordinates(mc.renderGlobal, tile.identifier).hashCode())
         btnStop.enabled = tile.playing
         btnPlay.enabled = !tile.playing
         btnShuffleOn.enabled = !tile.shuffle
