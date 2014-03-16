@@ -4,9 +4,9 @@ import net.cazzar.corelib.tile.SyncedTileEntity
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.common.util.ForgeDirection
 import net.cazzar.corelib.util.ClientUtil
-import net.cazzar.corelib.lib.SoundSystemHelper
+import net.cazzar.corelib.lib.{InventoryUtils, SoundSystemHelper}
 import net.minecraft.util.ChunkCoordinates
-import net.minecraft.item.{ItemRecord, ItemStack}
+import net.minecraft.item.{Item, ItemRecord, ItemStack}
 import net.minecraft.inventory.IInventory
 import net.minecraft.entity.player.EntityPlayer
 import net.cazzar.mods.jukeboxreloaded.common.{Strings, ReplayMode}
@@ -15,8 +15,8 @@ import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
 class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     private var isPlayingLocal = false
     var shuffle = false
-    var playing = {
-        if (ClientUtil.isClient) SoundSystemHelper.isPlaying(ClientUtil.mc.renderGlobal, identifier())
+    def playing = {
+        if (ClientUtil.isClient) SoundSystemHelper.isPlaying(ClientUtil.mc.renderGlobal, identifier)
         else isPlayingLocal
     }
     var facing = ForgeDirection.NORTH.ordinal.asInstanceOf[Short]
@@ -44,6 +44,7 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
         tag.setInteger("current", current)
         tag.setInteger("replayMode", replayMode.id)
         tag.setBoolean("shuffle", shuffle)
+        tag.setTag("items", InventoryUtils.writeItemStacksToTag(items))
     }
 
     //save
@@ -53,6 +54,8 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
         current = tag.getInteger("current")
         replayMode = ReplayMode(tag.getInteger("replayMode"))
         shuffle = tag.getBoolean("shuffle")
+        identifier = new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord)
+        InventoryUtils.readItemStacksFromTag(items, tag.getTagList("items", 10))
     }
 
     def addExtraNBTToPacket(tag: NBTTagCompound) = {
@@ -77,7 +80,8 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     def playSelectedRecord() = {
         if (getStackInSlot(current) != null) {
             isPlayingLocal = true
-            worldObj.playRecord(getStackInSlot(current).getItem.asInstanceOf[ItemRecord].recordName, this.xCoord, this.yCoord, this.zCoord)
+//            worldObj.playRecord(getStackInSlot(current).getItem.asInstanceOf[ItemRecord].recordName, this.xCoord, this.yCoord, this.zCoord)
+            worldObj.playAuxSFXAtEntity(null, 1005, xCoord, yCoord, zCoord, Item.getIdFromItem(getStackInSlot(current).getItem))
         }
     }
 
@@ -90,7 +94,7 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
         worldObj.playRecord(null, this.xCoord, this.yCoord, this.zCoord)
     }
 
-    def identifier(): ChunkCoordinates = new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord)
+    var identifier: ChunkCoordinates = null
 
     override def getSizeInventory: Int = 12
 

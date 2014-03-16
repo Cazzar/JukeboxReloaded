@@ -22,9 +22,9 @@ class PacketPlayRecord(var tile: TileJukebox, var record: String) extends IPacke
     }
 
     def write(out: ByteBuf) = {
-        out.writeInt(tile.identifier().posX)
-        out.writeInt(tile.identifier().posY)
-        out.writeInt(tile.identifier().posZ)
+        out.writeInt(tile.xCoord)
+        out.writeInt(tile.yCoord)
+        out.writeInt(tile.zCoord)
     }
 
     override def executeServer(player: EntityPlayer): Unit = player.worldObj.playRecord(record, x, y, z)
