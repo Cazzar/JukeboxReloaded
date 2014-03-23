@@ -4,6 +4,7 @@ import cpw.mods.fml.common.{SidedProxy, Mod}
 import cpw.mods.fml.common.event.FMLPreInitializationEvent
 import net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy
 import net.cazzar.corelib.lib.LogHelper
+import cpw.mods.fml.common.gameevent.InputEvent.KeyInputEvent
 
 @Mod(modid = "JukeboxReloaded", modLanguage = "scala")
 object JukeboxReloaded {

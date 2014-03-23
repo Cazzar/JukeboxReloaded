@@ -22,7 +22,7 @@ version = "2.0.0"
 archivesBaseName = 'JukeboxReloaded'
 
 minecraft {
-    version = '1.7.2-10.12.0.1040'
+    version = '1.7.2-10.12.0.1047'
     assetDir = '../run/assets'
 }
 
@@ -62,7 +62,7 @@ repositories {
     maven { url 'http://maven.cazzar.net' }
 }
 dependencies {
-    compile group: 'net.cazzar.corelib', name: 'CazzarCore-1.7', version: minecraft.version + '-1.1.0.40'
+    compile group: 'net.cazzar.corelib', name: 'CazzarCore-1.7', version: minecraft.version + '-1.1.0.47'
 }
 
 compileJava {

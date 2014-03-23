@@ -76,7 +76,7 @@ class BlockJukebox extends BlockContainer(Material.rock) {
     }
 
     override def onBlockActivated(world: World, x: Int, y: Int, z: Int, player: EntityPlayer, par6: Int, playerX: Float, playery: Float, playerZ: Float): Boolean = {
-        world.playRecord("13", x, y, z)
+//        world.playRecord("13", x, y, z)
         if (!player.isSneaking && !world.isRemote) {
             val tile: TileJukebox = world.getTileEntity(x, y, z).asInstanceOf[TileJukebox]
             if (tile != null) {

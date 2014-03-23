@@ -10,13 +10,25 @@ import net.minecraft.item.{Item, ItemRecord, ItemStack}
 import net.minecraft.inventory.IInventory
 import net.minecraft.entity.player.EntityPlayer
 import net.cazzar.mods.jukeboxreloaded.common.{Strings, ReplayMode}
-import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
+import net.minecraft.client.audio.{ISound, SoundManager, PositionedSoundRecord}
+import cpw.mods.fml.common.ObfuscationReflectionHelper
+import com.google.common.collect.HashBiMap
 
 class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     private var isPlayingLocal = false
     var shuffle = false
     def playing = {
-        if (ClientUtil.isClient) SoundSystemHelper.isPlaying(ClientUtil.mc.renderGlobal, identifier)
+        if (ClientUtil.isClient) {
+            if (SoundSystemHelper.getSoundForChunkCoordinates(ClientUtil.mc().renderGlobal, identifier) != null) {
+                val snd = SoundSystemHelper.getSoundForChunkCoordinates(ClientUtil.mc().renderGlobal, identifier)
+//                println(snd.hashCode() + " " + snd.canRepeat + " " + snd.getAttenuationType.getTypeInt + " " + snd.getPitch + " " + snd.getPositionedSoundLocation.hashCode() + " " + snd.getVolume + " " + snd.getXPosF + " " + snd.getYPosF + " " + snd.getZPosF)
+//                println(snd.getPositionedSoundLocation.hashCode() + " " + snd.getPositionedSoundLocation.getResourceDomain + " " + snd.getPositionedSoundLocation.getResourcePath)
+            }
+//            val playingSounds: AnyRef = ObfuscationReflectionHelper.getPrivateValue(classOf[SoundManager], SoundSystemHelper.getSoundManager, "playingSounds", "field_148629_h")
+//            println(playingSounds)
+//            SoundSystemHelper.isPlaying(ClientUtil.mc.renderGlobal, identifier)
+            SoundSystemHelper.getSoundForChunkCoordinates(ClientUtil.mc().renderGlobal, identifier) != null
+        }
         else isPlayingLocal
     }
     var facing = ForgeDirection.NORTH.ordinal.asInstanceOf[Short]
@@ -54,7 +66,6 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
         current = tag.getInteger("current")
         replayMode = ReplayMode(tag.getInteger("replayMode"))
         shuffle = tag.getBoolean("shuffle")
-        identifier = new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord)
         InventoryUtils.readItemStacksFromTag(items, tag.getTagList("items", 10))
     }
 
@@ -86,15 +97,15 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     }
 
     def stopPlayingRecord() = {
-        if (worldObj.isRemote) {
-            //send packet?
-        }
+//        if (worldObj.isRemote) {
+//            send packet?
+//        }
 
         isPlayingLocal = false
         worldObj.playRecord(null, this.xCoord, this.yCoord, this.zCoord)
     }
 
-    var identifier: ChunkCoordinates = null
+    def identifier: ChunkCoordinates = new ChunkCoordinates(xCoord, yCoord, zCoord)
 
     override def getSizeInventory: Int = 12
 

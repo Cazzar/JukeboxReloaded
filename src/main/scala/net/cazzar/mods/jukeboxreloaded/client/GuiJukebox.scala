@@ -135,7 +135,7 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
 //        println(SoundSystemHelper.isPlaying(mc.renderGlobal, tile.identifier) + " : " + tile.identifier.toString)
 //
 //        println(SoundSystemHelper.getSoundHandler.isSoundPlaying(SoundSystemHelper.getSoundForChunkCoordinates(mc.renderGlobal, tile.identifier)))
-        println(SoundSystemHelper.getSoundForChunkCoordinates(mc.renderGlobal, tile.identifier).hashCode())
+//        println(SoundSystemHelper.getSoundForChunkCoordinates(mc.renderGlobal, tile.identifier).hashCode())
         btnStop.enabled = tile.playing
         btnPlay.enabled = !tile.playing
         btnShuffleOn.enabled = !tile.shuffle
