@@ -22,10 +22,7 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
     xSize = 176
     ySize = 176
 
-    //(width - xSize) / 2
     def xStart = (this.width - this.xSize) / 2
-
-    //(height - ySize) / 2
     def yStart = (this.height - this.ySize) / 2
 
     var btnPlay: TexturedButton = null
@@ -72,17 +69,10 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(n
         updateButtonStates()
         glColor4f(1F, 1F, 1F, 1F)
         mc.renderEngine.bindTexture(Reference.JUKEBOX_GUI_TEXTURE)
-        //        val xStart = (this.field_146294_l - this.field_146999_f) / 2
-        //        val yStart = (this.field_146295_m - this.field_147000_g) / 2
-
         drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize)
     }
 
-    //actionPerformed
     override def actionPerformed(button: GuiButton) = {
-        //this is only server -> client so we have to hack backwards.
-        //tile.markForUpdate()
-
         JukeboxReloaded.proxy.channel.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER)
         JukeboxReloaded.proxy.channel.get(Side.CLIENT).writeOutbound(new PacketJukeboxGuiAction(tile, button.id))
     }

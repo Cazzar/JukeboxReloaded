@@ -5,32 +5,27 @@ import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.common.util.ForgeDirection
 import net.cazzar.corelib.util.ClientUtil
 import net.cazzar.corelib.lib.{InventoryUtils, SoundSystemHelper}
-import net.minecraft.util.ChunkCoordinates
-import net.minecraft.item.{Item, ItemRecord, ItemStack}
+import net.minecraft.util.{MathHelper, ChunkCoordinates}
+import net.minecraft.item.{ItemRecord, ItemStack}
 import net.minecraft.inventory.IInventory
 import net.minecraft.entity.player.EntityPlayer
 import net.cazzar.mods.jukeboxreloaded.common.{Strings, ReplayMode}
-import net.minecraft.client.audio.{ISound, SoundManager, PositionedSoundRecord}
-import cpw.mods.fml.common.ObfuscationReflectionHelper
-import com.google.common.collect.HashBiMap
+import net.cazzar.corelib.util.ClientUtil._
+import cpw.mods.fml.relauncher.{Side, SideOnly}
+import li.cil.oc.api.network.SimpleComponent
 
-class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
+@cpw.mods.fml.common.Optional.Interface()
+class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory with SimpleComponent {
     private var isPlayingLocal = false
     var shuffle = false
+
     def playing = {
         if (ClientUtil.isClient) {
-            if (SoundSystemHelper.getSoundForChunkCoordinates(ClientUtil.mc().renderGlobal, identifier) != null) {
-                val snd = SoundSystemHelper.getSoundForChunkCoordinates(ClientUtil.mc().renderGlobal, identifier)
-//                println(snd.hashCode() + " " + snd.canRepeat + " " + snd.getAttenuationType.getTypeInt + " " + snd.getPitch + " " + snd.getPositionedSoundLocation.hashCode() + " " + snd.getVolume + " " + snd.getXPosF + " " + snd.getYPosF + " " + snd.getZPosF)
-//                println(snd.getPositionedSoundLocation.hashCode() + " " + snd.getPositionedSoundLocation.getResourceDomain + " " + snd.getPositionedSoundLocation.getResourcePath)
-            }
-//            val playingSounds: AnyRef = ObfuscationReflectionHelper.getPrivateValue(classOf[SoundManager], SoundSystemHelper.getSoundManager, "playingSounds", "field_148629_h")
-//            println(playingSounds)
-//            SoundSystemHelper.isPlaying(ClientUtil.mc.renderGlobal, identifier)
-            SoundSystemHelper.getSoundForChunkCoordinates(ClientUtil.mc().renderGlobal, identifier) != null
+            SoundSystemHelper.isPlaying(identifier.toString)
         }
         else isPlayingLocal
     }
+
     var facing = ForgeDirection.NORTH.ordinal.asInstanceOf[Short]
     var items = new Array[ItemStack](getSizeInventory)
     var lastRecord = ""
@@ -39,14 +34,43 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
 
     def this() = this(0)
 
-    def nextRecord() = {
-        current += 1
-        if (current >= getSizeInventory) current = 0
+    def nextRecord() {
+        if (playing) {
+            var set = false
+            for (i <- current to getSizeInventory - 1) {
+                if (getStackInSlot(i) != null && !set) {
+                    current = i
+                    set = true
+                }
+            }
+            if (!set) {
+                current = -1
+                nextRecord()
+                return
+            }
+        }
+        else if (shuffle) {
+            val c = current
+            current = worldObj.rand.nextInt(getSizeInventory)
+
+            while (current == c && getStackInSlot(current) != null) current = worldObj.rand.nextInt(getSizeInventory)
+        }
+        else {
+            current += 1
+            if (current >= getSizeInventory) current = 0
+        }
+
+        stopPlayingRecord()
+        if (playing)
+            playSelectedRecord()
     }
 
     def previousRecord() = {
         current -= 1
         if (current < 0) current = getSizeInventory - 1
+
+        stopPlayingRecord()
+        playSelectedRecord()
     }
 
     //write
@@ -79,30 +103,39 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
 
     def setPlaying(playing: Boolean): Boolean = {
         if (playing) {
-            stopPlayingRecord()
+            playSelectedRecord()
             false
         }
         else {
-            playSelectedRecord()
+            stopPlayingRecord()
             true
         }
     }
 
+    def record = getStackInSlot(current).getItem.asInstanceOf[ItemRecord]
+
     def playSelectedRecord() = {
-        if (getStackInSlot(current) != null) {
+        if (getStackInSlot(current) != null && !playing) {
             isPlayingLocal = true
-//            worldObj.playRecord(getStackInSlot(current).getItem.asInstanceOf[ItemRecord].recordName, this.xCoord, this.yCoord, this.zCoord)
-            worldObj.playAuxSFXAtEntity(null, 1005, xCoord, yCoord, zCoord, Item.getIdFromItem(getStackInSlot(current).getItem))
+            if (ClientUtil.isClient)
+                SoundSystemHelper.playRecord(getWorldObj, record, xCoord, yCoord, zCoord, identifier.toString)
+            lastRecord = record.recordName
+            markForUpdate()
         }
     }
 
     def stopPlayingRecord() = {
-//        if (worldObj.isRemote) {
-//            send packet?
-//        }
+        if (playing) {
+            isPlayingLocal = false
+            if (ClientUtil.isClient)
+                SoundSystemHelper.stop(identifier.toString)
+            markForUpdate()
+        }
+    }
 
-        isPlayingLocal = false
-        worldObj.playRecord(null, this.xCoord, this.yCoord, this.zCoord)
+    override def invalidate() {
+        super.invalidate()
+        stopPlayingRecord()
     }
 
     def identifier: ChunkCoordinates = new ChunkCoordinates(xCoord, yCoord, zCoord)
@@ -155,4 +188,27 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory {
     override def hasCustomInventoryName: Boolean = true
 
     override def getInventoryName: String = Strings.GUI_JUKEBOX_NAME
+
+    @SideOnly(Side.CLIENT)
+    override def updateEntity() {
+        if (isPlayingLocal) {
+            if (!playing) nextRecord()
+        }
+
+        if (getStackInSlot(current) == null) {
+            stopPlayingRecord()
+            return
+        }
+
+        val sound = SoundSystemHelper.getSoundHandler.getSound(record.getRecordResource("records." + record.recordName))
+        val entry = sound.func_148720_g
+        val category = sound.getSoundCategory
+        val volume = MathHelper.clamp_double(16 * entry.getVolume * mc.gameSettings.getSoundLevel(category).asInstanceOf[Double], 0.0D, 1.0D).asInstanceOf[Float]
+        val pitch = MathHelper.clamp_double(16 * entry.getVolume * mc.gameSettings.getSoundLevel(category).asInstanceOf[Double], 0.0D, 1.0D).asInstanceOf[Float]
+
+        SoundSystemHelper.getSoundSystem.setPitch(identifier.toString, pitch)
+        SoundSystemHelper.getSoundSystem.setVolume(identifier.toString, volume)
+    }
+
+    override def getComponentName: String = "jukebox"
 }
