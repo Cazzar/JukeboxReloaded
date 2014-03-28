@@ -12,9 +12,10 @@ import net.minecraft.entity.player.EntityPlayer
 import net.cazzar.mods.jukeboxreloaded.common.{Strings, ReplayMode}
 import net.cazzar.corelib.util.ClientUtil._
 import cpw.mods.fml.relauncher.{Side, SideOnly}
-import li.cil.oc.api.network.SimpleComponent
+import li.cil.oc.api.network.{Callback, Arguments, Context, SimpleComponent}
+import cpw.mods.fml.common.Optional
 
-@cpw.mods.fml.common.Optional.Interface()
+@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory with SimpleComponent {
     private var isPlayingLocal = false
     var shuffle = false
@@ -211,4 +212,35 @@ class TileJukebox(metadata: Int) extends SyncedTileEntity with IInventory with S
     }
 
     override def getComponentName: String = "jukebox"
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback def play(ctx: Context, args: Arguments): Array[Object] = {
+        playSelectedRecord()
+        null
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback def stop(ctx: Context, args: Arguments): Array[Object] = {
+        stopPlayingRecord()
+        null
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback def next(ctx: Context, args: Arguments): Array[Object] = {
+        nextRecord()
+        null
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback def previous(ctx: Context, args: Arguments): Array[Object] = {
+        previousRecord()
+        null
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback def isPlaying(ctx: Context, args: Arguments): Array[Object] = Array(Boolean.box(playing))
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback def getRecord(ctx: Context, args: Arguments): Array[Object] = Array(Int.box(current))
+
 }
