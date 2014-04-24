@@ -1,35 +1,56 @@
+/*
+ * Copyright (C) 2014 Cayde Dixon
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.cazzar.mods.jukeboxreloaded.blocks;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
+import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dan200.computer.api.IComputerAccess;
-import dan200.computer.api.IPeripheral;
+import net.cazzar.corelib.lib.InventoryUtils;
 import net.cazzar.corelib.lib.SoundSystemHelper;
+import net.cazzar.corelib.tile.SyncedTileEntity;
 import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
-import net.cazzar.corelib.util.InventoryUtils;
+import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
+import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.tileentity.TileEntity;
 
 import java.util.Random;
 
-public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
-    int metadata;
+import static cpw.mods.fml.common.network.FMLOutboundHandler.FML_MESSAGETARGET;
+import static cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget.ALL;
+import static cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget.TOSERVER;
+
+public class TileJukebox extends SyncedTileEntity implements IInventory {
     public ItemStack[] items;
+    public boolean playing = false;
+    public int waitTicks = 0;
+    public float volume = 0.5F;
+    int metadata;
     int recordNumber = 0;
     String lastPlayingRecord = "";
     //boolean repeat = true;
@@ -37,9 +58,6 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     boolean shuffle = false;
     RepeatMode repeatMode = RepeatMode.ALL;
     int tick = 0;
-    public boolean playing = false;
-    public int waitTicks = 0;
-    public float volume = 0.5F;
     private short facing;
     private boolean pageUpgrade;
 
@@ -50,10 +68,6 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
     public TileJukebox(int metadata) {
         this();
         this.metadata = metadata;
-    }
-
-    @Override
-    public void closeChest() {
     }
 
     /**
@@ -74,23 +88,23 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         return recordNumber;
     }
 
-    @Override
-    public Packet getDescriptionPacket() {
-        return (new PacketJukeboxDescription(this)).makePacket();
-    }
+//    @Override
+//    public void getDescriptionPacket() {
+//        return (new PacketJukeboxDescription(this)).makePacket();
+//    }
+
 
     public short getFacing() {
         return facing;
     }
 
-    @Override
-    public int getInventoryStackLimit() {
-        return 1;
+    public void setFacing(short direction) {
+        facing = direction;
     }
 
     @Override
-    public String getInvName() {
-        return "Jukebox";
+    public int getInventoryStackLimit() {
+        return 1;
     }
 
     public int getLastSlotWithItem() {
@@ -129,11 +143,6 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         return stack;
     }
 
-    @Override
-    public boolean isInvNameLocalized() {
-        return false;
-    }
-
     public boolean isPlayingRecord() {
         return SoundSystemHelper.isPlaying(getIdentifier());
     }
@@ -143,24 +152,31 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         return true;
     }
 
+    @Override
+    public void openInventory() {
+
+    }
+
+    @Override
+    public void closeInventory() {
+
+    }
+
     public void markForUpdate() {
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
     }
 
     public void nextRecord() {
         if (recordNumber++ >= getSizeInventory() - 1) recordNumber = 0;
     }
 
-    @Override
-    public void openChest() {
-    }
-
     public void playSelectedRecord() {
         if (worldObj.isRemote) {
             if (getStackInSlot(recordNumber) == null) return;
-            new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber)
-                    .getItem()).recordName, xCoord, yCoord, zCoord)
-                    .sendToServer();
+            FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(Side.CLIENT);
+            channel.attr(FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
+            channel.writeAndFlush(new PacketPlayRecord(getStackInSlot(recordNumber), xCoord, yCoord, zCoord));
             return;
         }
 
@@ -176,9 +192,9 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
                 .getItem()).recordName;
         playing = true;
 
-        new PacketPlayRecord(((ItemRecord) getStackInSlot(recordNumber)
-                .getItem()).recordName, xCoord, yCoord, zCoord)
-                .sendToAllPlayers();
+        FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(Side.SERVER);
+        channel.attr(FML_MESSAGETARGET).set(ALL);
+        channel.writeAndFlush(new PacketPlayRecord(getStackInSlot(recordNumber), xCoord, yCoord, zCoord));
     }
 
     public void previousRecord() {
@@ -195,15 +211,11 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         setRepeatMode(RepeatMode.get(tag.getInteger("rptMode")));
         volume = tag.getFloat("volume");
 
-        InventoryUtils.readItemStacksFromTag(items, tag.getTagList("inventory"));
+        InventoryUtils.readItemStacksFromTag(items, tag.getTagList("inventory", 10));
     }
 
     public void resetPlayingRecord() {
         recordNumber = 0;
-    }
-
-    public void setFacing(short direction) {
-        facing = direction;
     }
 
     @Override
@@ -212,6 +224,16 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
 
         if (recordNumber == slot && isPlayingRecord() && itemstack == null)
             playSelectedRecord();
+    }
+
+    @Override
+    public String getInventoryName() {
+        return null;
+    }
+
+    @Override
+    public boolean hasCustomInventoryName() {
+        return false;
     }
 
     public void setPlaying(boolean playing) {
@@ -242,9 +264,14 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
 
     public void stopPlayingRecord() {
         playing = false;
-        if (CommonUtil.isServer()) new PacketStopPlaying(
-                xCoord, yCoord, zCoord).sendToAllPlayers();
-        else new PacketStopPlaying(xCoord, yCoord, zCoord).sendToServer();
+        FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(CommonUtil.getSide());
+        if (CommonUtil.isServer()) {
+            channel.attr(FML_MESSAGETARGET).set(ALL);
+            channel.writeAndFlush(new PacketStopPlaying(xCoord, yCoord, zCoord));
+        } else {
+            channel.attr(FML_MESSAGETARGET).set(TOSERVER);
+            channel.writeAndFlush(new PacketStopPlaying(xCoord, yCoord, zCoord));
+        }
     }
 
     @Override
@@ -255,8 +282,8 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
 
         if (tick % 5 == 0 && random.nextBoolean())
             if (isPlayingRecord()) {
-                SoundSystemHelper.getSoundSystem().setVolume(getIdentifier(), volume * ClientUtil.mc().gameSettings.soundVolume);
-                SoundSystemHelper.stopBackgroundMusicIfPlaying();
+                SoundSystemHelper.getSoundSystem().setVolume(getIdentifier(), volume * ClientUtil.mc().gameSettings.getSoundLevel(SoundCategory.RECORDS));
+                SoundSystemHelper.stop("bgMusic");
 
                 Particles particles = Particles.values()[random.nextInt(Particles.values().length)];
                 particles.spawn(xCoord + random.nextDouble(), yCoord + 1.2D, zCoord + random.nextDouble());
@@ -284,8 +311,13 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
                 resetPlayingRecord();
             }
             // send tile information to the server to update the other clients
-            if (shuffle && repeatMode != RepeatMode.ONE) new PacketShuffleDisk(this).sendToServer();
-            new PacketJukeboxDescription(this).sendToServer();
+            if (shuffle && repeatMode != RepeatMode.ONE) {
+                FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(Side.CLIENT);
+                channel.attr(FML_MESSAGETARGET).set(TOSERVER);
+                channel.writeAndFlush(new PacketShuffleDisk(this));
+            }
+            markForUpdate();
+            markDirty();
         }
     }
 
@@ -304,121 +336,19 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
         return xCoord + ":" + yCoord + ":" + zCoord;
     }
 
-    // ComputerCraft API functions
-
-    @Override
-    public String getType() {
-        return "jukebox";
+    public String getServerSideRecordName() {
+        String s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+            s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
+        s = s.replace("cazzar:kokoro", "Kagamine Rin - Kokoro")
+                .replace("cazzar:love_is_war", "Hatsune Miku - Love Is war")
+                .replace("cazzar:shibuya", "BECCA - SHIBUYA (Original)")
+                .replace("cazzar:spica", "Hatsune Miku - SPiCa")
+                .replace("cazzar:suki_daisuki", "Kagamine Rin - I Like You, I Love You")
+                .replace("cazzar:we_are_popcandy", "Hatsune Miku - We are POPCANDY!");
+        return s;
     }
 
-    @Override
-    public String[] getMethodNames() {
-        return new String[]{"isPlaying", "next", "prev", "play", "stop",
-                "setShuffle", "getShuffle", "setRepeatAll", "setRepeatNone",
-                "setRepeatOne", "selectRecord", "getRecordInfo"};
-    }
-
-    @Override
-    public Object[] callMethod(IComputerAccess computer, int method,
-                               Object[] args) throws Exception {
-        boolean wasPlaying = playing;
-        switch (method) {
-            case 0:
-                return new Object[]{playing};
-            case 1:
-                if (wasPlaying) stopPlayingRecord();
-                if (shuffleEnabled()) {
-                    final Random random = new Random();
-                    if (getLastSlotWithItem() <= 0) break;
-                    final int nextDisk = random.nextInt(getLastSlotWithItem());
-                    if (getCurrentRecordNumber() != nextDisk)
-                        setRecordPlaying(nextDisk);
-                }
-                nextRecord();
-                if (wasPlaying) playSelectedRecord();
-                break;
-            case 2:
-                if (wasPlaying) stopPlayingRecord();
-                previousRecord();
-                if (wasPlaying) playSelectedRecord();
-                break;
-            case 3:
-                playSelectedRecord();
-                break;
-            case 4:
-                stopPlayingRecord();
-                break;
-            case 5:
-                boolean newShuffle;
-                try {
-                    newShuffle = (Boolean) args[0];
-                    this.setShuffle(newShuffle);
-                } catch (Exception e) {
-                    throw new Exception("Error parsing: " + args[0]);
-                }
-                break;
-            case 6:
-                return new Object[]{shuffle};
-            case 7:
-                this.setRepeatMode(RepeatMode.ALL);
-                break;
-            case 8:
-                this.setRepeatMode(RepeatMode.OFF);
-                break;
-            case 9:
-                this.setRepeatMode(RepeatMode.ONE);
-                break;
-            case 10:
-                this.setRecordPlaying(((Double) args[0]).intValue() - 1);
-                break;
-            case 11:
-                String s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
-                if (FMLCommonHandler.instance().getEffectiveSide().isClient())
-                    s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
-                s = s.replace("cazzar:kokoro", "Kagamine Rin - Kokoro")
-                        .replace("cazzar:love_is_war", "Hatsune Miku - Love Is war")
-                        .replace("cazzar:shibuya", "BECCA - SHIBUYA (Original)")
-                        .replace("cazzar:spica", "Hatsune Miku - SPiCa")
-                        .replace("cazzar:suki_daisuki", "Kagamine Rin - I Like You, I Love You")
-                        .replace("cazzar:we_are_popcandy",
-                                "Hatsune Miku - We are POPCANDY!");
-                return new String[]{s};
-            default:
-                return null;
-        }
-        markForUpdate();
-        return null;
-    }
-
-    @Override
-    public boolean canAttachToSide(int side) {
-        return true;
-    }
-
-    @Override
-    public void attach(IComputerAccess computer) {
-    }
-
-    @Override
-    public void detach(IComputerAccess computer) {
-    }
-
-    public void activate(EntityPlayer player) {
-        if (!player.isSneaking()) return;
-
-        ItemStack held = player.getHeldItem();
-
-        if (held == null) {
-            if (this.pageUpgrade)
-                dropItemInWorld(new ItemStack(Item.paper));
-        } else if (held.getItem() == Item.paper) {
-            if (this.pageUpgrade) return;
-            this.pageUpgrade = true;
-
-            if (!player.capabilities.isCreativeMode)
-                held.stackSize--;
-        }
-    }
 
     private void dropItemInWorld(ItemStack itemStack) {
         Random rand = new Random();
@@ -428,13 +358,10 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
             final float dY = rand.nextFloat() * 0.8F + 0.1F;
             final float dZ = rand.nextFloat() * 0.8F + 0.1F;
 
-            final EntityItem entityItem = new EntityItem(worldObj, xCoord + dX, yCoord
-                    + dY, zCoord + dZ, new ItemStack(itemStack.itemID,
-                    itemStack.stackSize, itemStack.getItemDamage()));
+            final EntityItem entityItem = new EntityItem(worldObj, xCoord + dX, yCoord + dY, zCoord + dZ, new ItemStack(itemStack.getItem(), itemStack.stackSize, itemStack.getItemDamage()));
 
             if (itemStack.hasTagCompound())
-                entityItem.getEntityItem().setTagCompound(
-                        (NBTTagCompound) itemStack.getTagCompound().copy());
+                entityItem.getEntityItem().setTagCompound((NBTTagCompound) itemStack.getTagCompound().copy());
 
             final float factor = 0.05F;
             entityItem.motionX = rand.nextGaussian() * factor;
@@ -443,5 +370,16 @@ public class TileJukebox extends TileEntity implements IInventory, IPeripheral {
             worldObj.spawnEntityInWorld(entityItem);
             itemStack.stackSize = 0;
         }
+    }
+
+    @Override
+    public void addExtraNBTToPacket(NBTTagCompound tag) {
+        tag.setBoolean("playing", playing);
+    }
+
+    @Override
+    public void readExtraNBTFromPacket(NBTTagCompound tag) {
+        if (tag.getBoolean("playing") && !playing)
+            playSelectedRecord();
     }
 }

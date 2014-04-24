@@ -1,0 +1,67 @@
+/*
+ * Copyright (C) 2014 Cayde Dixon
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+minecraft {
+    version = '1.7.2-10.12.1.1061'
+    assetDir = '../run/assets'
+}
+
+if (System.getenv("BUILD_NUMBER") != null) {
+    version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
+    project.actualVersion += "." + System.getenv("BUILD_NUMBER");
+} else {
+    version = "${minecraft.version}-$version-DEV"
+    project.actualVersion += "-DEV"
+}
+
+processResources {
+    // replace stuff in text files, not binary ones.
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.lang'
+        include '**/*.info'
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+        // replace version and MCVersion
+    }
+
+    // copy everything else, that's not text
+    from(sourceSets.main.resources.srcDirs) {
+        exclude '**/*.lang'
+        exclude '**/*.info'
+    }
+}

@@ -1,18 +1,16 @@
 /*
- * Copyright (C) 2013 cazzar
+ * Copyright (C) 2014 Cayde Dixon
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see [http://www.gnu.org/licenses/].
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package net.cazzar.mods.jukeboxreloaded.gui;
@@ -25,7 +23,7 @@ import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketJukeboxDescription;
+import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -101,7 +99,7 @@ public class GUIJukebox extends GuiContainer {
                     break;
                 }
 
-                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
+                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.getSoundLevel(SoundCategory.RECORDS));
                 tileJukebox.volume += 0.05F;
                 break;
             case VOLUME_DOWN:
@@ -110,13 +108,13 @@ public class GUIJukebox extends GuiContainer {
                     break;
                 }
 
-                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.soundVolume);
+                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.getSoundLevel(SoundCategory.RECORDS));
                 tileJukebox.volume -= 0.05F;
                 break;
         }
 
         updateButtonStates();
-        new PacketJukeboxDescription(tileJukebox).sendToServer();
+        tileJukebox.markForUpdate();
     }
 
     @Override
@@ -133,15 +131,15 @@ public class GUIJukebox extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {
         final String containerName = Strings.GUI_JUKEBOX_NAME.toString();
-        fontRenderer.drawString(containerName,
-                xSize / 2 - fontRenderer.getStringWidth(containerName) / 2, 6,
+        this.fontRendererObj.drawString(containerName,
+                xSize / 2 - fontRendererObj.getStringWidth(containerName) / 2, 6,
                 4210752);
-        fontRenderer.drawString(
+        fontRendererObj.drawString(
                 Strings.GUI_INVENTORY.toString(), 8,
                 ySize - 93, 4210752);
 
         String str = (tileJukebox.volume == 1.0F) ? "10" : String.format("%.1f", tileJukebox.volume * 10);
-        fontRenderer.drawString(str, 21, 68, 4210752);
+        fontRendererObj.drawString(str, 21, 68, 4210752);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE);
@@ -212,40 +210,41 @@ public class GUIJukebox extends GuiContainer {
         buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
     }
 
+    @SuppressWarnings("RedundantCast")
     public void updateButtonStates() {
         if (tileJukebox.volume <= 0F) {
             tileJukebox.volume = 0F;
-            ((GuiButton)volDown).enabled = false;
-            ((GuiButton)volUp).enabled = true;
+            ((GuiButton) volDown).enabled = false;
+            ((GuiButton) volUp).enabled = true;
         } else if (tileJukebox.volume >= 1F) {
             tileJukebox.volume = 1F;
-            ((GuiButton)volUp).enabled = false;
-            ((GuiButton)volDown).enabled = true;
+            ((GuiButton) volUp).enabled = false;
+            ((GuiButton) volDown).enabled = true;
         } else {
-            ((GuiButton)volUp).enabled = true;
-            ((GuiButton)volDown).enabled = true;
+            ((GuiButton) volUp).enabled = true;
+            ((GuiButton) volDown).enabled = true;
         }
 
 
-        ((GuiButton)btnPlay).enabled = !(((GuiButton)btnStop).enabled = tileJukebox.isPlayingRecord());
-        ((GuiButton)btnShuffleOn).enabled = !tileJukebox.shuffleEnabled();
-        ((GuiButton)btnShuffleOff).enabled = tileJukebox.shuffleEnabled();
+        ((GuiButton) btnPlay).enabled = !(((GuiButton) btnStop).enabled = tileJukebox.isPlayingRecord());
+        ((GuiButton) btnShuffleOn).enabled = !tileJukebox.shuffleEnabled();
+        ((GuiButton) btnShuffleOff).enabled = tileJukebox.shuffleEnabled();
 
         switch (tileJukebox.getReplayMode()) {
             case OFF:
-                ((GuiButton)btnRepeatAll).enabled = true;
-                ((GuiButton)btnRepeatOne).enabled = true;
-                ((GuiButton)btnRepeatOff).enabled = false;
+                ((GuiButton) btnRepeatAll).enabled = true;
+                ((GuiButton) btnRepeatOne).enabled = true;
+                ((GuiButton) btnRepeatOff).enabled = false;
                 break;
             case ONE:
-                ((GuiButton)btnRepeatAll).enabled = true;
-                ((GuiButton)btnRepeatOne).enabled = false;
-                ((GuiButton)btnRepeatOff).enabled = true;
+                ((GuiButton) btnRepeatAll).enabled = true;
+                ((GuiButton) btnRepeatOne).enabled = false;
+                ((GuiButton) btnRepeatOff).enabled = true;
                 break;
             case ALL:
-                ((GuiButton)btnRepeatAll).enabled = false;
-                ((GuiButton)btnRepeatOne).enabled = true;
-                ((GuiButton)btnRepeatOff).enabled = true;
+                ((GuiButton) btnRepeatAll).enabled = false;
+                ((GuiButton) btnRepeatOne).enabled = true;
+                ((GuiButton) btnRepeatOff).enabled = true;
         }
     }
 }

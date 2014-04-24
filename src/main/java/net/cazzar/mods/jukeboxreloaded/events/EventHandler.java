@@ -1,27 +1,29 @@
+/*
+ * Copyright (C) 2014 Cayde Dixon
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.cazzar.mods.jukeboxreloaded.events;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.IPlayerTracker;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
 import net.cazzar.corelib.lib.SoundSystemHelper;
-import net.minecraft.entity.player.EntityPlayer;
 
-public class EventHandler implements IPlayerTracker {
-
-    @Override
-    public void onPlayerLogin(EntityPlayer player) {
-    }
-
-    @Override
-    public void onPlayerLogout(EntityPlayer player) {
+public class EventHandler {
+    @SubscribeEvent
+    public void onPlayerLogout(FMLNetworkEvent.ClientDisconnectionFromServerEvent player) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient())
             SoundSystemHelper.getSoundManager().stopAllSounds();
-    }
-
-    @Override
-    public void onPlayerChangedDimension(EntityPlayer player) {
-    }
-
-    @Override
-    public void onPlayerRespawn(EntityPlayer player) {
     }
 }

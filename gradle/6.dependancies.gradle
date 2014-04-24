@@ -13,25 +13,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.cazzar.mods.jukeboxreloaded.configuration;
-
-import net.cazzar.corelib.configuration.Config;
-import net.cazzar.corelib.configuration.annotations.ConfigurationClass;
-import net.minecraftforge.common.config.Configuration;
 
 
-// @ConfigurationClass(category = "default")
-public class ConfigHelper {
-    public Main main;
 
-    public ConfigHelper(Configuration config) {
-        Config.parse(main = new Main(), config);
-        if (config.hasChanged())
-            config.save();
-    }
 
-    @ConfigurationClass
-    public class Main {
-        public boolean enableUpdater = true;
-    }
+repositories {
+    mavenCentral()
+    maven { url 'http://maven.cazzar.net' }
+    maven { url 'http://maven.cil.li' }
+}
+dependencies {
+    compile 'net.cazzar.corelib:CazzarCore-1.7:1.7.2-1.1.0.+'
+    compile group: 'li.cil.oc', name: 'OpenComputers', version: 'MC1.7.2-1.2.3.82'
 }

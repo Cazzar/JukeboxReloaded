@@ -1,14 +1,28 @@
+/*
+ * Copyright (C) 2014 Cayde Dixon
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.cazzar.mods.jukeboxreloaded.network.packets;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
+import net.cazzar.corelib.network.packets.IPacket;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.minecraft.entity.player.EntityPlayer;
 
 import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JukeboxGUIActions.*;
 
-public class PacketUpdateClientTile extends PacketJukebox {
+public class PacketUpdateClientTile implements IPacket {
 
     // packet.writeCoord(this.getCoord());
     // packet.writeBoolean(this.isPlayingRecord());
@@ -30,11 +44,9 @@ public class PacketUpdateClientTile extends PacketJukebox {
     }
 
     @Override
-    public void execute(EntityPlayer player, Side side)
-            throws ProtocolException {
-        if (side.isClient()) {
+    public void handleClient(EntityPlayer player) {
             final TileJukebox tile = (TileJukebox) player.worldObj
-                    .getBlockTileEntity(x, y, z);
+                    .getTileEntity(x, y, z);
 
             switch (action) {
                 case PLAY:
@@ -50,12 +62,15 @@ public class PacketUpdateClientTile extends PacketJukebox {
                     tile.setRecordPlaying(currentRecord);
                     break;
             }
-        } else throw new ProtocolException(
-                "Cannot send this packet to the server!");
     }
 
     @Override
-    public void read(ByteArrayDataInput in) {
+    public void handleServer(EntityPlayer player) {
+        //quietly die
+    }
+
+    @Override
+    public void read(ByteBuf in) {
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
@@ -64,7 +79,7 @@ public class PacketUpdateClientTile extends PacketJukebox {
     }
 
     @Override
-    public void write(ByteArrayDataOutput out) {
+    public void write(ByteBuf out) {
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);

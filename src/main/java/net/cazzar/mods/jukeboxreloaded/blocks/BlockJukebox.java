@@ -1,15 +1,33 @@
+/*
+ * Copyright (C) 2014 Cayde Dixon
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.cazzar.mods.jukeboxreloaded.blocks;
 
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
+import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.cazzar.corelib.util.ClientUtil;
+import net.cazzar.corelib.util.CommonUtil;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.client.particles.ParticleIcons;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,36 +35,42 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Random;
 
 public class BlockJukebox extends Block {
-    private final Icon[] iconBuffer = new Icon[4];
+    private final IIcon[] iconBuffer = new IIcon[4];
 
     private final Random rand = new Random();
 
-    public BlockJukebox(int ID) {
-        super(ID, Material.rock);
+    public BlockJukebox() {
+        super(Material.rock);
         setCreativeTab(JukeboxReloaded.proxy.creativeTab);
-        setUnlocalizedName("Jukebox");
+        setBlockName("Jukebox");
         setHardness(1.0F);
-        setStepSound(soundWoodFootstep);
+        setStepSound(soundTypeWood);
         setTickRandomly(true);
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, int id, int meta) {
+    public void breakBlock(World world, int x, int y, int z, Block id, int meta) {
         dropInventory(world, x, y, z);
 
-        if (ClientUtil.isClient())
-            new PacketStopPlaying(x, y, z).sendToServer();
-        else
-            new PacketStopPlaying(x, y, z).sendToAllPlayers();
+        FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(CommonUtil.getSide());
+
+        if (ClientUtil.isClient()) {
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
+            channel.writeAndFlush(new PacketStopPlaying(x, y, z));
+        } else {
+
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
+            channel.writeAndFlush(new PacketStopPlaying(x, y, z));
+        }
         super.breakBlock(world, x, y, z, id, meta);
     }
 
@@ -58,7 +82,7 @@ public class BlockJukebox extends Block {
 
     private void dropInventory(World world, int x, int y, int z) {
 
-        final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+        final TileEntity tileEntity = world.getTileEntity(x, y, z);
 
         if (!(tileEntity instanceof IInventory)) return;
 
@@ -74,9 +98,9 @@ public class BlockJukebox extends Block {
                 final float dZ = rand.nextFloat() * 0.8F + 0.1F;
 
 
-               JukeboxReloaded.logger.info("Dropping %s", itemStack);
+                JukeboxReloaded.logger.info("Dropping %s", itemStack);
                 final EntityItem entityItem = new EntityItem(world, x + dX, y
-                        + dY, z + dZ, new ItemStack(itemStack.itemID,
+                        + dY, z + dZ, new ItemStack(itemStack.getItem(),
                         itemStack.stackSize, itemStack.getItemDamage()));
 
                 if (itemStack.hasTagCompound())
@@ -95,12 +119,10 @@ public class BlockJukebox extends Block {
 
     @Override
     @SideOnly(Side.CLIENT)
-    // this one does in-world rendering
-    public Icon getBlockTexture(IBlockAccess world, int x, int y, int z,
-                                int blockSide) {
+    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int blockSide) {
         if (blockSide == ForgeDirection.UP.ordinal()) return iconBuffer[2];
         if (blockSide == ForgeDirection.DOWN.ordinal()) return iconBuffer[0];
-        final TileJukebox te = (TileJukebox) world.getBlockTileEntity(x, y, z);
+        final TileJukebox te = (TileJukebox) world.getTileEntity(x, y, z);
         // if (blockSide == Integer.valueOf(te.getFacing())) return
         // iconBuffer[1];
 
@@ -137,7 +159,7 @@ public class BlockJukebox extends Block {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public Icon getIcon(int blockSide, int blockMeta) {
+    public IIcon getIcon(int blockSide, int blockMeta) {
         // return super.getIcon(par1, par2);
         if (blockSide == ForgeDirection.UP.ordinal()) return iconBuffer[2];
         if (blockSide == ForgeDirection.DOWN.ordinal()) return iconBuffer[0];
@@ -150,36 +172,21 @@ public class BlockJukebox extends Block {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z,
-                                    EntityPlayer player, int par6, float par7, float par8, float par9) {
-        if (player.isSneaking()) {
-            if (!world.isRemote) {
-                TileEntity te = world.getBlockTileEntity(x, y, z);
-                if (te instanceof TileJukebox)
-                    ((TileJukebox) te).activate(player);
-            }
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
+        if (!world.isRemote) {
+            final TileJukebox tileJukebox = (TileJukebox) world.getTileEntity(x, y, z);
 
-            return false;
-        } else {
-            if (!world.isRemote) {
-                final TileJukebox tileJukebox = (TileJukebox) world
-                        .getBlockTileEntity(x, y, z);
-
-                if (tileJukebox != null) player.openGui(
-                        JukeboxReloaded.instance(), GuiHandler.JUKEBOX, world,
-                        x, y, z);
-                else System.out.println("Tile is null");
-            }
-            return true;
+            if (tileJukebox != null) player.openGui(JukeboxReloaded.instance(), GuiHandler.JUKEBOX, world, x, y, z);
+            else JukeboxReloaded.logger.error("Tile is null");
         }
+        return true;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z,
-                                EntityLivingBase player, ItemStack stack) {
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
         super.onBlockPlacedBy(world, x, y, z, player, stack);
         final int heading = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
-        final TileJukebox te = (TileJukebox) world.getBlockTileEntity(x, y, z);
+        final TileJukebox te = (TileJukebox) world.getTileEntity(x, y, z);
         switch (heading) {
             case 0:
                 te.setFacing((short) 2);
@@ -203,11 +210,11 @@ public class BlockJukebox extends Block {
      * their own) Args: x, y, z, neighbor blockID
      */
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, int blockID) {
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block id) {
         if (!world.isRemote) {
             if (!world.isBlockIndirectlyGettingPowered(x, y, z)) return;
 
-            final TileEntity tile = world.getBlockTileEntity(x, y, z);
+            final TileEntity tile = world.getTileEntity(x, y, z);
             if (tile instanceof TileJukebox)
                 ((TileJukebox) tile).playSelectedRecord();
         }
@@ -215,7 +222,7 @@ public class BlockJukebox extends Block {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister iconRegister) {
+    public void registerBlockIcons(IIconRegister iconRegister) {
         iconBuffer[0] = iconRegister.registerIcon("cazzar:jukeboxbottom");
         iconBuffer[1] = iconRegister.registerIcon("cazzar:jukeboxside");
         iconBuffer[2] = iconRegister.registerIcon("cazzar:jukeboxtop");
