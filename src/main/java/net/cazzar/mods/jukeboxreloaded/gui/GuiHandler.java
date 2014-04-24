@@ -34,8 +34,8 @@ public class GuiHandler implements IGuiHandler {
             case JUKEBOX:
                 if (!(tile instanceof TileJukebox)) return null;
                 return new GUIJukebox(player, (TileJukebox) tile);
-            case PORTABLE_JUKEBOX:
-                return new GuiPortableJukebox(player);
+/*            case PORTABLE_JUKEBOX:
+                return new GuiPortableJukebox(player);*/
             default:
                 return null;
         }
@@ -50,8 +50,8 @@ public class GuiHandler implements IGuiHandler {
             case JUKEBOX:
                 if (!(tile instanceof TileJukebox)) return null;
                 return new ContainerJukebox(player.inventory, (TileJukebox) tile);
-            case PORTABLE_JUKEBOX:
-                return new ContainerPortableJukebox(player.inventory);
+            /*case PORTABLE_JUKEBOX:
+                return new ContainerPortableJukebox(player.inventory);*/
             default:
                 return null;
         }
