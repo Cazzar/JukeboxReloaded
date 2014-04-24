@@ -7,7 +7,6 @@ import net.cazzar.mods.jukeboxreloaded.lib.Reference;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
-import java.util.logging.Level;
 
 /**
  * Equivalent-Exchange-3
@@ -171,9 +170,8 @@ public class VersionHelper implements Runnable {
 
     public static void logResult() {
 
-        if (result == CURRENT || result == OUTDATED) JukeboxReloaded.logger.log(Level.INFO,
-                getResultMessage());
-        else JukeboxReloaded.logger.log(Level.WARNING, getResultMessage());
+        if (result == CURRENT || result == OUTDATED) JukeboxReloaded.logger.info(getResultMessage());
+        else JukeboxReloaded.logger.warn(getResultMessage());
     }
 
     @Override
@@ -182,7 +180,7 @@ public class VersionHelper implements Runnable {
         int count = 0;
 
         JukeboxReloaded.logger
-                .log(Level.INFO,
+                .info(
                         "Initializing remote version check against remote version authority, located at "
                                 + REMOTE_VERSION_XML_FILE);
 
