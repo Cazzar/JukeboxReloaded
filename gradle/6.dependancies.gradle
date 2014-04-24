@@ -23,6 +23,6 @@ repositories {
     maven { url 'http://maven.cil.li' }
 }
 dependencies {
-    compile 'net.cazzar.corelib:CazzarCore-1.7:1.7.2-1.1.0.+'
+    compile 'net.cazzar.corelib:CazzarCoreLib:1.7.2-1.1.0.+'
     compile group: 'li.cil.oc', name: 'OpenComputers', version: 'MC1.7.2-1.2.3.82'
 }
