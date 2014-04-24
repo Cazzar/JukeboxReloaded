@@ -15,9 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.ajoberstar.gradle.git.tasks.GitPush
-import org.ajoberstar.gradle.git.tasks.GitTag
-
 buildscript {
     repositories {
         mavenCentral()
@@ -28,34 +25,46 @@ buildscript {
             name 'forge'
             url 'http://files.minecraftforge.net/maven'
         }
-        maven {
-            name 'Cazzar\'s Maven repo'
-            url 'http://maven.cazzar.net/'
-        }
     }
-
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
         classpath 'org.ajoberstar:gradle-git:0.7.0-SNAPSHOT'
-        classpath 'net.cazzar:CurseForgeUploader:1.0'
     }
 }
 
-group = 'net.cazzar.mods'
-version = '3.0.0'
-project.ext.set('actualVersion', version)
-//noinspection GroovyUnusedAssignment
-//archivesBaseName = 'CazzarCoreLib'
-
-fileTree('gradle').include('*.gradle').collect().sort().each { apply from: it }
-
+apply plugin: 'forge'
 apply plugin: 'grgit'
 
-task tag(type: GitTag) {
-    setTagName actualVersion
-    setMessage "Release of ${version}"
+minecraft {
+    version = '1.7.2-10.12.0.1052'
+    assetDir = '../run/assets'
 }
 
-task push(type: GitPush) {
-    setPushTags true
+if (System.getenv("BUILD_NUMBER") != null) {
+    version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
+    project.actualVersion += "." + System.getenv("BUILD_NUMBER");
+} else if (new File(projectDir, '.git').exists()) {
+    def repo = grgit.repo('.')
+    version = "${minecraft.version}-$version-${repo.history.log().find().abbreviatedId}"
+    project.actualVersion += "-${repo.history.log().find().abbreviatedId}"
+} else {
+    version = "${minecraft.version}-$version-DEV"
+    project.actualVersion += "-DEV"
+}
+
+processResources {
+    // replace stuff in text files, not binary ones.
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.lang'
+        include '**/*.info'
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+        // replace version and MCVersion
+    }
+
+    // copy everything else, that's not text
+    from(sourceSets.main.resources.srcDirs) {
+        exclude '**/*.lang'
+        exclude '**/*.info'
+    }
 }

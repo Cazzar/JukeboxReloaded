@@ -13,14 +13,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.cazzar.mods.jukeboxreloaded.proxy;
+package net.cazzar.mods.jukeboxreloaded.util;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
-
-public class CommonProxy {
-    BlockJukebox block;
-    public void initBlocks() {
-        GameRegistry.registerBlock(new BlockJukebox(), "jukebox");
-    }
+public class ModInfo {
+    public static final String MODID = "jukeboxreloaded";
 }

@@ -1,0 +1,12 @@
+repositories {
+    mavenCentral()
+    maven { url 'http://maven.cazzar.net' }
+    maven { url 'http://maven.cil.li' }
+}
+dependencies {
+    if (!project.hasProperty('useProjectDep'))
+        compile 'net.cazzar.corelib:CazzarCore-1.7:1.7.2-1.1.0.+'
+    else
+        compile project(':CazzarCoreLib')
+    compile group: 'li.cil.oc', name: 'OpenComputers', version: 'MC1.7.2-1.2.4.101'
+}
