@@ -40,13 +40,15 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.Random;
 
 public class BlockJukebox extends Block {
     private final IIcon[] iconBuffer = new IIcon[4];
-
     private final Random rand = new Random();
+    Marker marker = MarkerManager.getMarker("JukeboxReloaded-Block");
 
     public BlockJukebox() {
         super(Material.rock);
@@ -61,16 +63,18 @@ public class BlockJukebox extends Block {
     public void breakBlock(World world, int x, int y, int z, Block id, int meta) {
         dropInventory(world, x, y, z);
 
+        TileJukebox tileJukebox = world.getTileEntity(x, y, z) instanceof TileJukebox ? ((TileJukebox) world.getTileEntity(x, y, z)) : null;
+
         FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(CommonUtil.getSide());
 
-        if (ClientUtil.isClient()) {
-            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-            channel.writeAndFlush(new PacketStopPlaying(x, y, z));
-        } else {
-
-            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
-            channel.writeAndFlush(new PacketStopPlaying(x, y, z));
-        }
+        if (tileJukebox != null)
+            if (ClientUtil.isClient()) {
+                channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
+                channel.writeAndFlush(new PacketStopPlaying(tileJukebox.getIdentifier(), x, y, z));
+            } else {
+                channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
+                channel.writeAndFlush(new PacketStopPlaying(tileJukebox.getIdentifier(), x, y, z));
+            }
         super.breakBlock(world, x, y, z, id, meta);
     }
 
@@ -98,7 +102,7 @@ public class BlockJukebox extends Block {
                 final float dZ = rand.nextFloat() * 0.8F + 0.1F;
 
 
-                JukeboxReloaded.logger.info("Dropping %s", itemStack);
+                JukeboxReloaded.logger.info(marker, "Dropping {}", itemStack);
                 final EntityItem entityItem = new EntityItem(world, x + dX, y
                         + dY, z + dZ, new ItemStack(itemStack.getItem(),
                         itemStack.stackSize, itemStack.getItemDamage()));
@@ -177,7 +181,7 @@ public class BlockJukebox extends Block {
             final TileJukebox tileJukebox = (TileJukebox) world.getTileEntity(x, y, z);
 
             if (tileJukebox != null) player.openGui(JukeboxReloaded.instance(), GuiHandler.JUKEBOX, world, x, y, z);
-            else JukeboxReloaded.logger.error("Tile is null");
+            else JukeboxReloaded.logger.error(marker, "Tile is null");
         }
         return true;
     }

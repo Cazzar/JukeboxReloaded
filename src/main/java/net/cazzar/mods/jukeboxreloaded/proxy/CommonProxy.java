@@ -22,7 +22,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.cazzar.corelib.items.ItemCustomRecord;
-import net.cazzar.corelib.network.DynamicPacketHandler;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
@@ -31,7 +30,7 @@ import net.cazzar.mods.jukeboxreloaded.configuration.ConfigHelper;
 import net.cazzar.mods.jukeboxreloaded.events.EventHandler;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import net.cazzar.mods.jukeboxreloaded.lib.Reference;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
+import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -78,18 +77,18 @@ public class CommonProxy {
         GameRegistry.registerItem(weArePopcandy = new ItemCustomRecord("we_are_popcandy", "We are POPCANDY!", new String[]{"Sung by Hatsune Miku", "Writer RUNO"}).setDomain("cazzar"), "we_are_popcandy");
 //        GameRegistry.registerItem(portableJukebox = new ItemPortableJukebox(config.items.portableJukeboxId), "Portable Jukebox");
 
-        ((Item)kokoro).setCreativeTab(creativeTab);
-        ((Item)loveIsWar).setCreativeTab(creativeTab);
-        ((Item)shibuya).setCreativeTab(creativeTab);
-        ((Item)spica).setCreativeTab(creativeTab);
-        ((Item)sukiDaiSuki).setCreativeTab(creativeTab);
-        ((Item)weArePopcandy).setCreativeTab(creativeTab);
+        ((Item) kokoro).setCreativeTab(creativeTab);
+        ((Item) loveIsWar).setCreativeTab(creativeTab);
+        ((Item) shibuya).setCreativeTab(creativeTab);
+        ((Item) spica).setCreativeTab(creativeTab);
+        ((Item) sukiDaiSuki).setCreativeTab(creativeTab);
+        ((Item) weArePopcandy).setCreativeTab(creativeTab);
     }
 
     public void initNetwork() {
         NetworkRegistry.INSTANCE.registerGuiHandler(JukeboxReloaded.instance(), new GuiHandler());
         //noinspection unchecked
-        channel = NetworkRegistry.INSTANCE.newChannel(Reference.MOD_ID, new DynamicPacketHandler(PacketPlayRecord.class));
+        channel = NetworkRegistry.INSTANCE.newChannel(Reference.MOD_ID, new PacketHandler());
     }
 
     public void initOther() {
@@ -113,6 +112,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileJukebox.class, "tileJukebox");
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public ConfigHelper getConfig() {
         return config;
     }

@@ -15,6 +15,7 @@
 
 package net.cazzar.mods.jukeboxreloaded.network.packets;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
@@ -30,12 +31,17 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class PacketStopPlaying implements IPacket {
 
-    public int x, y, z;
+    public int x;
+    public int y;
+    public int z;
+    private String identifier;
 
+    @SuppressWarnings("UnusedDeclaration")
     public PacketStopPlaying() {
     }
 
-    public PacketStopPlaying(int x, int y, int z) {
+    public PacketStopPlaying(String identifier, int x, int y, int z) {
+        this.identifier = identifier;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -50,7 +56,7 @@ public class PacketStopPlaying implements IPacket {
             ((TileJukebox) te).markForUpdate();
         }
 
-        SoundSystemHelper.stop(x + ":" + y + ":" + z);
+        SoundSystemHelper.stop(identifier);
     }
 
     @Override
@@ -66,6 +72,7 @@ public class PacketStopPlaying implements IPacket {
         x = in.readInt();
         y = in.readInt();
         z = in.readInt();
+        identifier = ByteBufUtils.readUTF8String(in);
     }
 
     @Override
@@ -73,6 +80,7 @@ public class PacketStopPlaying implements IPacket {
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);
+        ByteBufUtils.writeUTF8String(out, identifier);
     }
 
 }

@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBuf;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.network.packets.IPacket;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
+import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketStopAllSounds implements IPacket {
@@ -28,13 +29,13 @@ public class PacketStopAllSounds implements IPacket {
 
     @Override
     public void handleClient(EntityPlayer player) {
-            SoundSystemHelper.getSoundManager().stopAllSounds();
+        SoundSystemHelper.getSoundManager().stopAllSounds();
     }
 
     @Override
     public void handleServer(EntityPlayer player) {
         //quietly ignore it.
-        JukeboxReloaded.logger.debug("Recieved a packet I should not have!");
+        JukeboxReloaded.logger.debug(PacketHandler.marker, "Recieved a packet I should not have!");
     }
 
     @Override

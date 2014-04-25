@@ -20,6 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.cazzar.corelib.client.gui.TexturedButton;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.util.ClientUtil;
+import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
@@ -61,6 +62,7 @@ public class GUIJukebox extends GuiContainer {
                 tileJukebox.stopPlayingRecord();
                 break;
             case NEXT:
+                JukeboxReloaded.logger.info("Was playing: {}", wasPlaying);
                 if (wasPlaying) tileJukebox.stopPlayingRecord();
                 if (tileJukebox.shuffleEnabled()) {
                     final Random random = new Random();
@@ -130,6 +132,7 @@ public class GUIJukebox extends GuiContainer {
     @SuppressWarnings("unchecked")
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {
+
         final String containerName = Strings.GUI_JUKEBOX_NAME.toString();
         this.fontRendererObj.drawString(containerName,
                 xSize / 2 - fontRendererObj.getStringWidth(containerName) / 2, 6,

@@ -59,7 +59,6 @@ public class TileJukebox extends SyncedTileEntity implements IInventory {
     RepeatMode repeatMode = RepeatMode.ALL;
     int tick = 0;
     private short facing;
-    private boolean pageUpgrade;
 
     public TileJukebox() {
         items = new ItemStack[getSizeInventory()];
@@ -267,10 +266,10 @@ public class TileJukebox extends SyncedTileEntity implements IInventory {
         FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(CommonUtil.getSide());
         if (CommonUtil.isServer()) {
             channel.attr(FML_MESSAGETARGET).set(ALL);
-            channel.writeAndFlush(new PacketStopPlaying(xCoord, yCoord, zCoord));
+            channel.writeAndFlush(new PacketStopPlaying(getIdentifier(), xCoord, yCoord, zCoord));
         } else {
             channel.attr(FML_MESSAGETARGET).set(TOSERVER);
-            channel.writeAndFlush(new PacketStopPlaying(xCoord, yCoord, zCoord));
+            channel.writeAndFlush(new PacketStopPlaying(getIdentifier(), xCoord, yCoord, zCoord));
         }
     }
 
@@ -333,9 +332,11 @@ public class TileJukebox extends SyncedTileEntity implements IInventory {
     }
 
     public String getIdentifier() {
-        return xCoord + ":" + yCoord + ":" + zCoord;
+        return SoundSystemHelper.getIdentifierForRecord(((ItemRecord) getStackInSlot(getCurrentRecordNumber()).getItem()), xCoord, yCoord, zCoord);
+//        return xCoord + ":" + yCoord + ":" + zCoord;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public String getServerSideRecordName() {
         String s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
         if (FMLCommonHandler.instance().getEffectiveSide().isClient())
@@ -350,6 +351,7 @@ public class TileJukebox extends SyncedTileEntity implements IInventory {
     }
 
 
+    @SuppressWarnings("UnusedDeclaration")
     private void dropItemInWorld(ItemStack itemStack) {
         Random rand = new Random();
 

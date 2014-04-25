@@ -23,7 +23,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.cazzar.corelib.lib.LogHelper;
 import net.cazzar.mods.jukeboxreloaded.lib.Reference;
-import net.cazzar.mods.jukeboxreloaded.lib.util.VersionHelper;
 import net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy;
 import org.apache.logging.log4j.Logger;
 
@@ -50,8 +49,6 @@ public class JukeboxReloaded {
         //LogHelper.init();
         proxy.initNetwork();
         proxy.initConfig(event.getSuggestedConfigurationFile());
-
-        VersionHelper.execute();
 
         proxy.initBlocks();
         proxy.initItems();
