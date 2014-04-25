@@ -24,9 +24,6 @@ import net.minecraft.world.World;
 
 import java.lang.reflect.Constructor;
 
-/**
- * @Author: Cayde
- */
 public enum Particles {
     QUAVER(EntityQuaverFX.class),
     CROTCHET(EntityCrotchetFX.class),
