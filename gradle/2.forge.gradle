@@ -17,6 +17,8 @@
 
 
 
+
+
 buildscript {
     repositories {
         mavenCentral()
@@ -45,8 +47,7 @@ if (System.getenv("BUILD_NUMBER") != null) {
     version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
     project.actualVersion += "." + System.getenv("BUILD_NUMBER");
 } else {
-    version = "${minecraft.version}-$version-DEV"
-    project.actualVersion += "-DEV"
+    version = "${minecraft.version}-$version"
 }
 
 processResources {
@@ -65,3 +66,5 @@ processResources {
         exclude '**/*.info'
     }
 }
+
+compileJava.options.encoding = 'UTF-8'
