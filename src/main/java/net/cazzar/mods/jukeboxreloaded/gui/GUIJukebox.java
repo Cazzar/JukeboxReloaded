@@ -20,7 +20,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.cazzar.corelib.client.gui.TexturedButton;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.util.ClientUtil;
-import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
@@ -62,7 +61,6 @@ public class GUIJukebox extends GuiContainer {
                 tileJukebox.stopPlayingRecord();
                 break;
             case NEXT:
-                JukeboxReloaded.logger.info("Was playing: {}", wasPlaying);
                 if (wasPlaying) tileJukebox.stopPlayingRecord();
                 if (tileJukebox.shuffleEnabled()) {
                     final Random random = new Random();
@@ -101,8 +99,8 @@ public class GUIJukebox extends GuiContainer {
                     break;
                 }
 
-                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.getSoundLevel(SoundCategory.RECORDS));
                 tileJukebox.volume += 0.05F;
+                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.getSoundLevel(SoundCategory.RECORDS));
                 break;
             case VOLUME_DOWN:
                 if (tileJukebox.volume <= 0F) {
@@ -110,8 +108,8 @@ public class GUIJukebox extends GuiContainer {
                     break;
                 }
 
-                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.getSoundLevel(SoundCategory.RECORDS));
                 tileJukebox.volume -= 0.05F;
+                SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.getSoundLevel(SoundCategory.RECORDS));
                 break;
         }
 

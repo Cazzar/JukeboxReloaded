@@ -16,10 +16,15 @@
 package net.cazzar.mods.jukeboxreloaded.blocks;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import li.cil.oc.api.network.Arguments;
+import li.cil.oc.api.network.Callback;
+import li.cil.oc.api.network.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import net.cazzar.corelib.lib.InventoryUtils;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.tile.SyncedTileEntity;
@@ -45,7 +50,8 @@ import static cpw.mods.fml.common.network.FMLOutboundHandler.FML_MESSAGETARGET;
 import static cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget.ALL;
 import static cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget.TOSERVER;
 
-public class TileJukebox extends SyncedTileEntity implements IInventory {
+@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
+public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleComponent {
     public ItemStack[] items;
     public boolean playing = false;
     public int waitTicks = 0;
@@ -336,8 +342,9 @@ public class TileJukebox extends SyncedTileEntity implements IInventory {
 //        return xCoord + ":" + yCoord + ":" + zCoord;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public String getServerSideRecordName() {
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] getRecordName(Context context, Arguments args) {
         String s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
         if (FMLCommonHandler.instance().getEffectiveSide().isClient())
             s = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
@@ -347,9 +354,126 @@ public class TileJukebox extends SyncedTileEntity implements IInventory {
                 .replace("cazzar:spica", "Hatsune Miku - SPiCa")
                 .replace("cazzar:suki_daisuki", "Kagamine Rin - I Like You, I Love You")
                 .replace("cazzar:we_are_popcandy", "Hatsune Miku - We are POPCANDY!");
-        return s;
+        return new String[]{s};
     }
 
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] isPlaying(Context context, Arguments args) {
+        return new Object[]{isPlayingRecord()};
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] play(Context context, Arguments args) {
+        playSelectedRecord();
+        markForUpdate();
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] stop(Context context, Arguments args) {
+        stopPlayingRecord();
+        markForUpdate();
+
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] next(Context context, Arguments args) {
+        boolean wasPlaying = isPlayingRecord();
+        if (wasPlaying) stopPlayingRecord();
+        if (shuffleEnabled()) {
+            final Random random = new Random();
+            if (getLastSlotWithItem() <= 0) return null;
+
+            final int nextDisk = random.nextInt(getLastSlotWithItem());
+            if (getCurrentRecordNumber() != nextDisk)
+                setRecordPlaying(nextDisk);
+        }
+        nextRecord();
+        if (wasPlaying) playSelectedRecord();
+        markForUpdate();
+
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] previous(Context context, Arguments args) {
+        boolean wasPlaying = isPlayingRecord();
+
+        if (wasPlaying) stopPlayingRecord();
+        previousRecord();
+        if (wasPlaying) playSelectedRecord();
+        markForUpdate();
+
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] setRepeatOne(Context context, Arguments args) {
+        repeatMode = RepeatMode.ONE;
+        markForUpdate();
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] setRepeatNone(Context context, Arguments args) {
+        repeatMode = RepeatMode.OFF;
+        markForUpdate();
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] setRepeatAll(Context context, Arguments args) {
+        repeatMode = RepeatMode.ALL;
+        markForUpdate();
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] enableShuffle(Context context, Arguments args) {
+        shuffle = true;
+        markForUpdate();
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] disableShuffle(Context context, Arguments args) {
+        shuffle = false;
+        markForUpdate();
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] toggleShuffle(Context context, Arguments args) {
+        shuffle = !shuffle;
+        markForUpdate();
+        return null;
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Callback
+    public Object[] setVolume(Context context, Arguments args) {
+        int vol = args.checkInteger(1);
+
+        if (vol >= 1f)
+            volume = 1f;
+        else if (vol <= 0f) volume = 0f;
+        else volume = vol;
+
+        markForUpdate();
+        return new Object[]{volume};
+    }
 
     @SuppressWarnings("UnusedDeclaration")
     private void dropItemInWorld(ItemStack itemStack) {
@@ -383,5 +507,11 @@ public class TileJukebox extends SyncedTileEntity implements IInventory {
     public void readExtraNBTFromPacket(NBTTagCompound tag) {
         if (tag.getBoolean("playing") && !playing)
             playSelectedRecord();
+    }
+
+    @Optional.Method(modid = "OpenComputers")
+    @Override
+    public String getComponentName() {
+        return "jukebox";
     }
 }
