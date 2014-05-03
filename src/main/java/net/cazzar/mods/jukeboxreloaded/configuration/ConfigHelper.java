@@ -20,18 +20,25 @@ import net.cazzar.corelib.configuration.annotations.ConfigurationClass;
 import net.minecraftforge.common.config.Configuration;
 
 
-// @ConfigurationClass(category = "default")
+@ConfigurationClass(category = "default")
 public class ConfigHelper {
-    public Main main;
+    @Config.Exclude
+    public final Config config;
+    public Main main = new Main();
 
     public ConfigHelper(Configuration config) {
-        Config.parse(main = new Main(), config);
+        this.config = new Config(config).setInstance(this);
+        try {
+            this.config.build();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         if (config.hasChanged())
             config.save();
     }
 
-    @ConfigurationClass
     public class Main {
+        @SuppressWarnings("UnusedDeclaration")
         public boolean enableUpdater = true;
     }
 }
