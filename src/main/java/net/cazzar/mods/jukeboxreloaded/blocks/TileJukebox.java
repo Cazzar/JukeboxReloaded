@@ -295,7 +295,7 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
             System.out.println(VecMath.angleTo(ClientUtil.mc().thePlayer, xCoord, yCoord, zCoord) + " " + ClientUtil.mc());
 
         tick++;
-        final Random random = new Random();
+        final Random random = worldObj.rand;
 
         if (tick % 5 == 0 && random.nextBoolean())
             if (isPlayingRecord()) {

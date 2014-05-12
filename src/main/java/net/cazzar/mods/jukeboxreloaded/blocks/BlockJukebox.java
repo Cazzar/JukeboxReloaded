@@ -110,7 +110,7 @@ public class BlockJukebox extends Block {
                 final float dZ = rand.nextFloat() * 0.8F + 0.1F;
 
 
-                JukeboxReloaded.logger.info(marker, "Dropping {}", itemStack);
+                JukeboxReloaded.logger.debug(marker, "Dropping {}", itemStack);
                 final EntityItem entityItem = new EntityItem(world, x + dX, y
                         + dY, z + dZ, new ItemStack(itemStack.getItem(),
                         itemStack.stackSize, itemStack.getItemDamage()));
