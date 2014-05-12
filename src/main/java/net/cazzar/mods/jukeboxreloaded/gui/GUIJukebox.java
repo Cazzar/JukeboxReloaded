@@ -1,16 +1,25 @@
 /*
- * Copyright (C) 2014 Cayde Dixon
+ * The MIT License (MIT)
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (c) 2014 Cayde Dixon
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package net.cazzar.mods.jukeboxreloaded.gui;
@@ -139,8 +148,8 @@ public class GUIJukebox extends GuiContainer {
                 Strings.GUI_INVENTORY.toString(), 8,
                 ySize - 93, 4210752);
 
-        String str = (tileJukebox.volume == 1.0F) ? "10" : String.format("%.1f", tileJukebox.volume * 10);
-        fontRendererObj.drawString(str, 21, 68, 4210752);
+//        String str = (tileJukebox.volume == 1.0F) ? "10" : String.format("%.1f", tileJukebox.volume * 10);
+//        fontRendererObj.drawString(str, 21, 68, 4210752);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE);
@@ -207,23 +216,23 @@ public class GUIJukebox extends GuiContainer {
         buttonList.add(btnShuffleOn = new TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118));
         buttonList.add(btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF, xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 158, 176, 138, 176, 178));
 
-        buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
-        buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
+//        buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
+//        buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
     }
 
     @SuppressWarnings("RedundantCast")
     public void updateButtonStates() {
         if (tileJukebox.volume <= 0F) {
             tileJukebox.volume = 0F;
-            ((GuiButton) volDown).enabled = false;
-            ((GuiButton) volUp).enabled = true;
+//            ((GuiButton) volDown).enabled = false;
+//            ((GuiButton) volUp).enabled = true;
         } else if (tileJukebox.volume >= 1F) {
             tileJukebox.volume = 1F;
-            ((GuiButton) volUp).enabled = false;
-            ((GuiButton) volDown).enabled = true;
+//            ((GuiButton) volUp).enabled = false;
+//            ((GuiButton) volDown).enabled = true;
         } else {
-            ((GuiButton) volUp).enabled = true;
-            ((GuiButton) volDown).enabled = true;
+//            ((GuiButton) volUp).enabled = true;
+//            ((GuiButton) volDown).enabled = true;
         }
 
 

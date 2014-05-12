@@ -22,6 +22,25 @@
  * SOFTWARE.
  */
 
+package net.cazzar.mods.jukeboxreloaded.client.particles;
 
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.init.Blocks;
+import net.minecraft.world.World;
 
-rootProject.name = "Jukebox-Reloaded"
+public class EntityCustomFX extends EntityFX {
+    protected EntityCustomFX(World par1World, double par2, double par4, double par6) {
+        super(par1World, par2, par4, par6);
+
+        setParticleIcon(Blocks.bookshelf.getIcon(1, 0));
+        particleMaxAge = 10;
+        this.motionY = Math.random() * 0.15D;
+
+        particleAlpha = 1;
+    }
+
+    @Override
+    public int getFXLayer() {
+        return 1;
+    }
+}

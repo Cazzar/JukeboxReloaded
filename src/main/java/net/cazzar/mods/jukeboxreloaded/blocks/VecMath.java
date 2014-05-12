@@ -22,6 +22,20 @@
  * SOFTWARE.
  */
 
+package net.cazzar.mods.jukeboxreloaded.blocks;
 
+import net.minecraft.entity.player.EntityPlayer;
 
-rootProject.name = "Jukebox-Reloaded"
+public class VecMath {
+    //1: player
+    //2: point
+    public static double angleTo(EntityPlayer player, double x, double y, double z) {
+        double dx = x - player.posX;
+        double dz = z - player.posY;
+        return Math.toDegrees(Math.atan(dx / dz)) - player.rotationYaw;
+    }
+
+    public static void main(String... args) {
+
+    }
+}

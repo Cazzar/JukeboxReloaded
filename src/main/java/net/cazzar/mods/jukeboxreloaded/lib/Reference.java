@@ -1,18 +1,25 @@
 /*
- * Copyright (C) 2013 cazzar
+ * The MIT License (MIT)
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * Copyright (c) 2014 Cayde Dixon
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see [http://www.gnu.org/licenses/].
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package net.cazzar.mods.jukeboxreloaded.lib;
@@ -20,6 +27,18 @@ package net.cazzar.mods.jukeboxreloaded.lib;
 import net.minecraft.util.ResourceLocation;
 
 public class Reference {
+    public static final String MOD_ID = "JukeboxReloaded";
+    public static final String MOD_NAME = "Jukebox Reloaded";
+    public static final String MOD_VERSION = "@VERSION@";
+    public static final String CHANNEL_NAME = "JUKEBOXRELOADED";
+    public static final String SERVER_PROXY_CLASS = "net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy";
+    public static final String CLIENT_PROXY_CLASS = "net.cazzar.mods.jukeboxreloaded.proxy.ClientProxy";
+    public static final ResourceLocation JUKEBOX_GUI_TEXTURE = new ResourceLocation(
+            "cazzar",
+            "textures/gui/jukebox.png");
+    public static final ResourceLocation PORTABLE_JUKEBOX_GUI_TEXTURE = new ResourceLocation("cazzar", "textures/gui/portableJukebox.png");
+    public static final int VERSION_CHECK_ATTEMPTS = 3;
+
     public static class JukeboxGUIActions {
         public static final int PLAY = 0;
         public static final int STOP = 1;
@@ -42,17 +61,4 @@ public class Reference {
         public static final int STOP_RECORD = 5;
         public static final int STOP_ALL = 6;
     }
-
-    public static final String MOD_ID = "JukeboxReloaded";
-    public static final String MOD_NAME = "Jukebox Reloaded";
-    public static final String MOD_VERSION = "@VERSION@";
-    public static final String CHANNEL_NAME = "JUKEBOXRELOADED";
-    public static final String SERVER_PROXY_CLASS = "net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy";
-    public static final String CLIENT_PROXY_CLASS = "net.cazzar.mods.jukeboxreloaded.proxy.ClientProxy";
-    public static final ResourceLocation JUKEBOX_GUI_TEXTURE = new ResourceLocation(
-            "cazzar",
-            "textures/gui/jukebox.png");
-    public static final ResourceLocation PORTABLE_JUKEBOX_GUI_TEXTURE = new ResourceLocation("cazzar", "textures/gui/portableJukebox.png");
-
-    public static final int VERSION_CHECK_ATTEMPTS = 3;
 }
