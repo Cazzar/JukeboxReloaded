@@ -26,6 +26,8 @@
 
 
 
+
+
 buildscript {
     repositories {
         mavenCentral()
@@ -45,7 +47,6 @@ buildscript {
 
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-        classpath 'net.cazzar:CurseForgeUploader:1.0'
     }
 }
 
