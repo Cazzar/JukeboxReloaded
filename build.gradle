@@ -22,12 +22,6 @@
  * SOFTWARE.
  */
 
-
-
-
-
-
-
 buildscript {
     repositories {
         mavenCentral()
@@ -45,17 +39,34 @@ buildscript {
         }
     }
 
+
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'me.tatarka:gradle-retrolambda:1.3.2'
     }
 }
+
+// Required because retrolambda is on maven central
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'retrolambda'
 
 group = 'net.cazzar.mods'
 version = '3.0.0'
 project.ext.set('actualVersion', version)
-
 //noinspection GroovyUnusedAssignment
 //archivesBaseName = 'CazzarCoreLib'
 
 fileTree('gradle').include('*.gradle').collect().sort().each { apply from: it }
 
+retrolambda {
+    jdk System.getenv("JAVA8_HOME")
+    oldJdk System.getenv("JAVA6_HOME")
+    javaVersion JavaVersion.VERSION_1_7 // Fuck you Java 6
+}
+
+afterEvaluate {
+    tasks.reobf.dependsOn tasks.compileRetrolambda
+}
