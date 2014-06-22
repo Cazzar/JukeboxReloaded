@@ -25,11 +25,9 @@
 package net.cazzar.mods.jukeboxreloaded.proxy;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
-import cpw.mods.fml.relauncher.Side;
 import net.cazzar.corelib.items.ItemCustomRecord;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
@@ -38,7 +36,6 @@ import net.cazzar.mods.jukeboxreloaded.client.CreativeTabJukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.configuration.ConfigHelper;
 import net.cazzar.mods.jukeboxreloaded.events.EventHandler;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
-import net.cazzar.mods.jukeboxreloaded.lib.Reference;
 import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.init.Blocks;
@@ -52,7 +49,6 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.io.File;
-import java.util.EnumMap;
 import java.util.Random;
 
 public class CommonProxy {
@@ -60,7 +56,6 @@ public class CommonProxy {
     public ItemCustomRecord kokoro, loveIsWar, shibuya, spica, sukiDaiSuki, weArePopcandy;
     //    public ItemPortableJukebox portableJukebox;
     public CreativeTabJukeboxReloaded creativeTab;
-    public EnumMap<Side, FMLEmbeddedChannel> channel;
     private ConfigHelper config;
 
     public void initBlocks() {
@@ -97,7 +92,8 @@ public class CommonProxy {
     public void initNetwork() {
         NetworkRegistry.INSTANCE.registerGuiHandler(JukeboxReloaded.instance(), new GuiHandler());
         //noinspection unchecked
-        channel = NetworkRegistry.INSTANCE.newChannel(Reference.MOD_ID, new PacketHandler());
+//        channel = NetworkRegistry.INSTANCE.newChannel(Reference.MOD_ID, new PacketHandler());
+        PacketHandler.init();
     }
 
     public void initOther() {

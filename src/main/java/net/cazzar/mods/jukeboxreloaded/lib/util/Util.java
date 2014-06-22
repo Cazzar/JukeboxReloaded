@@ -24,6 +24,9 @@
 
 package net.cazzar.mods.jukeboxreloaded.lib.util;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
+
 import java.io.*;
 import java.net.URL;
 
@@ -53,5 +56,12 @@ public class Util {
             if (in != null) in.close();
             if (fout != null) fout.close();
         }
+    }
+
+    public static <T extends TileEntity> T getTileEntity(IBlockAccess world, int x, int y, int z, Class<? extends T> tileClass) {
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        if (tileEntity == null) return null;
+        if (tileEntity.getClass().isAssignableFrom(tileClass)) return (T) tileEntity;
+        return null;
     }
 }

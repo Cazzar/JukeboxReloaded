@@ -26,8 +26,6 @@ package net.cazzar.mods.jukeboxreloaded.blocks;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import li.cil.oc.api.network.Arguments;
@@ -39,12 +37,10 @@ import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.tile.SyncedTileEntity;
 import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.corelib.util.CommonUtil;
-import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketPlayRecord;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketShuffleDisk;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
+import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
+import net.cazzar.mods.jukeboxreloaded.network.packet.*;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,10 +50,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Random;
-
-import static cpw.mods.fml.common.network.FMLOutboundHandler.FML_MESSAGETARGET;
-import static cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget.ALL;
-import static cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget.TOSERVER;
 
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleComponent {
@@ -131,7 +123,7 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
     }
 
     /**
-     * @return 0: none <br/> 1: all <br/> 2: one
+     * @return 0: none <br> 1: all <br> 2: one
      */
     public RepeatMode getReplayMode() {
         //if (repeat) return 2;
@@ -186,29 +178,17 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
     }
 
     public void playSelectedRecord() {
+        if (getStackInSlot(recordNumber) == null) return;
+
         if (worldObj.isRemote) {
-            if (getStackInSlot(recordNumber) == null) return;
-            FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(Side.CLIENT);
-            channel.attr(FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-            channel.writeAndFlush(new PacketPlayRecord(getStackInSlot(recordNumber), xCoord, yCoord, zCoord));
+            PacketHandler.INSTANCE.sendToServer(new ClientPlayRecord(this));
             return;
         }
 
-        if (getStackInSlot(recordNumber) == null) return;
-
-        // if (!(getStackInSlot(recordNumber).getItem() instanceof ItemRecord))
-        // return; // no I will not play.
-
-        // worldObj.playRecord(((ItemRecord) getStackInSlot(recordNumber)
-        // .getItem()).recordName, xCoord, yCoord, zCoord);
-
-        lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber)
-                .getItem()).recordName;
+        lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
         playing = true;
 
-        FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(Side.SERVER);
-        channel.attr(FML_MESSAGETARGET).set(ALL);
-        channel.writeAndFlush(new PacketPlayRecord(getStackInSlot(recordNumber), xCoord, yCoord, zCoord));
+        PacketHandler.INSTANCE.sendToAll(new ServerPlayRecord(this));
     }
 
     public void previousRecord() {
@@ -259,10 +239,12 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
         this.recordNumber = recordNumber;
         if (isPlayingRecord() && oldRecord != recordNumber)
             playSelectedRecord();
+
+        markForUpdate();
     }
 
     /**
-     * @param mode 0: none <br/> 1: all <br/> 2: one
+     * @param mode 0: none <br> 1: all <br> 2: one
      */
     public void setRepeatMode(RepeatMode mode) {
         repeatMode = mode;
@@ -278,14 +260,9 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
 
     public void stopPlayingRecord() {
         playing = false;
-        FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(CommonUtil.getSide());
-        if (CommonUtil.isServer()) {
-            channel.attr(FML_MESSAGETARGET).set(ALL);
-            channel.writeAndFlush(new PacketStopPlaying(getIdentifier(), xCoord, yCoord, zCoord));
-        } else {
-            channel.attr(FML_MESSAGETARGET).set(TOSERVER);
-            channel.writeAndFlush(new PacketStopPlaying(getIdentifier(), xCoord, yCoord, zCoord));
-        }
+        if (CommonUtil.isServer())
+            PacketHandler.INSTANCE.sendToAll(new ServerAction(ClientAction.Action.STOP, this));
+        else PacketHandler.INSTANCE.sendToServer(new ClientAction(ClientAction.Action.STOP, this));
     }
 
     @Override
@@ -326,12 +303,9 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
             }
             // send tile information to the server to update the other clients
             if (shuffle && repeatMode != RepeatMode.ONE) {
-                FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(Side.CLIENT);
-                channel.attr(FML_MESSAGETARGET).set(TOSERVER);
-                channel.writeAndFlush(new PacketShuffleDisk(this));
+                PacketHandler.INSTANCE.sendToServer(new ClientShuffle(this));
             }
             markForUpdate();
-            markDirty();
         }
     }
 
@@ -350,7 +324,6 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
         if (getStackInSlot(getCurrentRecordNumber()) == null) return "";
 
         return SoundSystemHelper.getIdentifierForRecord(((ItemRecord) getStackInSlot(getCurrentRecordNumber()).getItem()), xCoord, yCoord, zCoord);
-//        return xCoord + ":" + yCoord + ":" + zCoord;
     }
 
     @Optional.Method(modid = "OpenComputers")

@@ -24,16 +24,15 @@
 
 package net.cazzar.mods.jukeboxreloaded.blocks;
 
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.cazzar.corelib.util.ClientUtil;
-import net.cazzar.corelib.util.CommonUtil;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.client.particles.ParticleIcons;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
-import net.cazzar.mods.jukeboxreloaded.network.packets.PacketStopPlaying;
+import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
+import net.cazzar.mods.jukeboxreloaded.network.packet.ClientAction;
+import net.cazzar.mods.jukeboxreloaded.network.packet.ServerAction;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -74,16 +73,10 @@ public class BlockJukebox extends Block {
 
         TileJukebox tileJukebox = world.getTileEntity(x, y, z) instanceof TileJukebox ? ((TileJukebox) world.getTileEntity(x, y, z)) : null;
 
-        FMLEmbeddedChannel channel = JukeboxReloaded.proxy().channel.get(CommonUtil.getSide());
-
         if (tileJukebox != null)
-            if (ClientUtil.isClient()) {
-                channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-                channel.writeAndFlush(new PacketStopPlaying(tileJukebox.getIdentifier(), x, y, z));
-            } else {
-                channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
-                channel.writeAndFlush(new PacketStopPlaying(tileJukebox.getIdentifier(), x, y, z));
-            }
+            if (ClientUtil.isClient())
+                PacketHandler.INSTANCE.sendToServer(new ClientAction(ClientAction.Action.STOP, x, y, z));
+            else PacketHandler.INSTANCE.sendToAll(new ServerAction(ClientAction.Action.STOP, x, y, z));
         super.breakBlock(world, x, y, z, id, meta);
     }
 

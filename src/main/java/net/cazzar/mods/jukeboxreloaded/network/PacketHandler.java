@@ -24,44 +24,26 @@
 
 package net.cazzar.mods.jukeboxreloaded.network;
 
-import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.cazzar.corelib.network.packets.IPacket;
-import net.cazzar.corelib.util.ClientUtil;
-import net.cazzar.corelib.util.CommonUtil;
-import net.cazzar.mods.jukeboxreloaded.network.packets.*;
-import net.minecraft.network.NetHandlerPlayServer;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.cazzar.mods.jukeboxreloaded.lib.Reference;
+import net.cazzar.mods.jukeboxreloaded.network.packet.*;
 
-public class PacketHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
-    public static Marker marker = MarkerManager.getMarker("JukeboxReloaded-Packets");
+import static cpw.mods.fml.relauncher.Side.CLIENT;
+import static cpw.mods.fml.relauncher.Side.SERVER;
 
-    public PacketHandler() {
-        addDiscriminator(0, PacketPlayRecord.class);
-        addDiscriminator(1, PacketShuffleDisk.class);
-        addDiscriminator(2, PacketStopAllSounds.class);
-        addDiscriminator(3, PacketStopPlaying.class);
-        addDiscriminator(4, PacketUpdateClientTile.class);
+public class PacketHandler {
+    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MOD_ID);
+
+    public static void init() {
+        INSTANCE.registerMessage(ClientAction.class, ClientAction.class, 0, SERVER);
+        INSTANCE.registerMessage(ServerAction.class, ServerAction.class, 0, CLIENT);
+        INSTANCE.registerMessage(ClientPlayRecord.class, ClientPlayRecord.class, 0, SERVER);
+        INSTANCE.registerMessage(ServerPlayRecord.class, ServerPlayRecord.class, 0, CLIENT);
+        INSTANCE.registerMessage(ClientShuffle.class, ClientShuffle.class, 0, SERVER);
     }
 
-    @Override
-    public void encodeInto(ChannelHandlerContext ctx, IPacket packet, ByteBuf bytes) throws Exception {
-        packet.write(bytes);
-    }
+    private PacketHandler() {
 
-    @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf bytes, IPacket packet) {
-        packet.read(bytes);
-        switch (CommonUtil.getSide()) {
-            case CLIENT:
-                packet.handleClient(ClientUtil.mc().thePlayer);
-                break;
-            case SERVER:
-                packet.handleServer(((NetHandlerPlayServer) ctx.channel().attr(NetworkRegistry.NET_HANDLER).get()).playerEntity);
-                break;
-        }
     }
 }

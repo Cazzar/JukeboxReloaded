@@ -213,7 +213,7 @@ public class GUIJukebox extends GuiContainer {
         buttonList.add(btnRepeatAll = new TexturedButton(this, REPEAT_ALL, xStart + 150, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 98, 216, 78, 216, 118));
         buttonList.add(btnRepeatOff = new TexturedButton(this, REPEAT_OFF, xStart + 150, yStart + 63, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 158, 196, 138, 196, 178));
 
-        buttonList.add(btnShuffleOn = new TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118));
+        buttonList.add(btnShuffleOn = new  TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118));
         buttonList.add(btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF, xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 158, 176, 138, 176, 178));
 
 //        buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
@@ -222,19 +222,6 @@ public class GUIJukebox extends GuiContainer {
 
     @SuppressWarnings("RedundantCast")
     public void updateButtonStates() {
-        if (tileJukebox.volume <= 0F) {
-            tileJukebox.volume = 0F;
-//            ((GuiButton) volDown).enabled = false;
-//            ((GuiButton) volUp).enabled = true;
-        } else if (tileJukebox.volume >= 1F) {
-            tileJukebox.volume = 1F;
-//            ((GuiButton) volUp).enabled = false;
-//            ((GuiButton) volDown).enabled = true;
-        } else {
-//            ((GuiButton) volUp).enabled = true;
-//            ((GuiButton) volDown).enabled = true;
-        }
-
 
         ((GuiButton) btnPlay).enabled = !(((GuiButton) btnStop).enabled = tileJukebox.isPlayingRecord());
         ((GuiButton) btnShuffleOn).enabled = !tileJukebox.shuffleEnabled();
