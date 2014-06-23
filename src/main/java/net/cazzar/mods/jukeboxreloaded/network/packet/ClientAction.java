@@ -61,8 +61,6 @@ public class ClientAction implements IMessage {
                 return null;
             }
 
-            log.info(message.action);
-
             switch (message.action) {
                 case STOP:
                     if (ClientUtil.isClient()) {
