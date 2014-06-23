@@ -32,6 +32,8 @@ import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
+import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
+import net.cazzar.mods.jukeboxreloaded.network.packet.ClientAction;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -61,15 +63,19 @@ public class GUIJukebox extends GuiContainer {
     @Override
     protected void actionPerformed(GuiButton btn) {
         final boolean wasPlaying = tileJukebox.isPlayingRecord();
+        ClientAction.Action action = null;
 
         switch (btn.id) {
             case PLAY:
                 tileJukebox.playSelectedRecord();
                 break;
             case STOP:
+                //no need to set action due to the function sends it.
                 tileJukebox.stopPlayingRecord();
                 break;
             case NEXT:
+                //logic for next and also looping.
+                action = ClientAction.Action.NEXT;
                 if (wasPlaying) tileJukebox.stopPlayingRecord();
                 if (tileJukebox.shuffleEnabled()) {
                     final Random random = new Random();
@@ -83,23 +89,33 @@ public class GUIJukebox extends GuiContainer {
                 if (wasPlaying) tileJukebox.playSelectedRecord();
                 break;
             case PREVIOUS:
+                action = ClientAction.Action.PREVIOUS;
                 if (wasPlaying) tileJukebox.stopPlayingRecord();
                 tileJukebox.previousRecord();
                 if (wasPlaying) tileJukebox.playSelectedRecord();
                 break;
+
             case REPEAT_ALL:
+                //repeat
+                action = ClientAction.Action.REPEAT_ALL;
                 tileJukebox.setRepeatMode(RepeatMode.ALL);
                 break;
             case REPEAT_ONE:
+                action = ClientAction.Action.REPEAT_ONE;
                 tileJukebox.setRepeatMode(RepeatMode.ONE);
                 break;
             case REPEAT_OFF:
+                action = ClientAction.Action.REPEAT_OFF;
                 tileJukebox.setRepeatMode(RepeatMode.OFF);
                 break;
+
             case SHUFFLE:
+                //shuffle
+                action = ClientAction.Action.SHUFFLE_ON;
                 tileJukebox.setShuffle(true);
                 break;
             case SHUFFLE_OFF:
+                action = ClientAction.Action.SHUFFLE_OFF;
                 tileJukebox.setShuffle(false);
                 break;
             case VOLUME_UP:
@@ -123,6 +139,8 @@ public class GUIJukebox extends GuiContainer {
         }
 
         updateButtonStates();
+        if (action != null) PacketHandler.INSTANCE.sendToServer(new ClientAction(action, tileJukebox));
+
         tileJukebox.markForUpdate();
     }
 

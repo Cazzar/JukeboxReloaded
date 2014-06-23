@@ -10,7 +10,7 @@ import net.cazzar.mods.jukeboxreloaded.lib.util.Util;
 /**
  * @author Cayde
  */
-public class ClientPlayRecord implements IMessage, IMessageHandler<ClientPlayRecord, IMessage> {
+public class ClientPlayRecord implements IMessage {
     int slot, x, y, z;
 
     public ClientPlayRecord() {
@@ -44,18 +44,20 @@ public class ClientPlayRecord implements IMessage, IMessageHandler<ClientPlayRec
         buf.writeInt(z);
     }
 
-    @Override
-    public IMessage onMessage(ClientPlayRecord message, MessageContext ctx) {
-        TileJukebox jukebox = Util.getTileEntity(ctx.getServerHandler().playerEntity.worldObj, x, y, z, TileJukebox.class);
-        if (jukebox == null) {
-            //TODO: log;
+    public static class Handler implements IMessageHandler<ClientPlayRecord, IMessage> {
+        @Override
+        public IMessage onMessage(ClientPlayRecord message, MessageContext ctx) {
+            TileJukebox jukebox = Util.getTileEntity(ctx.getServerHandler().playerEntity.worldObj, message.x, message.y, message.z, TileJukebox.class);
+            if (jukebox == null) {
+                //TODO: log;
+                return null;
+            }
+
+            jukebox.setRecordPlaying(message.slot);
+            jukebox.playSelectedRecord();
+
             return null;
         }
-
-        jukebox.setRecordPlaying(slot);
-        jukebox.playSelectedRecord();
-
-        return null;
     }
 
     @Override

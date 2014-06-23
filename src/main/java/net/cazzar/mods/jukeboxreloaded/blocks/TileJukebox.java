@@ -188,6 +188,8 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
         lastPlayingRecord = ((ItemRecord) getStackInSlot(recordNumber).getItem()).recordName;
         playing = true;
 
+        waitTicks = 20;
+
         PacketHandler.INSTANCE.sendToAll(new ServerPlayRecord(this));
     }
 
@@ -291,16 +293,17 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
             final boolean wasPlaying = playing;
             if (!wasPlaying) return;
             // if repeating
-            if (repeatMode == RepeatMode.ONE) playSelectedRecord();
-            else if (repeatMode == RepeatMode.ALL) {
+            if (repeatMode == RepeatMode.ONE && !shuffle) playSelectedRecord();
+            else if (repeatMode == RepeatMode.ALL && !shuffle) {
                 nextRecord();
                 if (recordNumber == getLastSlotWithItem() + 1)
                     resetPlayingRecord();
                 playSelectedRecord();
-            } else {
+            } else if (!shuffle) {
                 stopPlayingRecord();
                 resetPlayingRecord();
             }
+
             // send tile information to the server to update the other clients
             if (shuffle && repeatMode != RepeatMode.ONE) {
                 PacketHandler.INSTANCE.sendToServer(new ClientShuffle(this));

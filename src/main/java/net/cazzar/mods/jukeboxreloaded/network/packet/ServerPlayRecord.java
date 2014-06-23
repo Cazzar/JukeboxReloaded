@@ -5,6 +5,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.cazzar.corelib.lib.SoundSystemHelper;
+import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.util.Util;
 import net.minecraft.item.ItemRecord;
@@ -12,7 +13,7 @@ import net.minecraft.item.ItemRecord;
 /**
  * @author Cayde
  */
-public class ServerPlayRecord implements IMessage, IMessageHandler<ServerPlayRecord, IMessage> {
+public class ServerPlayRecord implements IMessage {
     int slot, x, y, z;
 
     public ServerPlayRecord() {
@@ -46,19 +47,21 @@ public class ServerPlayRecord implements IMessage, IMessageHandler<ServerPlayRec
         buf.writeInt(z);
     }
 
-    @Override
-    public IMessage onMessage(ServerPlayRecord message, MessageContext ctx) {
-        TileJukebox jukebox = Util.getTileEntity(ctx.getServerHandler().playerEntity.worldObj, x, y, z, TileJukebox.class);
-        if (jukebox == null) {
-            //TODO: log;
+    public static class Handler implements IMessageHandler<ServerPlayRecord, IMessage> {
+        @Override
+        public IMessage onMessage(ServerPlayRecord message, MessageContext ctx) {
+            TileJukebox jukebox = Util.getTileEntity(ClientUtil.mc().thePlayer.worldObj, message.x, message.y, message.z, TileJukebox.class);
+            if (jukebox == null) {
+                //TODO: log;
+                return null;
+            }
+
+            if (jukebox.getStackInSlot(message.slot) == null) return null;
+
+            jukebox.setPlaying(true);
+            SoundSystemHelper.playRecord((ItemRecord) jukebox.getStackInSlot(message.slot).getItem(), message.x, message.y, message.z, jukebox.getIdentifier());
             return null;
         }
-
-        if (jukebox.getStackInSlot(slot) == null) return null;
-
-        jukebox.setPlaying(true);
-        SoundSystemHelper.playRecord((ItemRecord) jukebox.getStackInSlot(slot).getItem(), x, y, z, jukebox.getIdentifier());
-        return null;
     }
 
     @Override

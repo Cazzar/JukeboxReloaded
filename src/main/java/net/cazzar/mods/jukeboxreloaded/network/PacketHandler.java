@@ -36,11 +36,11 @@ public class PacketHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MOD_ID);
 
     public static void init() {
-        INSTANCE.registerMessage(ClientAction.class, ClientAction.class, 0, SERVER);
-        INSTANCE.registerMessage(ServerAction.class, ServerAction.class, 0, CLIENT);
-        INSTANCE.registerMessage(ClientPlayRecord.class, ClientPlayRecord.class, 0, SERVER);
-        INSTANCE.registerMessage(ServerPlayRecord.class, ServerPlayRecord.class, 0, CLIENT);
-        INSTANCE.registerMessage(ClientShuffle.class, ClientShuffle.class, 0, SERVER);
+        INSTANCE.registerMessage(ClientAction.Handler.class, ClientAction.class, 0, SERVER);
+        INSTANCE.registerMessage(ServerAction.Handler.class, ServerAction.class, 1, CLIENT);
+        INSTANCE.registerMessage(ClientPlayRecord.Handler.class, ClientPlayRecord.class, 2, SERVER);
+        INSTANCE.registerMessage(ServerPlayRecord.Handler.class, ServerPlayRecord.class, 3, CLIENT);
+        INSTANCE.registerMessage(ClientShuffle.Handler.class, ClientShuffle.class, 4, SERVER);
     }
 
     private PacketHandler() {
