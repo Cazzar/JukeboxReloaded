@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
  * @author Cayde
  */
 public class ClientAction implements IMessage {
+
+
     Action action;
     int x, y, z;
 

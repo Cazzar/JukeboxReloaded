@@ -27,25 +27,19 @@ package net.cazzar.mods.jukeboxreloaded.gui;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.cazzar.corelib.client.gui.TexturedButton;
-import net.cazzar.corelib.lib.SoundSystemHelper;
-import net.cazzar.corelib.util.ClientUtil;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
-import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.lib.Strings;
 import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
 import net.cazzar.mods.jukeboxreloaded.network.packet.ClientAction;
-import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
-import java.util.Random;
 
 import static java.lang.Math.floor;
 import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JUKEBOX_GUI_TEXTURE;
-import static net.cazzar.mods.jukeboxreloaded.lib.Reference.JukeboxGUIActions.*;
 
 @SideOnly(Side.CLIENT)
 public class GUIJukebox extends GuiContainer {
@@ -65,7 +59,16 @@ public class GUIJukebox extends GuiContainer {
         final boolean wasPlaying = tileJukebox.isPlayingRecord();
         ClientAction.Action action = null;
 
-        switch (btn.id) {
+        if (btn == btnNext) action = ClientAction.Action.NEXT;
+        else if (btn == btnPrev) action = ClientAction.Action.PREVIOUS;
+        else if (btn == btnRepeatAll) action = ClientAction.Action.REPEAT_ALL;
+        else if (btn == btnRepeatOne) action = ClientAction.Action.REPEAT_ONE;
+        else if (btn == btnRepeatOff) action = ClientAction.Action.REPEAT_OFF;
+        else if (btn == btnShuffleOn) action = ClientAction.Action.SHUFFLE_ON;
+        else if (btn == btnShuffleOff) action = ClientAction.Action.SHUFFLE_OFF;
+
+
+/*        switch (btn.id) {
             case PLAY:
                 tileJukebox.playSelectedRecord();
                 break;
@@ -136,7 +139,7 @@ public class GUIJukebox extends GuiContainer {
                 tileJukebox.volume -= 0.05F;
                 SoundSystemHelper.getSoundSystem().setVolume(tileJukebox.getIdentifier(), tileJukebox.volume * ClientUtil.mc().gameSettings.getSoundLevel(SoundCategory.RECORDS));
                 break;
-        }
+        }*/
 
         updateButtonStates();
         if (action != null) PacketHandler.INSTANCE.sendToServer(new ClientAction(action, tileJukebox));
@@ -160,11 +163,11 @@ public class GUIJukebox extends GuiContainer {
 
         final String containerName = Strings.GUI_JUKEBOX_NAME.toString();
         this.fontRendererObj.drawString(containerName,
-                xSize / 2 - fontRendererObj.getStringWidth(containerName) / 2, 6,
-                4210752);
+                                               xSize / 2 - fontRendererObj.getStringWidth(containerName) / 2, 6,
+                                               4210752);
         fontRendererObj.drawString(
-                Strings.GUI_INVENTORY.toString(), 8,
-                ySize - 93, 4210752);
+                                          Strings.GUI_INVENTORY.toString(), 8,
+                                          ySize - 93, 4210752);
 
 //        String str = (tileJukebox.volume == 1.0F) ? "10" : String.format("%.1f", tileJukebox.volume * 10);
 //        fontRendererObj.drawString(str, 21, 68, 4210752);
@@ -221,18 +224,89 @@ public class GUIJukebox extends GuiContainer {
         final int xStart = (width - xSize) / 2;
         final int yStart = (height - ySize) / 2;
 
-        buttonList.add(btnPlay = new TexturedButton(this, PLAY, xStart + 7, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 38, 176, 18, 176, 58));
-        buttonList.add(btnStop = new TexturedButton(this, STOP, xStart + 29, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 98, 176, 78, 176, 118));
+       /*buttonList.add(btnShuffleOn = new  TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118));*/
 
-        buttonList.add(btnNext = new TexturedButton(this, NEXT, xStart + 29, yStart + 39, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 38, 216, 18, 216, 58));
-        buttonList.add(btnPrev = new TexturedButton(this, PREVIOUS, xStart + 7, yStart + 39, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 38, 236, 18, 236, 58));
+        buttonList.add(btnPlay = (TexturedButton) new TexturedButton()
+                                                          .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                          .setOffsets(176, 38)
+                                                          .setDisabledOffsets(176, 18)
+                                                          .setHoveredOffsets(176, 58)
+                                                          .setPosition(xStart + 7, yStart + 17)
+                                                          .setSize(20, 20)
+                                                          .setOwner(this));
 
-        buttonList.add(btnRepeatOne = new TexturedButton(this, REPEAT_ONE, xStart + 150, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 98, 196, 78, 196, 118));
-        buttonList.add(btnRepeatAll = new TexturedButton(this, REPEAT_ALL, xStart + 150, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 216, 98, 216, 78, 216, 118));
-        buttonList.add(btnRepeatOff = new TexturedButton(this, REPEAT_OFF, xStart + 150, yStart + 63, 20, 20, JUKEBOX_GUI_TEXTURE, 196, 158, 196, 138, 196, 178));
+        buttonList.add(btnStop = (TexturedButton) new TexturedButton()
+                                                          .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                          .setOffsets(176, 98)
+                                                          .setDisabledOffsets(176, 78)
+                                                          .setHoveredOffsets(176, 118)
+                                                          .setPosition(xStart + 29, yStart + 17)
+                                                          .setSize(20, 20)
+                                                          .setOwner(this));
 
-        buttonList.add(btnShuffleOn = new  TexturedButton(this, SHUFFLE, xStart + 128, yStart + 17, 20, 20, JUKEBOX_GUI_TEXTURE, 236, 98, 236, 78, 236, 118));
-        buttonList.add(btnShuffleOff = new TexturedButton(this, SHUFFLE_OFF, xStart + 128, yStart + 40, 20, 20, JUKEBOX_GUI_TEXTURE, 176, 158, 176, 138, 176, 178));
+        buttonList.add(btnNext = (TexturedButton) new TexturedButton()
+                                                          .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                          .setOffsets(216, 38)
+                                                          .setDisabledOffsets(216, 18)
+                                                          .setHoveredOffsets(216, 58)
+                                                          .setPosition(xStart + 29, yStart + 39)
+                                                          .setSize(20, 20)
+                                                          .setOwner(this));
+
+        buttonList.add(btnPrev = (TexturedButton) new TexturedButton()
+                                                          .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                          .setOffsets(236, 38)
+                                                          .setDisabledOffsets(236, 18)
+                                                          .setHoveredOffsets(236, 58)
+                                                          .setPosition(xStart + 7, yStart + 39)
+                                                          .setSize(20, 20)
+                                                          .setOwner(this));
+
+        buttonList.add(btnRepeatOne = (TexturedButton) new TexturedButton()
+                                                               .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                               .setOffsets(236, 38)
+                                                               .setDisabledOffsets(236, 18)
+                                                               .setHoveredOffsets(236, 58)
+                                                               .setPosition(xStart + 150, yStart + 17)
+                                                               .setSize(20, 20)
+                                                               .setOwner(this));
+
+        buttonList.add(btnRepeatAll = (TexturedButton) new TexturedButton()
+                                                               .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                               .setOffsets(236, 38)
+                                                               .setDisabledOffsets(236, 18)
+                                                               .setHoveredOffsets(236, 58)
+                                                               .setPosition(xStart + 150, yStart + 40)
+                                                               .setSize(20, 20)
+                                                               .setOwner(this));
+
+        buttonList.add(btnRepeatOff = (TexturedButton) new TexturedButton()
+                                                               .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                               .setOffsets(196, 158)
+                                                               .setDisabledOffsets(196, 138)
+                                                               .setHoveredOffsets(196, 178)
+                                                               .setPosition(xStart + 150, yStart + 63)
+                                                               .setSize(20, 20)
+                                                               .setOwner(this));
+
+
+        buttonList.add(btnShuffleOn = (TexturedButton) new TexturedButton()
+                                                               .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                               .setOffsets(236, 98)
+                                                               .setDisabledOffsets(236, 78)
+                                                               .setHoveredOffsets(236, 118)
+                                                               .setPosition(xStart + 128, yStart + 17)
+                                                               .setSize(20, 20)
+                                                               .setOwner(this));
+
+        buttonList.add(btnShuffleOff = (TexturedButton) new TexturedButton()
+                                                                .setTexture(JUKEBOX_GUI_TEXTURE)
+                                                                .setOffsets(216, 98)
+                                                                .setDisabledOffsets(216, 78)
+                                                                .setHoveredOffsets(216, 118)
+                                                                .setPosition(xStart + 128, yStart + 40)
+                                                                .setSize(20, 20)
+                                                                .setOwner(this));
 
 //        buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
 //        buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));

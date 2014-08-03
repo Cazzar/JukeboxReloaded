@@ -28,10 +28,12 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import li.cil.oc.api.network.Arguments;
 import li.cil.oc.api.network.Callback;
 import li.cil.oc.api.network.Context;
 import li.cil.oc.api.network.SimpleComponent;
+
 import net.cazzar.corelib.lib.InventoryUtils;
 import net.cazzar.corelib.lib.SoundSystemHelper;
 import net.cazzar.corelib.tile.SyncedTileEntity;
@@ -41,6 +43,7 @@ import net.cazzar.mods.jukeboxreloaded.client.particles.Particles;
 import net.cazzar.mods.jukeboxreloaded.lib.RepeatMode;
 import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
 import net.cazzar.mods.jukeboxreloaded.network.packet.*;
+
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;

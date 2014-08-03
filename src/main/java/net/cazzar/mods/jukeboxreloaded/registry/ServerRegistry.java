@@ -22,35 +22,38 @@
  * SOFTWARE.
  */
 
-apply plugin: 'forge'
+package net.cazzar.mods.jukeboxreloaded.registry;
 
-minecraft {
-    version = '1.7.10-10.13.0.1190'
-    assetDir = '../run/assets'
-}
+import com.google.common.collect.HashBiMap;
 
-if (System.getenv("BUILD_NUMBER") != null) {
-    version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
-    project.actualVersion += "." + System.getenv("BUILD_NUMBER");
-} else {
-    version = "${minecraft.version}-$version"
-}
+import java.util.Map;
+import java.util.UUID;
 
-processResources {
-    // replace stuff in text files, not binary ones.
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.lang'
-        include '**/*.info'
+/**
+ * @author Cayde
+ */
+public class ServerRegistry {
+    private static ServerRegistry ourInstance = new ServerRegistry();
+    private Map<UUID, Object> serverMap = HashBiMap.create();
 
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-        // replace version and MCVersion
+    public static ServerRegistry getInstance() {
+        return ourInstance;
     }
 
-    // copy everything else, that's not text
-    from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.lang'
-        exclude '**/*.info'
+    private ServerRegistry() {
+    }
+
+    public Object getServerInformation(UUID uuid) {
+        return serverMap.get(uuid);
+    }
+
+    public Object getServerInformation(String uuid) {
+        return getServerInformation(UUID.fromString(uuid));
+    }
+
+    public UUID newServer() {
+        UUID newUUID = UUID.randomUUID();
+        //serverMap.put(newUUID, new Server());
+        return newUUID;
     }
 }
-
-compileJava.options.encoding = 'UTF-8'

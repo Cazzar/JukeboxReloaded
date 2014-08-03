@@ -32,6 +32,11 @@ repositories {
     maven { url 'http://maven.cil.li' }
 }
 dependencies {
-    compile 'net.cazzar.corelib:CazzarCoreLib:1.7.2-1.2.+'
-    compile group: 'li.cil.oc', name: 'OpenComputers', version: 'MC1.7.2-1.2.3.82'
+//    if (System.getenv("BUILD_NUMBER") == null)
+//        compile 'net.cazzar.corelib:CazzarCoreLib:1.7.2-1.2.+'
+//    else
+        compile project(':CazzarCoreLib')
+    compile group: 'li.cil.oc', name: 'OpenComputers', version: 'MC1.7.10-1.3.3.68-dev'
+//    compile ("codechicken:NotEnoughItems:1.7.2-1.0.1:dev") { changing = true }
+//    compile group: 'codechicken', name: 'NotEnoughItems', version: '1.7.2-1.0.1', classifier: 'dev', changing: true
 }

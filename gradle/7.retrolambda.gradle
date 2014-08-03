@@ -22,35 +22,18 @@
  * SOFTWARE.
  */
 
-apply plugin: 'forge'
+apply plugin: 'retrolambda'
 
-minecraft {
-    version = '1.7.10-10.13.0.1190'
-    assetDir = '../run/assets'
+retrolambda {
+    jdk System.getenv("JAVA8_HOME")
+    oldJdk System.getenv("JAVA7_HOME")
+    javaVersion JavaVersion.VERSION_1_7
 }
-
-if (System.getenv("BUILD_NUMBER") != null) {
-    version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
-    project.actualVersion += "." + System.getenv("BUILD_NUMBER");
-} else {
-    version = "${minecraft.version}-$version"
+dependencies {
+    compile 'org.ow2.asm:asm-debug-all:5.0.3'
 }
-
-processResources {
-    // replace stuff in text files, not binary ones.
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.lang'
-        include '**/*.info'
-
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-        // replace version and MCVersion
-    }
-
-    // copy everything else, that's not text
-    from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.lang'
-        exclude '**/*.info'
-    }
+tasks.withType(JavaCompile) {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+    options.encoding = 'UTF-8'
 }
-
-compileJava.options.encoding = 'UTF-8'
