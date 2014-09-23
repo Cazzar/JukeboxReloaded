@@ -264,18 +264,18 @@ public class GUIJukebox extends GuiContainer {
 
         buttonList.add(btnRepeatOne = (TexturedButton) new TexturedButton()
                                                                .setTexture(JUKEBOX_GUI_TEXTURE)
-                                                               .setOffsets(236, 38)
-                                                               .setDisabledOffsets(236, 18)
-                                                               .setHoveredOffsets(236, 58)
+                                                               .setOffsets(196, 98)
+                                                               .setDisabledOffsets(196, 78)
+                                                               .setHoveredOffsets(196, 118)
                                                                .setPosition(xStart + 150, yStart + 17)
                                                                .setSize(20, 20)
                                                                .setOwner(this));
 
         buttonList.add(btnRepeatAll = (TexturedButton) new TexturedButton()
                                                                .setTexture(JUKEBOX_GUI_TEXTURE)
-                                                               .setOffsets(236, 38)
-                                                               .setDisabledOffsets(236, 18)
-                                                               .setHoveredOffsets(236, 58)
+                                                               .setOffsets(216, 98)
+                                                               .setDisabledOffsets(216, 78)
+                                                               .setHoveredOffsets(216, 118)
                                                                .setPosition(xStart + 150, yStart + 40)
                                                                .setSize(20, 20)
                                                                .setOwner(this));
@@ -301,9 +301,9 @@ public class GUIJukebox extends GuiContainer {
 
         buttonList.add(btnShuffleOff = (TexturedButton) new TexturedButton()
                                                                 .setTexture(JUKEBOX_GUI_TEXTURE)
-                                                                .setOffsets(216, 98)
-                                                                .setDisabledOffsets(216, 78)
-                                                                .setHoveredOffsets(216, 118)
+                                                                .setOffsets(176, 158)
+                                                                .setDisabledOffsets(176, 138)
+                                                                .setHoveredOffsets(176, 178)
                                                                 .setPosition(xStart + 128, yStart + 40)
                                                                 .setSize(20, 20)
                                                                 .setOwner(this));

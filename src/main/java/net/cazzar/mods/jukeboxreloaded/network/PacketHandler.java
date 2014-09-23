@@ -42,8 +42,4 @@ public class PacketHandler {
         INSTANCE.registerMessage(ServerPlayRecord.Handler.class, ServerPlayRecord.class, 3, CLIENT);
         INSTANCE.registerMessage(ClientShuffle.Handler.class, ClientShuffle.class, 4, SERVER);
     }
-
-    private PacketHandler() {
-
-    }
 }
