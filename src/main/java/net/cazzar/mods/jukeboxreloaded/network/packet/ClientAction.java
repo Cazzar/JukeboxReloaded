@@ -62,6 +62,7 @@ public class ClientAction implements IMessage {
                 //TODO: log;
                 return null;
             }
+            final boolean wasPlaying = jukebox.isPlayingRecord();
 
             switch (message.action) {
                 case STOP:
@@ -71,10 +72,22 @@ public class ClientAction implements IMessage {
                     } else jukebox.stopPlayingRecord();
                     break;
                 case NEXT:
+                    if (wasPlaying)
+                        jukebox.stopPlayingRecord();
+
                     jukebox.nextRecord();
+
+                    if (wasPlaying)
+                        jukebox.playSelectedRecord();
                     break;
                 case PREVIOUS:
+                    if (wasPlaying)
+                        jukebox.stopPlayingRecord();
+
                     jukebox.previousRecord();
+
+                    if (wasPlaying)
+                        jukebox.playSelectedRecord();
                     break;
                 case SHUFFLE_ON:
                     jukebox.setShuffle(true);
