@@ -233,7 +233,9 @@ public class GUIJukebox extends GuiContainer {
                                                           .setHoveredOffsets(176, 58)
                                                           .setPosition(xStart + 7, yStart + 17)
                                                           .setSize(20, 20)
-                                                          .setOwner(this));
+                                                          .setOwner(this)
+                                                          .addListener(tileJukebox::playSelectedRecord)
+        );
 
         buttonList.add(btnStop = (TexturedButton) new TexturedButton()
                                                           .setTexture(JUKEBOX_GUI_TEXTURE)
@@ -242,7 +244,8 @@ public class GUIJukebox extends GuiContainer {
                                                           .setHoveredOffsets(176, 118)
                                                           .setPosition(xStart + 29, yStart + 17)
                                                           .setSize(20, 20)
-                                                          .setOwner(this));
+                                                          .setOwner(this)
+                                                          .addListener(tileJukebox::stopPlayingRecord));
 
         buttonList.add(btnNext = (TexturedButton) new TexturedButton()
                                                           .setTexture(JUKEBOX_GUI_TEXTURE)
@@ -307,9 +310,6 @@ public class GUIJukebox extends GuiContainer {
                                                                 .setPosition(xStart + 128, yStart + 40)
                                                                 .setSize(20, 20)
                                                                 .setOwner(this));
-
-//        buttonList.add(volDown = new GuiButton(VOLUME_DOWN, xStart + 7, yStart + 61, 12, 20, "-"));
-//        buttonList.add(volUp = new GuiButton(VOLUME_UP, xStart + 37, yStart + 61, 12, 20, "+"));
     }
 
     @SuppressWarnings("RedundantCast")
