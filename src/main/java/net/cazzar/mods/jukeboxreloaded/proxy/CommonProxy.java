@@ -123,30 +123,27 @@ public class CommonProxy {
     }
 
     public void initVillagers() {
-        VillagerRegistry.instance().registerVillagerId(3000);
-        VillagerRegistry.instance().registerVillageTradeHandler(3000, new VillagerRegistry.IVillageTradeHandler() {
-            @Override
-            public void manipulateTradesForVillager(EntityVillager villager, MerchantRecipeList recipeList, Random random) {
-                switch (random.nextInt(6)) {
-                    case 0:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), kokoro));
-                        break;
-                    case 1:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), loveIsWar));
-                        break;
-                    case 2:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), shibuya));
-                        break;
-                    case 3:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), spica));
-                        break;
-                    case 4:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), sukiDaiSuki));
-                        break;
-                    case 5:
-                        recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), weArePopcandy));
-                        break;
-                }
+        VillagerRegistry.instance().registerVillagerId(getConfig().main.villagerID);
+        VillagerRegistry.instance().registerVillageTradeHandler(getConfig().main.villagerID, (villager, recipeList, random) -> {
+            switch (random.nextInt(6)) {
+                case 0:
+                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), kokoro));
+                    break;
+                case 1:
+                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), loveIsWar));
+                    break;
+                case 2:
+                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), shibuya));
+                    break;
+                case 3:
+                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), spica));
+                    break;
+                case 4:
+                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), sukiDaiSuki));
+                    break;
+                case 5:
+                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), weArePopcandy));
+                    break;
             }
         });
     }

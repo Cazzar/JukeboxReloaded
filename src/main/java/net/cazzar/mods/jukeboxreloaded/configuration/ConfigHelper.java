@@ -49,5 +49,6 @@ public class ConfigHelper {
     public class Main {
         @SuppressWarnings("UnusedDeclaration")
         public boolean enableUpdater = true;
+        public int villagerID = 3000;
     }
 }
