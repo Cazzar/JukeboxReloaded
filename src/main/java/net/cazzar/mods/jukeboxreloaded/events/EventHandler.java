@@ -28,17 +28,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import net.cazzar.corelib.lib.SoundSystemHelper;
-import net.minecraftforge.client.event.TextureStitchEvent;
 
 public class EventHandler {
     @SubscribeEvent
     public void onPlayerLogout(FMLNetworkEvent.ClientDisconnectionFromServerEvent player) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient())
             SoundSystemHelper.getSoundManager().stopAllSounds();
-    }
-
-    @SubscribeEvent
-    public void tSE(TextureStitchEvent event) {
-        System.out.println("done");
     }
 }
