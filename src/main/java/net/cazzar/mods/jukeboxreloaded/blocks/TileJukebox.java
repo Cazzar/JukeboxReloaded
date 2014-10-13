@@ -153,6 +153,7 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
     }
 
     public boolean isPlayingRecord() {
+        if (!worldObj.isRemote && CommonUtil.isServer()) return playing;
         return SoundSystemHelper.isPlaying(getIdentifier());
     }
 
