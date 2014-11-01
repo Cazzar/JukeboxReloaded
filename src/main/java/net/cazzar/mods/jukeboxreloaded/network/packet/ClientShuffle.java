@@ -1,6 +1,8 @@
 package net.cazzar.mods.jukeboxreloaded.network.packet;
 
-import cpw.mods.fml.common.network.simpleimpl.*;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
 import net.cazzar.mods.jukeboxreloaded.lib.util.Util;
@@ -45,7 +47,7 @@ public class ClientShuffle implements IMessage {
                 return null;
             }
 
-            final Random random = jukebox.getWorldObj().rand;
+            final Random random = jukebox.getWorld().rand;
             if (jukebox.getLastSlotWithItem() <= 0) return null;
             final int next = random.nextInt(jukebox.getLastSlotWithItem());
 

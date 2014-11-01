@@ -61,7 +61,7 @@ public class BlockJukebox extends Block {
     public BlockJukebox() {
         super(Material.rock);
         setCreativeTab(JukeboxReloaded.proxy.creativeTab);
-        setBlockName("Jukebox");
+        setUnlocalizedName("Jukebox");
         setHardness(1.0F);
         setStepSound(soundTypeWood);
         setTickRandomly(true);
@@ -106,7 +106,7 @@ public class BlockJukebox extends Block {
                 JukeboxReloaded.logger.debug(marker, "Dropping {}", itemStack);
                 final EntityItem entityItem = new EntityItem(world, x + dX, y
                         + dY, z + dZ, new ItemStack(itemStack.getItem(),
-                        itemStack.stackSize, itemStack.getItemDamage()));
+                        itemStack.stackSize, itemStack.getCurrentDurability()));
 
                 if (itemStack.hasTagCompound())
                     entityItem.getEntityItem().setTagCompound(
@@ -228,7 +228,7 @@ public class BlockJukebox extends Block {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister iconRegister) {
+    public void registerIcons(IIconRegister iconRegister) {
         iconBuffer[0] = iconRegister.registerIcon("cazzar:jukeboxbottom");
         iconBuffer[1] = iconRegister.registerIcon("cazzar:jukeboxside");
         iconBuffer[2] = iconRegister.registerIcon("cazzar:jukeboxtop");
