@@ -22,16 +22,47 @@
  * SOFTWARE.
  */
 
-package net.cazzar.mods.jukeboxreloaded.proxy;
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            name 'Cazzar\'s Maven repo'
+            url 'http://maven.cazzar.net/'
+        }
+    }
 
-import cpw.mods.fml.common.registry.VillagerRegistry;
-import net.cazzar.mods.jukeboxreloaded.lib.Reference;
-import net.minecraft.util.ResourceLocation;
 
-public class ClientProxy extends CommonProxy {
-    @Override
-    public void initVillagers() {
-        super.initVillagers();
-        VillagerRegistry.instance().registerVillagerSkin(3000, new ResourceLocation(Reference.MOD_ID.toLowerCase(), "textures/mob/villager.png"));
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'me.tatarka:gradle-retrolambda:2.2.0'
     }
 }
+
+// Required because retrolambda is on maven central
+repositories {
+    mavenCentral()
+}
+
+group = 'net.cazzar.mods'
+version = '3.0.0'
+project.ext.set('actualVersion', version)
+//noinspection GroovyUnusedAssignment
+//archivesBaseName = 'CazzarCoreLib'
+
+fileTree('gradle').include('*.gradle').collect().sort().each { apply from: it }
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = "1.7"
+    targetCompatibility = "1.7"
+    options.encoding = 'UTF-8'
+}
+
+javadoc.options.encoding = 'UTF-8'

@@ -25,10 +25,10 @@
 package net.cazzar.mods.jukeboxreloaded.proxy;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry;
-import net.cazzar.corelib.items.ItemCustomRecord;
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox;
 import net.cazzar.mods.jukeboxreloaded.blocks.TileJukebox;
@@ -37,23 +37,20 @@ import net.cazzar.mods.jukeboxreloaded.configuration.ConfigHelper;
 import net.cazzar.mods.jukeboxreloaded.events.EventHandler;
 import net.cazzar.mods.jukeboxreloaded.gui.GuiHandler;
 import net.cazzar.mods.jukeboxreloaded.network.PacketHandler;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.village.MerchantRecipe;
-import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.io.File;
-import java.util.Random;
+import java.util.Map;
 
 public class CommonProxy {
     public BlockJukebox jukeBox;
-    public ItemCustomRecord kokoro, loveIsWar, shibuya, spica, sukiDaiSuki, weArePopcandy;
     //    public ItemPortableJukebox portableJukebox;
     public CreativeTabJukeboxReloaded creativeTab;
     private ConfigHelper config;
@@ -73,7 +70,7 @@ public class CommonProxy {
 
     @SuppressWarnings("RedundantCast")
     public void initItems() {
-        GameRegistry.registerItem(kokoro = new ItemCustomRecord("kokoro", "ココロ", new String[]{"Sung by Kagamine Rin", "writer トラボルタ feat. 鏡音リン"}).setDomain("cazzar"), "kokoro");
+/*        GameRegistry.registerItem(kokoro = new ItemCustomRecord("kokoro", "ココロ", new String[]{"Sung by Kagamine Rin", "writer トラボルタ feat. 鏡音リン"}).setDomain("cazzar"), "kokoro");
         GameRegistry.registerItem(loveIsWar = new ItemCustomRecord("love_is_war", "Love is War", new String[]{"Sung by Hatsune Miku", "Writer - Supercell feat. 初音ミク"}).setDomain("cazzar"), "love_is_war");
         GameRegistry.registerItem(shibuya = new ItemCustomRecord("shibuya", "SHIBUYA (Original)", new String[]{"by BECCA"}).setDomain("cazzar"), "shibuya");
         GameRegistry.registerItem(spica = new ItemCustomRecord("spica", "SPiCa", new String[]{"by とく"}).setDomain("cazzar"), "spica");
@@ -86,7 +83,7 @@ public class CommonProxy {
         ((Item) shibuya).setCreativeTab(creativeTab);
         ((Item) spica).setCreativeTab(creativeTab);
         ((Item) sukiDaiSuki).setCreativeTab(creativeTab);
-        ((Item) weArePopcandy).setCreativeTab(creativeTab);
+        ((Item) weArePopcandy).setCreativeTab(creativeTab);*/
     }
 
     public void initNetwork() {
@@ -125,25 +122,19 @@ public class CommonProxy {
     public void initVillagers() {
         VillagerRegistry.instance().registerVillagerId(getConfig().main.villagerID);
         VillagerRegistry.instance().registerVillageTradeHandler(getConfig().main.villagerID, (villager, recipeList, random) -> {
-            switch (random.nextInt(6)) {
-                case 0:
-                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), kokoro));
-                    break;
-                case 1:
-                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), loveIsWar));
-                    break;
-                case 2:
-                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), shibuya));
-                    break;
-                case 3:
-                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), spica));
-                    break;
-                case 4:
-                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), sukiDaiSuki));
-                    break;
-                case 5:
-                    recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald), weArePopcandy));
-                    break;
+            Map<String, ItemRecord> value = ObfuscationReflectionHelper.getPrivateValue(ItemRecord.class, null, "field_150928_b");
+            if (random.nextInt(3) == 2) {
+                ItemRecord record = (ItemRecord) value.values().toArray()[random.nextInt(value.size())];
+                ItemRecord result = (ItemRecord) value.values().toArray()[random.nextInt(value.size())];
+
+                while (result == record) {// ensure no buyback for the same item
+                    result = (ItemRecord) value.values().toArray()[random.nextInt(value.size())];
+                }
+
+                recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(record), new ItemStack(Items.emerald, random.nextInt(3) + 1), new ItemStack(result)));
+            } else {
+                ItemRecord record = (ItemRecord) value.values().toArray()[random.nextInt(value.size())];
+                recipeList.addToListWithCheck(new MerchantRecipe(new ItemStack(Items.emerald, 15 + random.nextInt(5)), record));
             }
         });
     }

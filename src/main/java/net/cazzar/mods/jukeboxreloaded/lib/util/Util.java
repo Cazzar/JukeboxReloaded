@@ -61,7 +61,8 @@ public class Util {
     public static <T extends TileEntity> T getTileEntity(IBlockAccess world, int x, int y, int z, Class<? extends T> tileClass) {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (tileEntity == null) return null;
-        if (tileEntity.getClass().isAssignableFrom(tileClass)) return (T) tileEntity;
+        if (tileEntity.getClass().isAssignableFrom(tileClass)) //noinspection unchecked
+            return (T) tileEntity;
         return null;
     }
 }

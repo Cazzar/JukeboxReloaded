@@ -67,7 +67,6 @@ public class GUIJukebox extends GuiContainer {
         else if (btn == btnShuffleOn) action = ClientAction.Action.SHUFFLE_ON;
         else if (btn == btnShuffleOff) action = ClientAction.Action.SHUFFLE_OFF;
 
-
 /*        switch (btn.id) {
             case PLAY:
                 tileJukebox.playSelectedRecord();

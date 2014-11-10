@@ -22,16 +22,18 @@
  * SOFTWARE.
  */
 
-package net.cazzar.mods.jukeboxreloaded.proxy;
+apply plugin: 'retrolambda'
 
-import cpw.mods.fml.common.registry.VillagerRegistry;
-import net.cazzar.mods.jukeboxreloaded.lib.Reference;
-import net.minecraft.util.ResourceLocation;
-
-public class ClientProxy extends CommonProxy {
-    @Override
-    public void initVillagers() {
-        super.initVillagers();
-        VillagerRegistry.instance().registerVillagerSkin(3000, new ResourceLocation(Reference.MOD_ID.toLowerCase(), "textures/mob/villager.png"));
-    }
+retrolambda {
+    jdk System.getenv("JAVA8_HOME")
+    oldJdk System.getenv("JAVA7_HOME")
+    javaVersion JavaVersion.VERSION_1_7
+}
+dependencies {
+    compile 'org.ow2.asm:asm-debug-all:5.0.3'
+}
+tasks.withType(JavaCompile) {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+    options.encoding = 'UTF-8'
 }

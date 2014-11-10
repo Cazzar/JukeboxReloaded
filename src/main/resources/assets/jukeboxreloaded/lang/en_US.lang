@@ -12,3 +12,5 @@ gui.jukebox.repeat.all=Repeat all
 gui.jukebox.repeat.none=Repeat none
 gui.jukebox.shuffle.on=Enable shuffle
 gui.jukebox.shuffle.off=Disable shuffle
+cazzar:walia.jukebox.playing=Playing
+cazzar:walia.jukebox.currentlyPlaying=Currently playing: %s

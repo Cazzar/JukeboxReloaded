@@ -22,16 +22,22 @@
  * SOFTWARE.
  */
 
-package net.cazzar.mods.jukeboxreloaded.proxy;
 
-import cpw.mods.fml.common.registry.VillagerRegistry;
-import net.cazzar.mods.jukeboxreloaded.lib.Reference;
-import net.minecraft.util.ResourceLocation;
 
-public class ClientProxy extends CommonProxy {
-    @Override
-    public void initVillagers() {
-        super.initVillagers();
-        VillagerRegistry.instance().registerVillagerSkin(3000, new ResourceLocation(Reference.MOD_ID.toLowerCase(), "textures/mob/villager.png"));
-    }
+
+
+repositories {
+    mavenCentral()
+    maven { url 'http://maven.cazzar.net' }
+    maven { url 'http://maven.cil.li' }
+}
+dependencies {
+//    if (System.getenv("BUILD_NUMBER") == null)
+//        compile 'net.cazzar.corelib:CazzarCoreLib:1.7.2-1.2.+'
+//    else
+    compile group: 'net.cazzar.corelib', name: 'CazzarCoreLib', version: '1.2.0-SNAPSHOT'
+    compile group: 'li.cil.oc', name: 'OpenComputers', version: 'MC1.7.10-1.3.3.68-dev'
+    compile project(':JukeboxReloaded')
+//    compile ("codechicken:NotEnoughItems:1.7.2-1.0.1:dev") { changing = true }
+//    compile group: 'codechicken', name: 'NotEnoughItems', version: '1.7.2-1.0.1', classifier: 'dev', changing: true
 }
