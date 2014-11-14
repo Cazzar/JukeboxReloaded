@@ -122,7 +122,7 @@ public class CommonProxy {
     public void initVillagers() {
         VillagerRegistry.instance().registerVillagerId(getConfig().main.villagerID);
         VillagerRegistry.instance().registerVillageTradeHandler(getConfig().main.villagerID, (villager, recipeList, random) -> {
-            Map<String, ItemRecord> value = ObfuscationReflectionHelper.getPrivateValue(ItemRecord.class, null, "field_150928_b");
+            Map<String, ItemRecord> value = ObfuscationReflectionHelper.getPrivateValue(ItemRecord.class, null, "field_150928_b"); //This here is alright due to to the
             if (random.nextInt(3) == 2) {
                 ItemRecord record = (ItemRecord) value.values().toArray()[random.nextInt(value.size())];
                 ItemRecord result = (ItemRecord) value.values().toArray()[random.nextInt(value.size())];

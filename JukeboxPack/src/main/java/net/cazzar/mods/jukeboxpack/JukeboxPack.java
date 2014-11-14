@@ -5,7 +5,6 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.cazzar.corelib.items.ItemCustomRecord;
-import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
@@ -21,10 +20,12 @@ public class JukeboxPack {
     public static JukeboxPack instance;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(FMLPreInitializationEvent event) throws Exception {
         CreativeTabs creativeTab = CreativeTabs.tabMisc;
         if (Loader.isModLoaded("JukeboxReloaded")) {
-            creativeTab = JukeboxReloaded.proxy.creativeTab;
+            Object proxy = Class.forName("net.cazzar.mods.jukeboxreloaded.JukeboxReloaded").getField("proxy").get(null);
+
+            creativeTab = (CreativeTabs) Class.forName("net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy").getField("creativeTab").get(proxy);
         }
 
         GameRegistry.registerItem(kokoro = new ItemCustomRecord("kokoro", "\u30b3\u30b3\u30ed", new String[]{"Sung by Kagamine Rin", "writer \u30c8\u30e9\u30dc\u30eb\u30bf feat. \u93e1\u97f3\u30ea\u30f3"}).setDomain(MODID), "kokoro");
