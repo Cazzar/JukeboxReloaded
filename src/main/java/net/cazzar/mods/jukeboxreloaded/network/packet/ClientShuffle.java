@@ -47,7 +47,7 @@ public class ClientShuffle implements IMessage {
                 return null;
             }
 
-            final Random random = jukebox.getWorld().rand;
+            final Random random = jukebox.getWorldObj().rand;
             if (jukebox.getLastSlotWithItem() <= 0) return null;
             final int next = random.nextInt(jukebox.getLastSlotWithItem());
 
