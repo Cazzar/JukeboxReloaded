@@ -35,7 +35,7 @@ import net.cazzar.mods.jukeboxreloaded.lib.Reference;
 import net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, dependencies = "required-after:CazzarCoreLib", certificateFingerprint = "b69d7336fbe4c3e97279eb3ee3199f009a903475")
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, dependencies = "required-after:CazzarCoreLib", certificateFingerprint = "b69d7336fbe4c3e97279eb3ee3199f009a903475", version = "@VERSION@")
 //@NetworkMod(clientSideRequired = true, serverSideRequired = true, channels = {Reference.CHANNEL_NAME}, packetHandler = PacketHandler.class)
 public class JukeboxReloaded {
     public static Logger logger = LogHelper.getLogger(Reference.MOD_ID);

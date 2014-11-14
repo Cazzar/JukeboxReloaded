@@ -1,13 +1,15 @@
 [
-{
-  "name": "Jukebox Reloaded",
-  "description": "A rebuild of the vanilla jukebox",
-  "url": "http://cazzar.net",
-  "updateUrl": "",
-  "authorList": [
-    "cazzar"
-  ],
-  modid: "JukeboxReloaded",
-  "credits": "Textures by mousecop, Schillaaa for the button textures, Knallbi and Schillaaa for the German translation."
-}
+  {
+    "name": "Jukebox Reloaded",
+    "description": "A rebuild of the vanilla jukebox",
+    "url": "http://cazzar.net",
+    "updateUrl": "",
+    "authorList": [
+      "cazzar"
+    ],
+    "modid": "JukeboxReloaded",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "credits": "Textures by mousecop, Schillaaa for the button textures, Knallbi and Schillaaa for the German translation."
+  }
 ]
