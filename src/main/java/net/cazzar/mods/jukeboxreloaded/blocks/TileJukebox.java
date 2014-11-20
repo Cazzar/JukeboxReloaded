@@ -160,12 +160,12 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
     }
 
     @Override
-    public void openChest() {
+    public void openInventory() {
 
     }
 
     @Override
-    public void closeChest() {
+    public void closeInventory() {
 
     }
 
@@ -229,7 +229,7 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
     }
 
     @Override
-    public boolean isCustomInventoryName() {
+    public boolean hasCustomInventoryName() {
         return false;
     }
 
@@ -472,7 +472,7 @@ public class TileJukebox extends SyncedTileEntity implements IInventory, SimpleC
             final float dY = rand.nextFloat() * 0.8F + 0.1F;
             final float dZ = rand.nextFloat() * 0.8F + 0.1F;
 
-            final EntityItem entityItem = new EntityItem(worldObj, xCoord + dX, yCoord + dY, zCoord + dZ, new ItemStack(itemStack.getItem(), itemStack.stackSize, itemStack.getCurrentDurability()));
+            final EntityItem entityItem = new EntityItem(worldObj, xCoord + dX, yCoord + dY, zCoord + dZ, new ItemStack(itemStack.getItem(), itemStack.stackSize, itemStack.getItemDamage()));
 
             if (itemStack.hasTagCompound())
                 entityItem.getEntityItem().setTagCompound((NBTTagCompound) itemStack.getTagCompound().copy());
