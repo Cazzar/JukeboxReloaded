@@ -32,6 +32,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void initVillagers() {
         super.initVillagers();
-        VillagerRegistry.instance().registerVillagerSkin(3000, new ResourceLocation(Reference.MOD_ID.toLowerCase(), "textures/mob/villager.png"));
+        VillagerRegistry.instance().registerVillagerSkin(getConfig().main.villagerID, new ResourceLocation(Reference.MOD_ID.toLowerCase(), "textures/mob/villager.png"));
     }
 }
