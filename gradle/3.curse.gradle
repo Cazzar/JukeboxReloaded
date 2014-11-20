@@ -1,4 +1,4 @@
-pply plugin: 'curseforge'
+apply plugin: 'curseforge'
 curse {
     apiKey      = project.curseforge_key // gradle curse -Pcurseforge_key=your-api-key
     projectId   = "77021" // http://minecraft.curseforge.com/mc-mods/"xxxxxx"-projectname
