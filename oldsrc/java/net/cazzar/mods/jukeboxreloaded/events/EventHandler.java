@@ -22,38 +22,18 @@
  * SOFTWARE.
  */
 
-apply plugin: 'forge'
+package net.cazzar.mods.jukeboxreloaded.events;
 
-minecraft {
-    version = "1.8-11.14.0.1269-1.8"
-    runDir = '.run'
-//    mappings = 'stable_12'
-    replace '@VERSION@', version
-	mappings = "snapshot_20141213"
-}
 
-if (System.getenv("BUILD_NUMBER") != null) {
-    version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
-    project.actualVersion += "." + System.getenv("BUILD_NUMBER");
-} else {
-    version = "${minecraft.version}-$version"
-}
+import net.cazzar.corelib.lib.SoundSystemHelper;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
-processResources {
-    // replace stuff in text files, not binary ones.
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.lang'
-        include '**/*.info'
-
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-        // replace version and MCVersion
-    }
-
-    // copy everything else, that's not text
-    from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.lang'
-        exclude '**/*.info'
+public class EventHandler {
+    @SubscribeEvent
+    public void onPlayerLogout(FMLNetworkEvent.ClientDisconnectionFromServerEvent player) {
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+            SoundSystemHelper.getSoundManager().stopAllSounds();
     }
 }
-
-compileJava.options.encoding = 'UTF-8'

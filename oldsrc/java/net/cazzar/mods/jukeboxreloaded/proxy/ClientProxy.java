@@ -22,38 +22,12 @@
  * SOFTWARE.
  */
 
-apply plugin: 'forge'
+package net.cazzar.mods.jukeboxreloaded.proxy;
 
-minecraft {
-    version = "1.8-11.14.0.1269-1.8"
-    runDir = '.run'
-//    mappings = 'stable_12'
-    replace '@VERSION@', version
-	mappings = "snapshot_20141213"
-}
-
-if (System.getenv("BUILD_NUMBER") != null) {
-    version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
-    project.actualVersion += "." + System.getenv("BUILD_NUMBER");
-} else {
-    version = "${minecraft.version}-$version"
-}
-
-processResources {
-    // replace stuff in text files, not binary ones.
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.lang'
-        include '**/*.info'
-
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-        // replace version and MCVersion
-    }
-
-    // copy everything else, that's not text
-    from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.lang'
-        exclude '**/*.info'
+public class ClientProxy extends CommonProxy {
+    @Override
+    public void initVillagers() {
+        super.initVillagers();
+//        VillagerRegistry.instance().registerVillagerSkin(getConfig().main.villagerID, new ResourceLocation(Reference.MOD_ID.toLowerCase(), "textures/mob/villager.png"));
     }
 }
-
-compileJava.options.encoding = 'UTF-8'

@@ -1,0 +1,6 @@
+sourceSets {
+    main {
+        //if you truly want to override the defaults:
+        output.resourcesDir = output.classesDir
+    }
+}

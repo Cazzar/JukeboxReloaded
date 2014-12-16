@@ -51,8 +51,10 @@ repositories {
     mavenCentral()
 }
 
+apply plugin: 'scala'
+
 group = 'net.cazzar.mods'
-version = '3.0.0'
+version = '3.1.0'
 project.ext.set('actualVersion', version)
 //noinspection GroovyUnusedAssignment
 //archivesBaseName = 'CazzarCoreLib'
