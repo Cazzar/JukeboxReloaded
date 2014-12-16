@@ -42,7 +42,6 @@ buildscript {
 
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-        classpath 'me.tatarka:gradle-retrolambda:2.4.0'
     }
 }
 
@@ -62,8 +61,6 @@ project.ext.set('actualVersion', version)
 fileTree('gradle').include('*.gradle').collect().sort().each { apply from: it }
 
 tasks.withType(JavaCompile) {
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
     options.encoding = 'UTF-8'
 }
 
