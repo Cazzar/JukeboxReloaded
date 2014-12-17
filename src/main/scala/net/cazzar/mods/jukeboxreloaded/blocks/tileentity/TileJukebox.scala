@@ -1,10 +1,15 @@
 package net.cazzar.mods.jukeboxreloaded.blocks.tileentity
 
+import net.cazzar.corelib.lib.InventoryUtils
+import net.cazzar.mods.jukeboxreloaded.network.NetworkHandler
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.{ItemRecord, ItemStack}
+import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.network.Packet
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.IChatComponent
+import net.cazzar.mods.jukeboxreloaded.network.message._
 import net.cazzar.mods.jukeboxreloaded.Util._
 
 /**
@@ -14,6 +19,9 @@ class TileJukebox extends TileEntity with IInventory {
   var items: Array[ItemStack] = new Array[ItemStack](12)
   var isPlaying = false
   var name: String = null
+  private var currRecord = 0
+
+  def record = currRecord
 
   override def getSizeInventory: Int = items.length
 
@@ -29,7 +37,7 @@ class TileJukebox extends TileEntity with IInventory {
 
   override def getInventoryStackLimit: Int = 1
 
-  override def clear(): Unit = items = new Array[ItemStack](9)
+  override def clear(): Unit = items = new Array[ItemStack](getSizeInventory)
 
   override def isItemValidForSlot(index: Int, stack: ItemStack): Boolean = stack.getItem.isInstanceOf[ItemRecord]
 
@@ -59,4 +67,28 @@ class TileJukebox extends TileEntity with IInventory {
     super.markDirty()
     worldObj.markBlockForUpdate(getPos)
   }
+
+  override def getDescriptionPacket: Packet = {
+    null
+  }
+
+
+  override def writeToNBT(compound: NBTTagCompound): Unit = {
+    super.writeToNBT(compound)
+    compound.setTag("inventory", InventoryUtils.writeItemStacksToTag(items))
+    compound.setInteger("record", record)
+  }
+
+  def selectedRecord() = items(record)
+
+  def playRecord() = {
+    if (worldObj.isRemote) NetworkHandler.INSTANCE.sendToServer(ServerPlayMessage(selectedRecord(), pos))
+    else NetworkHandler.INSTANCE.sendToWorld(ClientPlayMessage(selectedRecord(), pos), worldObj)
+  }
+
+  def nextRecord() = setRecord(currRecord + 1)
+
+  def setRecord(index: Int) = currRecord = index % getSizeInventory
+
+  def prevRecord() = setRecord(if (currRecord == 0) getSizeInventory - 1 else currRecord - 1)
 }

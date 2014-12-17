@@ -1,11 +1,17 @@
 package net.cazzar.mods.jukeboxreloaded.network.gui.client
 
+import java.lang.Math._
+
 import net.cazzar.corelib.client.gui.TexturedButton
+import net.cazzar.corelib.client.gui.handler.IGUIAction
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded.JUKEBOX_GUI_TEXTURE
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
 import net.cazzar.mods.jukeboxreloaded.network.gui.server.ContainerJukebox
+import net.cazzar.mods.jukeboxreloaded.util.Strings
+import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.util.StatCollector
 import org.lwjgl.opengl.GL11
 
 class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(ContainerJukebox(player.inventory, tile)) {
@@ -37,7 +43,30 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
   }
 
   override def drawGuiContainerForegroundLayer(mouseX: Int, mouseY: Int): Unit = {
+    val name = if (tile.hasCustomName) StatCollector.translateToLocal(tile.name) else Strings.GUI_JUKEBOX_NAME.toString
+    fontRendererObj.drawString(name, xSize / 2 - fontRendererObj.getStringWidth(name) / 2, 6, 0x404040)
+    fontRendererObj.drawString(Strings.GUI_INVENTORY.toString, 8, ySize - 93, 0x404040)
 
+    GL11.glColor4f(1, 1, 1, 1)
+    mc.renderEngine.bindTexture(JUKEBOX_GUI_TEXTURE)
+
+    val xOffset = 53
+    val yOffset = 16
+    val size = 18
+
+    val index = tile.record
+    val column = floor(index / 4D).toInt
+    val row = index % 4
+
+    drawTexturedModalRect(xOffset + size * row, yOffset + size * column, 176, 0, 18, 18)
+
+    for (button <- buttonList.asInstanceOf[List[GuiButton]]) {
+      if (!button.isInstanceOf[TexturedButton]) return
+      val btn: TexturedButton = button.asInstanceOf[TexturedButton]
+      if ((mouseX >= btn.xPosition && mouseX <= btn.xPosition + btn.getHeight) && (mouseY >= btn.yPosition && mouseY <= btn.yPosition + btn.getWidth))
+        if (btn.getTooltipList.size() != 0 && btn.enabled)
+          btn.drawToolTip(mouseX - guiLeft, mouseY - guiTop)
+    }
   }
 
   def updateButtonStates() = {
@@ -53,7 +82,8 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       .setHoveredOffsets(176, 58)
       .setPosition(guiLeft + 7, guiTop + 17)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.playRecord()))
 
     add(buttonList, btnStop.setTexture(JUKEBOX_GUI_TEXTURE)
       .setOffsets(176, 98)
@@ -118,5 +148,9 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       .setPosition(guiLeft + 128, guiTop + 40)
       .setSize(20, 20)
       .setOwner(this))
+  }
+
+  implicit def unitToAction(unit: () => Unit): IGUIAction = new IGUIAction {
+    override def click(): Unit = unit()
   }
 }

@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.{BlockPos, ChatComponentText}
 import net.minecraft.world.World
 import net.minecraftforge.fml.common.network.ByteBufUtils
+import net.minecraftforge.fml.common.network.simpleimpl.{IMessage, SimpleNetworkWrapper}
 
 object Util {
   implicit def blockToItem(block: Block): Item = Item.getItemFromBlock(block)
@@ -48,6 +49,10 @@ object Util {
     }
   }
 
+  implicit class RichSimpleNetworkWrapper(val wrapper: SimpleNetworkWrapper) {
+    def sendToWorld(message: IMessage, world: World) = wrapper.sendToDimension(message, world.provider.getDimensionId)
+  }
+
   implicit class RichBlockPos(pos: BlockPos) {
     def getTileEntity(world: World) = world.getTileEntity(pos)
     def getTileEntityChecked[T >: Null <: TileEntity](world: World) = world.getTile[T](pos)
@@ -64,4 +69,5 @@ object Util {
   implicit def toItemStack(block: Block): ItemStack = new ItemStack(block)
 
   implicit def itemStackToItem(is: ItemStack): Item = is.getItem
+
 }
