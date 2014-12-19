@@ -4,6 +4,8 @@ import net.minecraft.util.StatCollector
 
 object Strings extends Enumeration {
   protected case class Val(key: String) {
+    implicit def string: String = toString
+
     override def toString = StatCollector.translateToLocal(key)
   }
 
@@ -19,4 +21,6 @@ object Strings extends Enumeration {
   val TOOLTIP_SHUFFLE_ON = Val("gui.jukebox.shuffle.on")
   val TOOLTIP_SHUFFLE_OFF = Val("gui.jukebox.shuffle.off")
   val GUI_PORTABLE_JUKEBOX_NAME = Val("gui.portableJukebox.name")
+
+  implicit def string(value: Val): String = value.toString
 }

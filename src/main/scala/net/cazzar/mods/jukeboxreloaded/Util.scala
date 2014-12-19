@@ -5,7 +5,7 @@ import net.minecraft.block.Block
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.{BlockPos, ChatComponentText}
+import net.minecraft.util.{ChatComponentTranslation, BlockPos, ChatComponentText}
 import net.minecraft.world.World
 import net.minecraftforge.fml.common.network.ByteBufUtils
 import net.minecraftforge.fml.common.network.simpleimpl.{IMessage, SimpleNetworkWrapper}
@@ -68,6 +68,6 @@ object Util {
   implicit def toItemStack(item: Item): ItemStack = new ItemStack(item)
   implicit def toItemStack(block: Block): ItemStack = new ItemStack(block)
 
-  implicit def itemStackToItem(is: ItemStack): Item = is.getItem
+  implicit def itemStackToItem(is: ItemStack): Item = if(is == null) null else is.getItem
 
 }

@@ -8,7 +8,6 @@ import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded.JUKEBOX_GUI_TEXTURE
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
 import net.cazzar.mods.jukeboxreloaded.network.gui.server.ContainerJukebox
 import net.cazzar.mods.jukeboxreloaded.util.Strings
-import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.StatCollector
@@ -21,7 +20,7 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
   val btnShuffleOff = new TexturedButton()
   val btnRepeatAll = new TexturedButton()
   val btnRepeatOne = new TexturedButton()
-  val btnRepeatOff = new TexturedButton()
+  val btnRepeatNone = new TexturedButton()
   val btnNext = new TexturedButton()
   val btnPrev = new TexturedButton()
 
@@ -60,17 +59,31 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
 
     drawTexturedModalRect(xOffset + size * row, yOffset + size * column, 176, 0, 18, 18)
 
-    for (button <- buttonList.asInstanceOf[List[GuiButton]]) {
+    for (i <- 0 until buttonList.size()) {
+      val button = buttonList.get(i)
+
       if (!button.isInstanceOf[TexturedButton]) return
       val btn: TexturedButton = button.asInstanceOf[TexturedButton]
-      if ((mouseX >= btn.xPosition && mouseX <= btn.xPosition + btn.getHeight) && (mouseY >= btn.yPosition && mouseY <= btn.yPosition + btn.getWidth))
+
+      if ((mouseX >= btn.xPosition && mouseX <= btn.xPosition + btn.getHeight) &&
+          (mouseY >= btn.yPosition && mouseY <= btn.yPosition + btn.getWidth))
+
         if (btn.getTooltipList.size() != 0 && btn.enabled)
           btn.drawToolTip(mouseX - guiLeft, mouseY - guiTop)
     }
   }
 
   def updateButtonStates() = {
+    btnPlay.enabled = !tile.playing
+    btnStop.enabled = !tile.playing
 
+    import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox.RepeatMode._
+    btnRepeatAll.enabled = tile.repeatMode != ALL
+    btnRepeatOne.enabled = tile.repeatMode != ONE
+    btnRepeatNone.enabled = tile.repeatMode != NONE
+
+    btnShuffleOff.enabled = tile.shuffle
+    btnShuffleOn.enabled = !tile.shuffle
   }
 
   override def initGui(): Unit = {
@@ -91,7 +104,8 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       .setHoveredOffsets(176, 118)
       .setPosition(guiLeft + 29, guiTop + 17)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.stopPlayingRecord(serious = true)))
 
     add(buttonList, btnNext.setTexture(JUKEBOX_GUI_TEXTURE)
       .setOffsets(216, 38)
@@ -99,7 +113,8 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       .setHoveredOffsets(216, 58)
       .setPosition(guiLeft + 29, guiTop + 39)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.nextRecord()))
 
     add(buttonList, btnPrev.setTexture(JUKEBOX_GUI_TEXTURE)
       .setOffsets(236, 38)
@@ -107,15 +122,18 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       .setHoveredOffsets(236, 58)
       .setPosition(guiLeft + 7, guiTop + 39)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.prevRecord()))
 
+    import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox.RepeatMode._
     add(buttonList, btnRepeatOne.setTexture(JUKEBOX_GUI_TEXTURE)
       .setOffsets(196, 98)
       .setDisabledOffsets(196, 78)
       .setHoveredOffsets(196, 118)
       .setPosition(guiLeft + 150, guiTop + 17)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.repeatMode = ONE))
 
     add(buttonList, btnRepeatAll.setTexture(JUKEBOX_GUI_TEXTURE)
       .setOffsets(216, 98)
@@ -123,15 +141,17 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       .setHoveredOffsets(216, 118)
       .setPosition(guiLeft + 150, guiTop + 40)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.repeatMode = ALL))
 
-    add(buttonList, btnRepeatOff.setTexture(JUKEBOX_GUI_TEXTURE)
+    add(buttonList, btnRepeatNone.setTexture(JUKEBOX_GUI_TEXTURE)
       .setOffsets(196, 158)
       .setDisabledOffsets(196, 138)
       .setHoveredOffsets(196, 178)
       .setPosition(guiLeft + 150, guiTop + 63)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.repeatMode = NONE))
 
     add(buttonList, btnShuffleOn.setTexture(JUKEBOX_GUI_TEXTURE)
       .setOffsets(236, 98)
@@ -139,7 +159,8 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       .setHoveredOffsets(236, 118)
       .setPosition(guiLeft + 128, guiTop + 17)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.shuffle = true))
 
     add(buttonList, btnShuffleOff.setTexture(JUKEBOX_GUI_TEXTURE)
       .setOffsets(176, 158)
@@ -147,7 +168,23 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       .setHoveredOffsets(176, 178)
       .setPosition(guiLeft + 128, guiTop + 40)
       .setSize(20, 20)
-      .setOwner(this))
+      .setOwner(this)
+      .addListener(() => tile.shuffle = false))
+
+    initTooltips()
+  }
+
+  def initTooltips() = {
+    import Strings._
+    btnPlay.setTooltip(TOOLTIP_PLAY)
+    btnNext.setTooltip(TOOLTIP_NEXT)
+    btnPrev.setTooltip(TOOLTIP_PREV)
+    btnRepeatAll.setTooltip(TOOLTIP_REPEAT_ALL)
+    btnRepeatNone.setTooltip(TOOLTIP_REPEAT_NONE)
+    btnRepeatOne.setTooltip(TOOLTIP_REPEAT_NONE)
+    btnShuffleOff.setTooltip(TOOLTIP_SHUFFLE_OFF)
+    btnShuffleOn.setTooltip(TOOLTIP_SHUFFLE_ON)
+    btnStop.setTooltip(TOOLTIP_SHUFFLE_OFF)
   }
 
   implicit def unitToAction(unit: () => Unit): IGUIAction = new IGUIAction {

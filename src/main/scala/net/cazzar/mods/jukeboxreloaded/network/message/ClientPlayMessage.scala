@@ -29,7 +29,7 @@ object ClientPlayMessage {
     override def onMessage(message: ClientPlayMessage, ctx: MessageContext): IMessage = {
       if (!JukeboxReloaded.canBePlayed(message.item)) return null
 
-      val player = JukeboxReloaded.getPlayerFor(message.item).asInstanceOf[IPlayMethod[Item]]
+      val player = JukeboxReloaded.getPlayerFor(message.item)
       player.play(message.item, message.pos)
       null
     }

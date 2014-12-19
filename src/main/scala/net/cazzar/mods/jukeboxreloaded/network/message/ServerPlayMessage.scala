@@ -8,6 +8,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.{MessageContext, IMessag
 import net.cazzar.mods.jukeboxreloaded.Util._
 
 class ServerPlayMessage(var item: Item, var pos: BlockPos) extends IMessage {
+  def this() = this(null, null)
+
   override def fromBytes(buf: ByteBuf): Unit = {
     item = buf.readItemStack()
     pos = buf.readPos()

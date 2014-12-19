@@ -56,9 +56,9 @@ object JukeboxReloaded {
   }
   }
 
-  def getPlayerFor(item: Item): IPlayMethod[_ <: Item] = {
+  def getPlayerFor(item: Item): IPlayMethod[Item] = {
     for (player <- players) {
-      if (player.canPlay(item)) return player
+      if (player.canPlay(item)) return player.asInstanceOf[IPlayMethod[Item]]
     }
 
     null
