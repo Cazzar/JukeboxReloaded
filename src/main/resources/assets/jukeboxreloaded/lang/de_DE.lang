@@ -1,5 +1,7 @@
 tile.Jukebox.name=Plattenspieler
-itemGroup.Jukebox Reloaded=Plattenspieler Reloaded
+itemGroup.Jukebox Reloaded=Jukebox Reloaded
+item.PortableJukebox.name=Walkman
+gui.portableJukebox.name=Walkman
 gui.jukebox.name=Plattenspieler
 gui.jukebox.play=Abspielen
 gui.jukebox.stop=Stop
@@ -10,3 +12,5 @@ gui.jukebox.repeat.all=Alle wiederholen
 gui.jukebox.repeat.none=Nicht wiederholen
 gui.jukebox.shuffle.on=Zufallswiedergabe An
 gui.jukebox.shuffle.off=Zufallswiedergabe Aus
+cazzar:walia.jukebox.playing=Spielend
+cazzar:walia.jukebox.currentlyPlaying=Aktuelle Wiedergabe: %s
