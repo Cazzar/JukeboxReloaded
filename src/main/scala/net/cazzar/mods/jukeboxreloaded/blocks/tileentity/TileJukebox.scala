@@ -89,7 +89,7 @@ class TileJukebox extends SyncedTileEntity with IInventory {
 
   override def markDirty() =  {
     super.markDirty()
-    worldObj.markBlockForUpdate(getPos)
+    if (hasWorldObj) worldObj.markBlockForUpdate(getPos)
   }
 
   override def writeToNBT(compound: NBTTagCompound): Unit = {
@@ -113,7 +113,7 @@ class TileJukebox extends SyncedTileEntity with IInventory {
 
   def playRecord(fromServer: Boolean = false): Unit = {
     if (selectedRecord == null || !hasWorldObj) return
-    if (worldObj.isRemote){
+    if (worldObj.isRemote && !fromServer){
       val packet = new ClientActionMessage(Action.PLAY, pos)
       packet.currentRecord = record
       NetworkHandler.INSTANCE.sendToServer(packet)
@@ -139,17 +139,26 @@ class TileJukebox extends SyncedTileEntity with IInventory {
     else PlayUtil.stop(selectedRecord, pos)
   }
 
-  def nextRecord() = record = _record + 1
+  def nextRecord() = {
+    record = _record + 1
+    NetworkHandler.INSTANCE.sendToServerOrWorld(new SetRecordMessage(pos, _record), worldObj)
+  }
 
   def record_=(index: Int) = {
     val wasPlaying = playing
     if (wasPlaying) stopPlayingRecord()
 
     _record = index % getSizeInventory
+    markDirty()
+
     if (wasPlaying) playRecord()
   }
 
-  def prevRecord() = record = if (_record == 0) getSizeInventory - 1 else _record - 1
+  def prevRecord() = {
+    record = if (_record == 0) getSizeInventory - 1 else _record - 1
+
+    NetworkHandler.INSTANCE.sendToServerOrWorld(new SetRecordMessage(pos, _record), worldObj)
+  }
 
   override def addExtraNBTToPacket(tag: NBTTagCompound) = {
     tag.setBoolean("playing", playing)

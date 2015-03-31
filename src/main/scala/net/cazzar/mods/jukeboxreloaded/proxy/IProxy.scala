@@ -5,6 +5,7 @@ import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
 import net.cazzar.mods.jukeboxreloaded.network.NetworkHandler
 import net.cazzar.mods.jukeboxreloaded.network.gui.GuiHandler
+import net.minecraft.world.World
 import net.minecraftforge.fml.common.event.{FMLPostInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.fml.common.network.NetworkRegistry
 import net.minecraftforge.fml.common.registry.GameRegistry
@@ -33,4 +34,6 @@ trait IProxy {
     NetworkHandler.init()
     NetworkRegistry.INSTANCE.registerGuiHandler(JukeboxReloaded, GuiHandler)
   }
+
+  def getWorld: Option[World] = None
 }

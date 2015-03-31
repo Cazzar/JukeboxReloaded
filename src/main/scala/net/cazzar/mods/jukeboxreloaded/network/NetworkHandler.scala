@@ -16,6 +16,8 @@ object NetworkHandler {
     initialised = true
     INSTANCE.registerMessage(classOf[ClientActionMessage.Handler], classOf[ClientActionMessage], 0, Side.SERVER)
     INSTANCE.registerMessage(classOf[ServerActionMessage.Handler], classOf[ServerActionMessage], 1, Side.CLIENT)
+    INSTANCE.registerMessage(classOf[SetRecordMessage.Handler], classOf[SetRecordMessage], 2, Side.CLIENT)
+    INSTANCE.registerMessage(classOf[SetRecordMessage.Handler], classOf[SetRecordMessage], 3, Side.SERVER)
 
 //    INSTANCE.registerMessage(classOf[ClientPlay.Handler], classOf[ClientPlay], 0, CLIENT)
 //    INSTANCE.registerMessage(classOf[ServerPlay.Handler], classOf[ServerPlay], 1, SERVER)

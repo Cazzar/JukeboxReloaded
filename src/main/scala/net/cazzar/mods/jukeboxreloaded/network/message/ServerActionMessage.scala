@@ -1,9 +1,9 @@
 package net.cazzar.mods.jukeboxreloaded.network.message
 
 import io.netty.buffer.ByteBuf
+import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
 import net.cazzar.mods.jukeboxreloaded.Util._
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
-import net.cazzar.mods.jukeboxreloaded.network.NetworkHandler
 import net.minecraft.util.BlockPos
 import net.minecraftforge.fml.common.network.simpleimpl.{IMessage, IMessageHandler, MessageContext}
 
@@ -26,15 +26,22 @@ class ServerActionMessage(var action: Action.Value, var pos: BlockPos) extends I
 object ServerActionMessage {
   class Handler extends IMessageHandler[ServerActionMessage, IMessage] {
     override def onMessage(message: ServerActionMessage, ctx: MessageContext): IMessage = {
-      val newMessage = new ClientActionMessage(message.action, message.pos)
-      newMessage.currentRecord = message.currentRecord
+      val tile = JukeboxReloaded.proxy.getWorld.get.getTile[TileJukebox](message.pos)
 
-      val world = ctx.getServerHandler.playerEntity.worldObj
-      NetworkHandler.INSTANCE.sendToWorld(newMessage, world)
-
-      val maybeJukebox = world.getTile[TileJukebox](message.pos)
-      if (message.action == Action.PLAY) maybeJukebox.foreach(_.setServerPlayingStatus(true))
-      if (message.action == Action.STOP) maybeJukebox.foreach(_.setServerPlayingStatus(false))
+      message.action match {
+        case Action.PLAY => tile.foreach(r => {
+          r.record = message.currentRecord
+          r.playRecord(fromServer = true)
+        })
+        case Action.STOP => tile.foreach(_.stopPlayingRecord(serious = true))
+        case Action.NEXT => tile.foreach(_.nextRecord())
+        case Action.PREVIOUS => tile.foreach(_.prevRecord())
+        case Action.SHUFFLE_OFF => tile.foreach(_.shuffle = true)
+        case Action.SHUFFLE_ON => tile.foreach(_.shuffle = false)
+        case Action.REPEAT_ALL => tile.foreach(_.repeatMode = TileJukebox.RepeatMode.ALL)
+        case Action.REPEAT_NONE => tile.foreach(_.repeatMode = TileJukebox.RepeatMode.NONE)
+        case Action.REPEAT_ONE => tile.foreach(_.repeatMode = TileJukebox.RepeatMode.ONE)
+      }
 
       null
     }

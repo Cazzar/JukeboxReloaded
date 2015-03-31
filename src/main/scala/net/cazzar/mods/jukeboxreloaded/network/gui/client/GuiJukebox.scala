@@ -75,7 +75,7 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
 
   def updateButtonStates() = {
     btnPlay.enabled = !tile.playing
-    btnStop.enabled = !tile.playing
+    btnStop.enabled = tile.playing
 
     import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox.RepeatMode._
     btnRepeatAll.enabled = tile.repeatMode != ALL
@@ -177,6 +177,7 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
   def initTooltips() = {
     import Strings._
     btnPlay.setTooltip(TOOLTIP_PLAY)
+    btnStop.setTooltip(TOOLTIP_STOP)
     btnNext.setTooltip(TOOLTIP_NEXT)
     btnPrev.setTooltip(TOOLTIP_PREV)
     btnRepeatAll.setTooltip(TOOLTIP_REPEAT_ALL)
@@ -184,7 +185,6 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
     btnRepeatOne.setTooltip(TOOLTIP_REPEAT_NONE)
     btnShuffleOff.setTooltip(TOOLTIP_SHUFFLE_OFF)
     btnShuffleOn.setTooltip(TOOLTIP_SHUFFLE_ON)
-    btnStop.setTooltip(TOOLTIP_SHUFFLE_OFF)
   }
 
   implicit def unitToAction(unit: () => Unit): IGUIAction = new IGUIAction {
