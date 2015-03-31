@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Cayde Dixon
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package net.cazzar.mods.jukeboxreloaded.network.gui.client
 
 import java.lang.Math._
@@ -27,8 +51,6 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
   xSize = 176
   ySize = 176
 
-  def add[T](list: java.util.List[T], value: Any) = list.add(value.asInstanceOf[T])
-
   override def drawGuiContainerBackgroundLayer(partialTicks: Float, mouseX: Int, mouseY: Int) = {
     updateButtonStates()
     GL11.glColor4f(1, 1, 1, 1)
@@ -36,6 +58,18 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
     drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize)
   }
 
+  def updateButtonStates() = {
+    btnPlay.enabled = !tile.playing
+    btnStop.enabled = tile.playing
+
+    import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox.RepeatMode._
+    btnRepeatAll.enabled = tile.repeatMode != ALL
+    btnRepeatOne.enabled = tile.repeatMode != ONE
+    btnRepeatNone.enabled = tile.repeatMode != NONE
+
+    btnShuffleOff.enabled = tile.shuffle
+    btnShuffleOn.enabled = !tile.shuffle
+  }
 
   override def mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Unit = {
     super.mouseClicked(mouseX, mouseY, mouseButton)
@@ -66,24 +100,11 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
       val btn: TexturedButton = button.asInstanceOf[TexturedButton]
 
       if ((mouseX >= btn.xPosition && mouseX <= btn.xPosition + btn.getHeight) &&
-          (mouseY >= btn.yPosition && mouseY <= btn.yPosition + btn.getWidth))
+        (mouseY >= btn.yPosition && mouseY <= btn.yPosition + btn.getWidth))
 
         if (btn.getTooltipList.size() != 0 && btn.enabled)
           btn.drawToolTip(mouseX - guiLeft, mouseY - guiTop)
     }
-  }
-
-  def updateButtonStates() = {
-    btnPlay.enabled = !tile.playing
-    btnStop.enabled = tile.playing
-
-    import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox.RepeatMode._
-    btnRepeatAll.enabled = tile.repeatMode != ALL
-    btnRepeatOne.enabled = tile.repeatMode != ONE
-    btnRepeatNone.enabled = tile.repeatMode != NONE
-
-    btnShuffleOff.enabled = tile.shuffle
-    btnShuffleOn.enabled = !tile.shuffle
   }
 
   override def initGui(): Unit = {
@@ -173,6 +194,8 @@ class GuiJukebox(player: EntityPlayer, tile: TileJukebox) extends GuiContainer(C
 
     initTooltips()
   }
+
+  def add[T](list: java.util.List[T], value: Any) = list.add(value.asInstanceOf[T])
 
   def initTooltips() = {
     import Strings._

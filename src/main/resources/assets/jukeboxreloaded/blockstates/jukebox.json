@@ -1,8 +1,17 @@
 {
   "variants": {
     "facing=north": {"model": "jukeboxreloaded:jukebox"},
-    "facing=south": {"model": "jukeboxreloaded:jukebox", "y": 180},
-    "facing=west": {"model": "jukeboxreloaded:jukebox", "y": 270},
-    "facing=east": {"model": "jukeboxreloaded:jukebox", "y": 90}
+    "facing=south": {
+      "model": "jukeboxreloaded:jukebox",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "jukeboxreloaded:jukebox",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "jukeboxreloaded:jukebox",
+      "y": 90
+    }
   }
 }

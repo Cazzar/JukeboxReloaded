@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Cayde Dixon
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package net.cazzar.mods.jukeboxreloaded.blocks.tileentity
 
 import net.cazzar.corelib.lib.InventoryUtils
@@ -15,31 +39,16 @@ import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.util.IChatComponent
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
-/**
- * Created by Cayde on 16/12/2014.
- */
 class TileJukebox extends SyncedTileEntity with IInventory {
   var items: Array[ItemStack] = new Array[ItemStack](12)
-  private var _playing = false
   var name: String = null
   var repeatMode = RepeatMode.ALL
   var shuffle = false
+  private var _playing = false
   private var _record = 0
-
-  def record = _record
 
   @SideOnly(Side.SERVER)
   def setServerPlayingStatus(playing: Boolean) = _playing = playing
-
-  def playing: Boolean = {
-    if (CommonUtil.isServer) return _playing
-
-    for (item <- items) {
-      if (PlayUtil.isPlaying(item, pos))
-        return true
-    }
-    false
-  }
 
   def isSlotPlaying: Boolean = {
     if (worldObj.isRemote) return _playing
@@ -47,7 +56,7 @@ class TileJukebox extends SyncedTileEntity with IInventory {
     PlayUtil.isPlaying(selectedRecord, pos)
   }
 
-  override def getSizeInventory: Int = items.length
+  def selectedRecord = items(record)
 
   override def decrStackSize(index: Int, count: Int): ItemStack = {
     val item = items(index)
@@ -62,6 +71,8 @@ class TileJukebox extends SyncedTileEntity with IInventory {
   override def getInventoryStackLimit: Int = 1
 
   override def clear(): Unit = items = new Array[ItemStack](getSizeInventory)
+
+  override def getSizeInventory: Int = items.length
 
   override def isItemValidForSlot(index: Int, stack: ItemStack): Boolean = stack.getItem.isInstanceOf[ItemRecord]
 
@@ -87,7 +98,7 @@ class TileJukebox extends SyncedTileEntity with IInventory {
 
   override def hasCustomName: Boolean = name != null
 
-  override def markDirty() =  {
+  override def markDirty() = {
     super.markDirty()
     if (hasWorldObj) worldObj.markBlockForUpdate(getPos)
   }
@@ -100,7 +111,6 @@ class TileJukebox extends SyncedTileEntity with IInventory {
     compound.setBoolean("shuffle", shuffle)
   }
 
-
   override def readFromNBT(compound: NBTTagCompound): Unit = {
     super.readFromNBT(compound)
     if (compound.hasKey("inventory")) InventoryUtils.readItemStacksFromTag(items, compound.getTag("inventory").asInstanceOf[NBTTagList])
@@ -109,11 +119,9 @@ class TileJukebox extends SyncedTileEntity with IInventory {
     shuffle = compound.getBoolean("shuffle")
   }
 
-  def selectedRecord = items(record)
-
   def playRecord(fromServer: Boolean = false): Unit = {
     if (selectedRecord == null || !hasWorldObj) return
-    if (worldObj.isRemote && !fromServer){
+    if (worldObj.isRemote && !fromServer) {
       val packet = new ClientActionMessage(Action.PLAY, pos)
       packet.currentRecord = record
       NetworkHandler.INSTANCE.sendToServer(packet)
@@ -144,6 +152,8 @@ class TileJukebox extends SyncedTileEntity with IInventory {
     NetworkHandler.INSTANCE.sendToServerOrWorld(new SetRecordMessage(pos, _record), worldObj)
   }
 
+  def record = _record
+
   def record_=(index: Int) = {
     val wasPlaying = playing
     if (wasPlaying) stopPlayingRecord()
@@ -164,6 +174,16 @@ class TileJukebox extends SyncedTileEntity with IInventory {
     tag.setBoolean("playing", playing)
   }
 
+  def playing: Boolean = {
+    if (CommonUtil.isServer) return _playing
+
+    for (item <- items) {
+      if (PlayUtil.isPlaying(item, pos))
+        return true
+    }
+    false
+  }
+
   override def readExtraNBTFromPacket(tag: NBTTagCompound) = {
     val tagPlaying = tag.getBoolean("playing")
     if (tagPlaying && !playing) playRecord() else if (!tagPlaying && playing) stopPlayingRecord()
@@ -171,7 +191,9 @@ class TileJukebox extends SyncedTileEntity with IInventory {
 }
 
 object TileJukebox {
+
   object RepeatMode extends Enumeration {
     val ONE, NONE, ALL = Value
   }
+
 }

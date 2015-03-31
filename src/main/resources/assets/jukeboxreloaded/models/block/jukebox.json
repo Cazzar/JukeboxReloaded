@@ -1,9 +1,9 @@
 {
   "parent": "jukeboxreloaded:block/jukebox_base",
   "textures": {
-    "top":    "jukeboxreloaded:blocks/jukebox_top",
-    "front":  "jukeboxreloaded:blocks/jukebox_front",
-    "side":   "jukeboxreloaded:blocks/jukebox_side",
+    "top": "jukeboxreloaded:blocks/jukebox_top",
+    "front": "jukeboxreloaded:blocks/jukebox_front",
+    "side": "jukeboxreloaded:blocks/jukebox_side",
     "bottom": "jukeboxreloaded:blocks/jukebox_bottom"
   }
 }
