@@ -13,7 +13,7 @@ object JukeboxReloaded {
   final val JUKEBOX_GUI_TEXTURE: ResourceLocation = new ResourceLocation(MOD_ID.toLowerCase, "textures/gui/jukebox.png")
   val logger = LogHelper.getLogger("JukeboxReloaded")
 
-  @SidedProxy(clientSide = "net.cazzar.mods.jukeboxreloaded.proxy.ClientProxy", serverSide = "net.cazzar.mods.jukeboxreloaded.proxy.CommonProxy") // since I only have client for now.
+  @SidedProxy(clientSide = "net.cazzar.mods.jukeboxreloaded.proxy.ClientProxy", serverSide = "net.cazzar.mods.jukeboxreloaded.proxy.ServerProxy") // since I only have client for now.
   var proxy: IProxy = null
 
   @Mod.EventHandler def preInit(e: FMLPreInitializationEvent) = proxy.preInit(e)

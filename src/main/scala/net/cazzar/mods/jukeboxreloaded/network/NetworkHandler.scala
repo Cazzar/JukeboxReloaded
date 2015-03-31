@@ -14,8 +14,8 @@ object NetworkHandler {
     if (initialised) return
 
     initialised = true
-    INSTANCE.registerMessage(classOf[ClientActionMessage.Handler], classOf[ClientActionMessage], 0, Side.CLIENT)
-    INSTANCE.registerMessage(classOf[ServerActionMessage.Handler], classOf[ServerActionMessage], 1, Side.SERVER)
+    INSTANCE.registerMessage(classOf[ClientActionMessage.Handler], classOf[ClientActionMessage], 0, Side.SERVER)
+    INSTANCE.registerMessage(classOf[ServerActionMessage.Handler], classOf[ServerActionMessage], 1, Side.CLIENT)
 
 //    INSTANCE.registerMessage(classOf[ClientPlay.Handler], classOf[ClientPlay], 0, CLIENT)
 //    INSTANCE.registerMessage(classOf[ServerPlay.Handler], classOf[ServerPlay], 1, SERVER)

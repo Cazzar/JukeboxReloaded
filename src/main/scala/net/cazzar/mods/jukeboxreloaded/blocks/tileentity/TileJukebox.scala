@@ -1,21 +1,18 @@
 package net.cazzar.mods.jukeboxreloaded.blocks.tileentity
 
-import net.cazzar.corelib.lib.{SoundSystemHelper, InventoryUtils}
+import net.cazzar.corelib.lib.InventoryUtils
 import net.cazzar.corelib.tile.SyncedTileEntity
-import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
-import net.cazzar.mods.jukeboxreloaded.api.IPlayMethod
+import net.cazzar.corelib.util.CommonUtil
+import net.cazzar.mods.jukeboxreloaded.Util._
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox.RepeatMode
 import net.cazzar.mods.jukeboxreloaded.network.NetworkHandler
+import net.cazzar.mods.jukeboxreloaded.network.message._
 import net.cazzar.mods.jukeboxreloaded.util.PlayUtil
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.IInventory
-import net.minecraft.item.{Item, ItemRecord, ItemStack}
-import net.minecraft.nbt.{NBTTagList, NBTTagCompound}
-import net.minecraft.network.Packet
-import net.minecraft.tileentity.TileEntity
+import net.minecraft.item.{ItemRecord, ItemStack}
+import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.util.IChatComponent
-import net.cazzar.mods.jukeboxreloaded.network.message._
-import net.cazzar.mods.jukeboxreloaded.Util._
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
@@ -35,8 +32,7 @@ class TileJukebox extends SyncedTileEntity with IInventory {
   def setServerPlayingStatus(playing: Boolean) = _playing = playing
 
   def playing: Boolean = {
-    if (worldObj == null) return false
-    if (worldObj.isRemote) return _playing
+    if (CommonUtil.isServer) return _playing
 
     for (item <- items) {
       if (PlayUtil.isPlaying(item, pos))
@@ -116,7 +112,7 @@ class TileJukebox extends SyncedTileEntity with IInventory {
   def selectedRecord = items(record)
 
   def playRecord(fromServer: Boolean = false): Unit = {
-    if (selectedRecord == null) return
+    if (selectedRecord == null || !hasWorldObj) return
     if (worldObj.isRemote){
       val packet = new ClientActionMessage(Action.PLAY, pos)
       packet.currentRecord = record
@@ -147,12 +143,10 @@ class TileJukebox extends SyncedTileEntity with IInventory {
 
   def record_=(index: Int) = {
     val wasPlaying = playing
-    if (wasPlaying)
-      stopPlayingRecord()
+    if (wasPlaying) stopPlayingRecord()
 
     _record = index % getSizeInventory
-
-    playRecord()
+    if (wasPlaying) playRecord()
   }
 
   def prevRecord() = record = if (_record == 0) getSizeInventory - 1 else _record - 1
