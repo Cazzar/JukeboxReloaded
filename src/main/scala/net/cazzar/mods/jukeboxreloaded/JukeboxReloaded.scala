@@ -36,6 +36,7 @@ object JukeboxReloaded {
   final val MOD_ID = "jukeboxreloaded"
   final val JUKEBOX_GUI_TEXTURE: ResourceLocation = new ResourceLocation(MOD_ID.toLowerCase, "textures/gui/jukebox.png")
   val logger = LogHelper.getLogger("JukeboxReloaded")
+  logger.info("Like my mod? Consider supporting me on Patreon! http://www.patreon.com/cazzar") //Hey, at least this isn't ingame constantly.
 
   @SidedProxy(clientSide = "net.cazzar.mods.jukeboxreloaded.proxy.ClientProxy", serverSide = "net.cazzar.mods.jukeboxreloaded.proxy.ServerProxy") // since I only have client for now.
   var proxy: IProxy = null
