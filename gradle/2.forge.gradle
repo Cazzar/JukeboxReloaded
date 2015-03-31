@@ -25,7 +25,7 @@
 apply plugin: 'forge'
 
 minecraft {
-    version = "1.8-11.14.0.1269-1.8"
+    version = "1.8-11.14.1.1341"
     runDir = '.run'
 //    mappings = 'stable_12'
     replace '@VERSION@', version

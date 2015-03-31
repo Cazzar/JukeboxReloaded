@@ -1,11 +1,12 @@
 package net.cazzar.mods.jukeboxreloaded
 
 import io.netty.buffer.ByteBuf
+import net.cazzar.corelib.lib.SoundSystemHelper
 import net.minecraft.block.Block
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.item.{ItemRecord, Item, ItemStack}
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.{ChatComponentTranslation, BlockPos, ChatComponentText}
+import net.minecraft.util.{BlockPos, ChatComponentText}
 import net.minecraft.world.World
 import net.minecraftforge.fml.common.network.ByteBufUtils
 import net.minecraftforge.fml.common.network.simpleimpl.{IMessage, SimpleNetworkWrapper}
@@ -14,10 +15,7 @@ object Util {
   implicit def blockToItem(block: Block): Item = Item.getItemFromBlock(block)
 
   implicit class RichWorld(val world: World) {
-    def getTile[T >: Null <: TileEntity](pos: BlockPos): T = world.getTileEntity(pos) match {
-      case t: T => t
-      case _ => null
-    }
+    def getTile[T >: Null <: TileEntity](pos: BlockPos): Option[T] = Option(world.getTileEntity(pos)).filter(_.isInstanceOf[T]).asInstanceOf[Option[T]]
   }
 
   implicit class RichPlayer(val player: EntityPlayer) {
@@ -53,7 +51,14 @@ object Util {
     def sendToWorld(message: IMessage, world: World) = wrapper.sendToDimension(message, world.provider.getDimensionId)
   }
 
-  implicit class RichBlockPos(pos: BlockPos) {
+  implicit class RichItemRecord(val record: ItemRecord) {
+    def identifier(pos: BlockPos) = SoundSystemHelper.getIdentifierForRecord(record, pos.x, pos.y, pos.z);
+  }
+
+  implicit class RichBlockPos(val pos: BlockPos) {
+    def x = pos.getX
+    def y = pos.getY
+    def z = pos.getZ
     def getTileEntity(world: World) = world.getTileEntity(pos)
     def getTileEntityChecked[T >: Null <: TileEntity](world: World) = world.getTile[T](pos)
     def getBlockState(world: World) = world.getBlockState(pos)

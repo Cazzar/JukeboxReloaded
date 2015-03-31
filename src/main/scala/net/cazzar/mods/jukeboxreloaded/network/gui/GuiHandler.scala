@@ -13,10 +13,10 @@ object GuiHandler extends IGuiHandler{
   final val JUKEBOX = 0
 
   override def getServerGuiElement(ID: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): AnyRef = ID match {
-    case JUKEBOX => new ContainerJukebox(player.inventory, new BlockPos(x, y, z).getTileEntityChecked[TileJukebox](world))
+    case JUKEBOX => new ContainerJukebox(player.inventory, new BlockPos(x, y, z).getTileEntityChecked[TileJukebox](world).get)
   }
 
   override def getClientGuiElement(ID: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): AnyRef = ID match {
-    case JUKEBOX => new GuiJukebox(player, new BlockPos(x, y, z).getTileEntityChecked[TileJukebox](world))
+    case JUKEBOX => new GuiJukebox(player, new BlockPos(x, y, z).getTileEntityChecked[TileJukebox](world).get)
   }
 }

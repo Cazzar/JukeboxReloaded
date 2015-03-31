@@ -1,10 +1,10 @@
 package net.cazzar.mods.jukeboxreloaded.network.gui.server
 
-import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
+import net.cazzar.mods.jukeboxreloaded.api.IJukeboxPlayable
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
 import net.minecraft.entity.player.{EntityPlayer, InventoryPlayer}
 import net.minecraft.inventory.{Container, Slot}
-import net.minecraft.item.ItemStack
+import net.minecraft.item.{ItemRecord, ItemStack}
 
 class ContainerJukebox(inv: InventoryPlayer, tile: TileJukebox) extends Container {
   var slot = 0
@@ -49,7 +49,7 @@ class ContainerJukebox(inv: InventoryPlayer, tile: TileJukebox) extends Containe
   }
 
   override def mergeItemStack(stack: ItemStack, startIndex: Int, endIndex: Int, useEndIndex: Boolean): Boolean = {
-    JukeboxReloaded.getPlayerFor(stack.getItem) != null && super.mergeItemStack(stack, startIndex, endIndex, useEndIndex)
+    (stack.getItem.isInstanceOf[ItemRecord] || stack.getItem.isInstanceOf[IJukeboxPlayable]) && super.mergeItemStack(stack, startIndex, endIndex, useEndIndex)
   }
 }
 

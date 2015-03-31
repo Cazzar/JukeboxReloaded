@@ -1,18 +1,23 @@
 package net.cazzar.mods.jukeboxreloaded.network
 
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
-import net.cazzar.mods.jukeboxreloaded.network.message.{ServerPlayMessage, ClientPlayMessage}
-import net.minecraftforge.fml.relauncher.Side.{CLIENT, SERVER}
+import net.cazzar.mods.jukeboxreloaded.network.message._
+import net.minecraftforge.fml.relauncher.Side
+
+//import net.cazzar.mods.jukeboxreloaded.network.message.{ServerPlay, ClientPlay}
 
 object NetworkHandler {
   val INSTANCE = net.minecraftforge.fml.common.network.NetworkRegistry.INSTANCE.newSimpleChannel(JukeboxReloaded.MOD_ID)
-  private var initalized = false
+  private var initialised = false
 
   def init(): Unit = {
-    if (initalized) return
+    if (initialised) return
 
-    initalized = true
-    INSTANCE.registerMessage(classOf[ClientPlayMessage.Handler], classOf[ClientPlayMessage], 0, CLIENT)
-    INSTANCE.registerMessage(classOf[ServerPlayMessage.Handler], classOf[ServerPlayMessage], 1, SERVER)
+    initialised = true
+    INSTANCE.registerMessage(classOf[ClientActionMessage.Handler], classOf[ClientActionMessage], 0, Side.CLIENT)
+    INSTANCE.registerMessage(classOf[ServerActionMessage.Handler], classOf[ServerActionMessage], 1, Side.SERVER)
+
+//    INSTANCE.registerMessage(classOf[ClientPlay.Handler], classOf[ClientPlay], 0, CLIENT)
+//    INSTANCE.registerMessage(classOf[ServerPlay.Handler], classOf[ServerPlay], 1, SERVER)
   }
 }

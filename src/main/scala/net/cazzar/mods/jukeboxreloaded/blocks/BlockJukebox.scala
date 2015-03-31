@@ -3,9 +3,7 @@ package net.cazzar.mods.jukeboxreloaded.blocks
 import com.google.common.base.Predicate
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
-import net.cazzar.mods.jukeboxreloaded.network.NetworkHandler
 import net.cazzar.mods.jukeboxreloaded.network.gui.GuiHandler
-import net.cazzar.mods.jukeboxreloaded.network.message.ClientPlayMessage
 import net.minecraft.block.{ITileEntityProvider, Block}
 import net.minecraft.block.material.Material
 import net.minecraft.block.properties.PropertyDirection
@@ -40,9 +38,8 @@ object BlockJukebox extends {
   override def onBlockActivated(worldIn: World, pos: BlockPos, state: IBlockState, playerIn: EntityPlayer, side: EnumFacing, hitX: Float, hitY: Float, hitZ: Float): Boolean = {
     if (!worldIn.isRemote) {
       val tile = pos.getTileEntityChecked[TileJukebox](worldIn)
-      if (tile == null) return false
-
-      playerIn.openGui(JukeboxReloaded, GuiHandler.JUKEBOX, worldIn, pos.getX, pos.getY, pos.getZ)
+      if (!tile.isDefined) return false
+      playerIn.openGui(JukeboxReloaded, GuiHandler.JUKEBOX, worldIn, pos.x, pos.y, pos.z)
     }
     true
   }
