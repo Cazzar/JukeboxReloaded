@@ -37,7 +37,6 @@ import net.minecraft.inventory.IInventory
 import net.minecraft.item.{ItemRecord, ItemStack}
 import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.util.IChatComponent
-import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 class TileJukebox extends SyncedTileEntity with IInventory {
   var items: Array[ItemStack] = new Array[ItemStack](12)
@@ -47,7 +46,6 @@ class TileJukebox extends SyncedTileEntity with IInventory {
   private var _playing = false
   private var _record = 0
 
-  @SideOnly(Side.SERVER)
   def setServerPlayingStatus(playing: Boolean) = _playing = playing
 
   def isSlotPlaying: Boolean = {

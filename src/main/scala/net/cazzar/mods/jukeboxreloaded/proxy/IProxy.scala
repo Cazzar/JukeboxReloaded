@@ -24,21 +24,42 @@
 
 package net.cazzar.mods.jukeboxreloaded.proxy
 
+import net.cazzar.corelib.creative.GenericCreativeTab
 import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
+import net.cazzar.mods.jukeboxreloaded.Util._
 import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox
 import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
 import net.cazzar.mods.jukeboxreloaded.network.NetworkHandler
 import net.cazzar.mods.jukeboxreloaded.network.gui.GuiHandler
+import net.minecraft.init.Blocks
+import net.minecraft.item.ItemStack
 import net.minecraft.world.World
 import net.minecraftforge.fml.common.event.{FMLPostInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.fml.common.network.NetworkRegistry
 import net.minecraftforge.fml.common.registry.GameRegistry
+import net.minecraftforge.oredict.ShapedOreRecipe
 
 trait IProxy {
   def preInit(e: FMLPreInitializationEvent) = {
     registerBlocks()
+
+    val tab = new GenericCreativeTab("Jukebox Reloaded", BlockJukebox)
+    BlockJukebox.setCreativeTab(tab)
+
     registerTileEntity()
     registerNetwork()
+
+    GameRegistry.addRecipe(new ShapedOreRecipe(BlockJukebox,
+      "WCW",
+      "NJN",
+      "WWW",
+      Char.box('W'), "plankWood",
+      Char.box('C'), new ItemStack(Blocks.chest),
+      Char.box('J'), new ItemStack(Blocks.jukebox),
+      Char.box('N'), new ItemStack(Blocks.noteblock)
+    ))
+
+
   }
 
   def registerBlocks(): Unit = {
