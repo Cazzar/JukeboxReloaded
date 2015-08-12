@@ -22,13 +22,26 @@
  * SOFTWARE.
  */
 
-if (project.hasProperty("curseforge_key")) { //apply conditionally.
-    apply plugin: 'curseforge'
-    curse {
-        apiKey      = project.curseforge_key // gradle curse -Pcurseforge_key=your-api-key
-        projectId   = "77021" // http://minecraft.curseforge.com/mc-mods/"xxxxxx"-projectname
-        releaseType = "release" //alpha beta release
-        changelog   = "BREAKING RELEASE: This will remove all RECORDS that I have added, though they are re added in the JukeboxPack sub-release." //must have at least an empty string
-        //addGameVersion "1.7.2" "1.7.4" //add additional versions compatible with your mod
-    }
+package net.cazzar.mods.jukeboxreloaded.network
+
+import net.cazzar.mods.jukeboxreloaded.JukeboxReloaded
+import net.cazzar.mods.jukeboxreloaded.network.message._
+import net.minecraftforge.fml.relauncher.Side
+
+object NetworkHandler {
+  val INSTANCE = net.minecraftforge.fml.common.network.NetworkRegistry.INSTANCE.newSimpleChannel(JukeboxReloaded.MOD_ID)
+  private var initialised = false
+
+  def init(): Unit = {
+    if (initialised) return
+
+    initialised = true
+    INSTANCE.registerMessage(classOf[ClientActionMessage.Handler], classOf[ClientActionMessage], 0, Side.SERVER)
+    INSTANCE.registerMessage(classOf[ServerActionMessage.Handler], classOf[ServerActionMessage], 1, Side.CLIENT)
+    INSTANCE.registerMessage(classOf[SetRecordMessage.Handler], classOf[SetRecordMessage], 2, Side.CLIENT)
+    INSTANCE.registerMessage(classOf[SetRecordMessage.Handler], classOf[SetRecordMessage], 3, Side.SERVER)
+
+    //    INSTANCE.registerMessage(classOf[ClientPlay.Handler], classOf[ClientPlay], 0, CLIENT)
+    //    INSTANCE.registerMessage(classOf[ServerPlay.Handler], classOf[ServerPlay], 1, SERVER)
+  }
 }

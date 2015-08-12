@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Cayde Dixon
+ * Copyright (c) 2014 Cayde Dixon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,38 +22,25 @@
  * SOFTWARE.
  */
 
-apply plugin: 'forge'
+package net.cazzar.mods.jukeboxreloaded.network;
 
-minecraft {
-    version = "1.8-11.14.1.1341"
-    runDir = '.run'
-//    mappings = 'stable_12'
-    replace '@VERSION@', version
-	mappings = "snapshot_20141213"
-}
 
-if (System.getenv("BUILD_NUMBER") != null) {
-    version = "${minecraft.version}-$version." + System.getenv("BUILD_NUMBER");
-    project.actualVersion += "." + System.getenv("BUILD_NUMBER");
-} else {
-    version = "${minecraft.version}-$version"
-}
+import net.cazzar.mods.jukeboxreloaded.lib.Reference;
+import net.cazzar.mods.jukeboxreloaded.network.packet.*;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-processResources {
-    // replace stuff in text files, not binary ones.
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.lang'
-        include '**/*.info'
+import static net.minecraftforge.fml.relauncher.Side.CLIENT;
+import static net.minecraftforge.fml.relauncher.Side.SERVER;
 
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-        // replace version and MCVersion
-    }
+public class PacketHandler {
+    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MOD_ID);
 
-    // copy everything else, that's not text
-    from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.lang'
-        exclude '**/*.info'
+    public static void init() {
+        INSTANCE.registerMessage(ClientAction.Handler.class, ClientAction.class, 0, SERVER);
+        INSTANCE.registerMessage(ServerAction.Handler.class, ServerAction.class, 1, CLIENT);
+        INSTANCE.registerMessage(ClientPlayRecord.Handler.class, ClientPlayRecord.class, 2, SERVER);
+        INSTANCE.registerMessage(ServerPlayRecord.Handler.class, ServerPlayRecord.class, 3, CLIENT);
+        INSTANCE.registerMessage(ClientShuffle.Handler.class, ClientShuffle.class, 4, SERVER);
     }
 }
-
-compileJava.options.encoding = 'UTF-8'

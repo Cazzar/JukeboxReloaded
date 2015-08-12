@@ -1,0 +1,25 @@
+tile.Jukebox.name=Jukebox
+
+itemGroup.Jukebox Reloaded=Jukebox Reloaded
+
+item.PortableJukebox.name=Walkman
+
+gui.portableJukebox.name=Walkman
+
+gui.jukebox.name=Jukebox
+
+gui.jukebox.play=Play
+
+gui.jukebox.stop=Stop
+
+gui.jukebox.next=Prossimo
+gui.jukebox.prev=Precedente
+gui.jukebox.repeat.one=Ripeti uno
+gui.jukebox.repeat.all=Ripeti tutti
+gui.jukebox.repeat.none=Ripeti nessuno
+gui.jukebox.shuffle.on=Abilita shuffle
+
+gui.jukebox.shuffle.off=Disabilita shuffle
+
+cazzar:walia.jukebox.playing=In esecuzione
+cazzar:walia.jukebox.currentlyPlaying=Attualmente in esecuzione: %s

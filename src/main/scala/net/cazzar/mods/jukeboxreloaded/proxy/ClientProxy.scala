@@ -22,13 +22,20 @@
  * SOFTWARE.
  */
 
-if (project.hasProperty("curseforge_key")) { //apply conditionally.
-    apply plugin: 'curseforge'
-    curse {
-        apiKey      = project.curseforge_key // gradle curse -Pcurseforge_key=your-api-key
-        projectId   = "77021" // http://minecraft.curseforge.com/mc-mods/"xxxxxx"-projectname
-        releaseType = "release" //alpha beta release
-        changelog   = "BREAKING RELEASE: This will remove all RECORDS that I have added, though they are re added in the JukeboxPack sub-release." //must have at least an empty string
-        //addGameVersion "1.7.2" "1.7.4" //add additional versions compatible with your mod
-    }
+package net.cazzar.mods.jukeboxreloaded.proxy
+
+import net.cazzar.mods.jukeboxreloaded.Util._
+import net.cazzar.mods.jukeboxreloaded.blocks.BlockJukebox
+import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.model.ModelResourceLocation
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
+
+class ClientProxy extends IProxy {
+  override def getWorld = Option(Minecraft.getMinecraft.theWorld)
+
+  override def postInit(e: FMLPostInitializationEvent): Unit = {
+    super.postInit(e)
+
+    Minecraft.getMinecraft.getRenderItem.getItemModelMesher.register(BlockJukebox, 0, new ModelResourceLocation("jukeboxreloaded:jukebox", "inventory"))
+  }
 }

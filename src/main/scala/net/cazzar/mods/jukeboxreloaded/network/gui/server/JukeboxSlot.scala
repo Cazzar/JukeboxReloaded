@@ -22,13 +22,17 @@
  * SOFTWARE.
  */
 
-if (project.hasProperty("curseforge_key")) { //apply conditionally.
-    apply plugin: 'curseforge'
-    curse {
-        apiKey      = project.curseforge_key // gradle curse -Pcurseforge_key=your-api-key
-        projectId   = "77021" // http://minecraft.curseforge.com/mc-mods/"xxxxxx"-projectname
-        releaseType = "release" //alpha beta release
-        changelog   = "BREAKING RELEASE: This will remove all RECORDS that I have added, though they are re added in the JukeboxPack sub-release." //must have at least an empty string
-        //addGameVersion "1.7.2" "1.7.4" //add additional versions compatible with your mod
-    }
+package net.cazzar.mods.jukeboxreloaded.network.gui.server
+
+import net.cazzar.mods.jukeboxreloaded.blocks.tileentity.TileJukebox
+import net.cazzar.mods.jukeboxreloaded.util.PlayUtil
+import net.minecraft.inventory.{IInventory, Slot}
+import net.minecraft.item.ItemStack
+
+class JukeboxSlot(jukebox: TileJukebox, index: Int, xPosition: Int, yPosition: Int) extends Slot(jukebox: IInventory, index: Int, xPosition: Int, yPosition: Int) {
+  override def isItemValid(stack: ItemStack): Boolean = PlayUtil.canBePlayed(stack, jukebox.getPos)
+
+  override def getItemStackLimit(stack: ItemStack): Int = 1
+
+  override def getSlotStackLimit: Int = 1
 }

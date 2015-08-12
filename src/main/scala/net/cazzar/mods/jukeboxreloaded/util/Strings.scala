@@ -22,13 +22,30 @@
  * SOFTWARE.
  */
 
-if (project.hasProperty("curseforge_key")) { //apply conditionally.
-    apply plugin: 'curseforge'
-    curse {
-        apiKey      = project.curseforge_key // gradle curse -Pcurseforge_key=your-api-key
-        projectId   = "77021" // http://minecraft.curseforge.com/mc-mods/"xxxxxx"-projectname
-        releaseType = "release" //alpha beta release
-        changelog   = "BREAKING RELEASE: This will remove all RECORDS that I have added, though they are re added in the JukeboxPack sub-release." //must have at least an empty string
-        //addGameVersion "1.7.2" "1.7.4" //add additional versions compatible with your mod
-    }
+package net.cazzar.mods.jukeboxreloaded.util
+
+import net.minecraft.util.StatCollector
+
+object Strings extends Enumeration {
+
+  val GUI_JUKEBOX_NAME = Val("gui.jukebox.name")
+  val GUI_INVENTORY = Val("container.inventory")
+  val TOOLTIP_PLAY = Val("gui.jukebox.play")
+  val TOOLTIP_STOP = Val("gui.jukebox.stop")
+  val TOOLTIP_NEXT = Val("gui.jukebox.next")
+  val TOOLTIP_PREV = Val("gui.jukebox.prev")
+  val TOOLTIP_REPEAT_ONE = Val("gui.jukebox.repeat.one")
+  val TOOLTIP_REPEAT_ALL = Val("gui.jukebox.repeat.all")
+  val TOOLTIP_REPEAT_NONE = Val("gui.jukebox.repeat.none")
+  val TOOLTIP_SHUFFLE_ON = Val("gui.jukebox.shuffle.on")
+  val TOOLTIP_SHUFFLE_OFF = Val("gui.jukebox.shuffle.off")
+  val GUI_PORTABLE_JUKEBOX_NAME = Val("gui.portableJukebox.name")
+
+  implicit def string(value: Val): String = value.toString
+
+  protected case class Val(key: String) {
+    implicit def string: String = toString
+
+    override def toString = StatCollector.translateToLocal(key)
+  }
 }

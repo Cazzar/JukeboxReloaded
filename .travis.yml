@@ -1,5 +1,3 @@
-language: java
+language: scala
 install: chmod +x gradlew
 script: gradle clean setupCIWorkspace build
-jdk:
-  - oraclejdk8

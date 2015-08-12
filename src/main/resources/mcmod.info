@@ -1,7 +1,7 @@
 [
   {
     "name": "Jukebox Reloaded",
-    "description": "A rebuild of the vanilla jukebox",
+    "description": "A rebuild of the vanilla jukebox\n if you like the mod, consider supporting me on patreon! http://www.patreon.com/cazzar",
     "url": "http://cazzar.net",
     "updateUrl": "",
     "authorList": [
@@ -10,6 +10,6 @@
     "modid": "JukeboxReloaded",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "credits": "Textures by mousecop, Schillaaa for the button textures, Knallbi and Schillaaa for the German translation."
+    "credits": "Textures by mousecop, Schillaaa for the button textures\nKnallbi and Schillaaa for the German translation.\nCapoFantasma97 for the Italian Translation"
   }
 ]

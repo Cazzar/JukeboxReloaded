@@ -22,13 +22,23 @@
  * SOFTWARE.
  */
 
-if (project.hasProperty("curseforge_key")) { //apply conditionally.
-    apply plugin: 'curseforge'
-    curse {
-        apiKey      = project.curseforge_key // gradle curse -Pcurseforge_key=your-api-key
-        projectId   = "77021" // http://minecraft.curseforge.com/mc-mods/"xxxxxx"-projectname
-        releaseType = "release" //alpha beta release
-        changelog   = "BREAKING RELEASE: This will remove all RECORDS that I have added, though they are re added in the JukeboxPack sub-release." //must have at least an empty string
-        //addGameVersion "1.7.2" "1.7.4" //add additional versions compatible with your mod
-    }
+package net.cazzar.mods.jukeboxreloaded.api;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+
+public interface IJukeboxPlayable {
+    void play(ItemStack item, BlockPos pos);
+
+    void stop(ItemStack item, BlockPos pos);
+
+    boolean isPlaying(ItemStack item, BlockPos pos);
+
+    /**
+     * NEVER ASSUME that you will only get your item to play.
+     *
+     * @param item the item to play
+     * @return if you can play it via this interface implementation.
+     */
+    boolean canPlay(ItemStack item);
 }
